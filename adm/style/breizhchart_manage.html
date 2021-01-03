@@ -10,7 +10,7 @@
 <p>{{ lang('BC_PAGE_DESC') }}</p>
 <p><img src="https://img.shields.io/badge/{{ lang('Version') }}-{{ DM_VERSION }}-green.svg?style=plastic" title="{{ lang('Version') }} {{ DM_VERSION }}" /></p>
 
-{% if not S_DM_EDIT %}
+{% if not S_BREIZHCHARTS_EDIT %}
 <form id="breizhchart_manage" method="post" action="{{ U_ACTION }}">
 	<div class="pagination top-pagination">
 	{% if pagination|length %}
@@ -91,7 +91,7 @@
 		<dl>
 			<dt><label for="picture">{{ lang('BC_SONG_PICTURE') }}:</label><br /><span>{{ lang('BC_SONG_PICTURE_EXPLAIN') }}</span></dt>
 			<dd><input onblur="breizhcharts.checkPicture()" type="text" name="picture" id="picture" size="70" value="{{ PICTURE }}" /></dd>
-			<dd id="on-picture" style="display: none;"><img src="" id="picture" alt="" height="25" /></dd>
+			<dd id="on-picture" style="display: none;"><img src="" id="new-picture" alt="" height="25" /></dd>
 			<dd id="check-picture"></dd>
 		</dl>
 		<dl>
