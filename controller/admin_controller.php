@@ -36,7 +36,7 @@ class admin_controller
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
-	/** @var \phpbb\path_helper */
+	/* @var \phpbb\controller\helper */
 	protected $helper;	
 
 	/** @var \phpbb\db\driver\driver_interface */
