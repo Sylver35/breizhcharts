@@ -1,0 +1,155 @@
+{% INCLUDE 'overall_header.html' %}
+{% INCLUDECSS '@sylver35_breizhcharts/calendar/skins/aqua/theme.css' %}
+
+<h1>{{ lang('BC_CONFIG') }}</h1>
+<p>{{ lang('BC_CONFIG_EXPLAIN') }}</p>
+<p><img src="https://img.shields.io/badge/{{ lang('Version') }}-{{ BC_CHARTS_VERSION }}-green.svg?style=plastic" title="{{ BC_CHARTS_VERSION }}" /></p>
+<form id="acp_breizhcharts" method="post" action="{U_ACTION}">
+	<fieldset>
+		<legend>{{ lang('BC_CONFIG_MAIN_SETTINGS') }}</legend>
+		<dl>
+			<dt><label>{{ lang('BC_ACP_PAGE') }}:</label><br />{{ lang('BC_ACP_PAGE_EXPLAIN') }}</dt>
+			<dd><input class="post" type="text" maxlength="3" size="5" name="breizhcharts_acp_page" value="{{ CHART_ACP_PAGE }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_MAX_PER_PAGE') }}:</label><br />{{ lang('BC_MAX_PER_PAGE_EXPLAIN') }}</dt>
+			<dd><input class="post" type="text" maxlength="3" size="5" name="breizhcharts_user_page" value="{{ CHART_USER_PAGE }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_WINNERS_PER_PAGE') }}:</label><br />{{ lang('BC_WINNERS_PER_PAGE_EXPLAIN') }}</dt>
+			<dd><input class="post" type="text" maxlength="3" size="5" name="breizhcharts_winners_per_page" value="{{ WINNERS_PER_PAGE }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_MAX_ENTRIES') }}:</label><br />{{ lang('BC_MAX_ENTRIES_EXPLAIN') }}</dt>
+			<dd><input class="post" type="text" maxlength="30" size="5" name="breizhcharts_max_entries" value="{{ CHART_MAX_ENTRIES }}" /></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_CHECK_1_ENABLE') }}:</label><br />{{ lang('BC_CHECK_1_ENABLE_EXPLAIN') }}</dt>
+			<dd><label><input type="radio" class="radio" name="breizhcharts_check_1" value="1"{% if CHART_CHECK_1 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="breizhcharts_check_1" value="0"{% if not CHART_CHECK_1 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_CHECK_2_ENABLE') }}:</label><br />{{ lang('BC_CHECK_2_ENABLE_EXPLAIN') }}</dt>
+			<dd><label><input type="radio" class="radio" name="breizhcharts_check_2" value="1"{% if CHART_CHECK_2 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+			<label><input type="radio" class="radio" name="breizhcharts_check_2" value="0"{% if not CHART_CHECK_2 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_CHECK_TIME') }}:</label><br />{{ lang('BC_CHECK_TIME_EXPLAIN') }}</dt>
+			<dd><select id="breizhcharts_check_time" name="breizhcharts_check_time">{{ CHART_CHECK_TIME }}</select>&nbsp;&nbsp;{{ lang('BC_CHOICE_DAYS') }}</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_STARTING_TIME') }}:</label><br />{{ lang('BC_STARTING_TIME_EXPLAIN') }}</dt>
+			<dd>
+				<input class="post" type="hidden" maxlength="255" size="15" name="breizhcharts_start_time" id="breizhcharts_start_time" value="{{ CHART_START_TIME }}" /><br />
+				<input class="post" type="text" maxlength="255" size="18" name="breizhcharts_start_time_bis" id="breizhcharts_start_time_bis" value="{{ FORMAT_START_TIME }}" />&nbsp;<input type="reset" id="button_time" value="{{ lang('BC_CALENDAR') }}" style="background-color: black;color: white;font-weight: bold;" /><br /><br />
+				<strong>{{ CHART_START_TIME_READABLE }}</strong>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_PERIOD') }}:</label><br />{{ lang('BC_PERIOD_EXPLAIN') }}</dt>
+			<dd>
+				<select id="breizhcharts_period" name="breizhcharts_period">{{ CHART_PERIOD }}</select>&nbsp;&nbsp;
+				<select name="breizhcharts_period_val"><option value="604800"{% if CHART_PERIOD_VAL eq '604800' %} selected=""{% endif %}>{{ lang('BC_CHOICE_WEEKS') }}</option><option value="86400"{% if CHART_PERIOD_VAL eq '86400' %} selected=""{% endif %}>{{ lang('BC_CHOICE_DAYS') }}</option></select>
+				<br /><strong>{{ CHART_PERIOD_READABLE }}</strong>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label>{{ lang('BC_NEXT_RESET') }}:</label><br />{{ lang('BC_NEXT_RESET_EXPLAIN') }}</dt>
+			<dd><br /><br /><strong>{{ CHART_NEXT_RESET }}</strong></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('BC_PM') }}</legend>
+			{{ lang('BC_PM_EXPLAIN') }}<br /><br />
+			<dl>
+				<dt><label>{{ lang('BC_PM_ENABLE') }}:</label><br />{{ lang('BC_PM_ENABLE_EXPLAIN') }}</dt>
+				<dd><label><input type="radio" class="radio" name="breizhcharts_pm_enable" value="1"{% if PM_ENABLE %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="breizhcharts_pm_enable" value="0"{% if not PM_ENABLE %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('BC_PM_USER') }}:</label><br />{{ lang('BC_PM_USER_EXPLAIN') }}</dt>
+				<dd><input class="post" type="text" id="breizhcharts_pm_user" maxlength="15" size="6" name="breizhcharts_pm_user" value="{PM_USER}" />&nbsp;({PM_USER_NAME})</dd>
+			</dl>
+
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('BC_ANNOUNCE_SETTINGS') }}</legend>
+		<dl>
+			<dt><label for="breizhcharts_announce_enable">{{ lang('BC_CONFIG_ANNOUNCE_ENABLE') }}</label><br />{{ lang('BC_CONFIG_ANNOUNCE_ENABLE_EX') }}</dt>
+			<dd><input type="radio" class="radio" name="breizhcharts_announce_enable" value="1"{% if ANNOUNCE_ENABLE eq 1 %} checked="checked"{% endif %}/> {{ lang('YES') }} &nbsp; 
+				<input type="radio" class="radio" name="breizhcharts_announce_enable" value="0"{% if ANNOUNCE_ENABLE eq 0 %} checked="checked"{% endif %}/> {{ lang('NO') }}</dd>
+		</dl>
+		<dl>
+			<dt><label for="breizhcharts_song_forum">{{ lang('BC_CONFIG_ANNOUNCE_FORUM') }}</label><br />
+				<span>{{ lang('BC_CONFIG_ANNOUNCE_FORUM_EX') }}</span></dt>
+			<dd><select name="breizhcharts_song_forum">{{ ANNOUNCE_FORUM_LIST }}</select></dd>
+		</dl>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ lang('BC_REQUIRED') }}</legend>
+			{{ lang('BC_REQUIRED_EXPLAIN') }}<br /><br />
+			<dl>
+				<dt><label>{{ lang('BC_REQUIRED_ALBUM') }}:</label></dt>
+				<dd><label><input type="radio" class="radio" name="breizhcharts_required_1" value="1"{% if REQUIRED_1 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="breizhcharts_required_1" value="0"{% if not REQUIRED_1 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('BC_REQUIRED_ALBUMCOVER') }}:</label></dt>
+				<dd><label><input type="radio" class="radio" name="breizhcharts_required_2" value="1"{% if REQUIRED_2 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="breizhcharts_required_2" value="0"{% if not REQUIRED_2 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('BC_REQUIRED_YEAR') }}:</label></dt>
+				<dd><label><input type="radio" class="radio" name="breizhcharts_required_3" value="1"{% if REQUIRED_3 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="breizhcharts_required_3" value="0"{% if not REQUIRED_3 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('BC_REQUIRED_WEBSITE') }}:</label></dt>
+				<dd><label><input type="radio" class="radio" name="breizhcharts_required_4" value="1"{% if REQUIRED_4 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
+				<label><input type="radio" class="radio" name="breizhcharts_required_4" value="0"{% if not REQUIRED_4 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
+			</dl>
+	</fieldset>
+
+{% if S_UPS_INSTALLED %}
+	<fieldset>
+		<legend>{{ lang('BC_UPS_TITLE') }}</legend>
+			{{ lang('BC_UPS_TITLE_EXPLAIN') }}<br /><br />
+			<dl>
+				<dt><label>{UPS}:</label><br /><span>{UPS_EXPLAIN}</span></dt>
+				<dd><input type="text" id="breizhcharts_ups_points" name="breizhcharts_ups_points" value="{CHART_UPS_POINTS}" maxlength="8" size="10" /></dd>
+			</dl>
+			<dl>
+				<dt><label>{POINTS}:</label><br /><span>{POINTS_EXPLAIN}</span></dt>
+				<dd><input type="text" id="breizhcharts_1st_place" name="breizhcharts_1st_place" value="{CHART_1ST_PLACE}" maxlength="8" size="10" /> {FIRST}</dd>
+				<dd><input type="text" id="breizhcharts_2nd_place" name="breizhcharts_2nd_place" value="{CHART_2ND_PLACE}" maxlength="8" size="10" /> {SECOND}</dd>
+				<dd><input type="text" id="breizhcharts_3rd_place" name="breizhcharts_3rd_place" value="{CHART_3RD_PLACE}" maxlength="8" size="10" /> {THIRD}</dd>
+			</dl>
+			<dl>
+				<dt><label>{POINTS_PER_VOTE_DESC}:</label><br /><span>{POINTS_PER_VOTE_DESC_EXPLAIN}</span></dt>
+				<dd><input type="text" id="breizhcharts_points_per_vote" name="breizhcharts_points_per_vote" value="{POINTS_PER_VOTE}" maxlength="8" size="10" /> {POINTS_NAME}</dd>
+			</dl>
+			<dl>
+				<dt><label>{POINTS_VOTERS_BONUS}:</label><br /><span>{POINTS_VOTERS_BONUS_EXPLAIN}</span></dt>
+				<dd><input type="text" id="breizhcharts_voters_points" name="breizhcharts_voters_points" value="{VOTERS_POINTS}" maxlength="8" size="10" /> {POINTS_NAME}</dd>
+			</dl>
+			<dl>
+				<dt><label>{{ lang('BC_LAST_VOTERS_WINNER_ID') }}:</label><br /><span>{{ lang('BC_LAST_VOTERS_WINNER_ID_EX') }}</span></dt>
+				<dd><input id="breizhcharts_winner_id" name="breizhcharts_winner_id" value="{LAST_VOTERS_WINNER_ID}" maxlength="8" size="10" /> {{ BONUS_WINNER_NAME }}</dd>
+			</dl>
+	</fieldset>
+{% endif %}
+
+	<fieldset class="submit-buttons">
+		<legend>{{ lang('SUBMIT') }}</legend>
+		<p class="submit-buttons">
+			<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}" />&nbsp;
+			<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}" />
+			{{ S_FORM_TOKEN }}
+		</p>
+	</fieldset>
+</form>
+
+{% INCLUDE 'overall_footer.html' %}

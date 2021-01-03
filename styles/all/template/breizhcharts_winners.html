@@ -1,0 +1,106 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h2>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
+
+<p>
+	{% if U_ADD_SONG %}
+	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}">{{ lang('BC_ADD_SONG') }}</a> | 
+	{% endif %}
+	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}">{{ lang('BC_SHOW_ALL') }}</a> | 
+	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}">{{ lang('BC_NEWEST_XX') }}</a> | 
+	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}">{{ lang('BC_LAST_WINNERS') }}</a> | 
+	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}">{{ lang('BC_OWN') }}</a>
+	{% if U_USER_NAV %}
+	 | <a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}">{{ USER_NAV_TITLE }}</a>
+	{% endif %}
+</p>
+
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dd>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</dd>
+				</dl>
+			</li>
+		</ul>
+
+		<ul class="topiclist forums" style="font-size:1.1em;">
+			<li class="row bg3">
+				<dl style="text-align:center;font-weight: bold;">
+					<dd style="text-align: center; width: 7%;">{{ lang('BC_RANK') }}</dd>
+					<dd style="text-align: center; width: 50%;">{{ lang('BC_SONG') }}</dd>
+					<dd style="text-align: center; width: 8%;">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd style="text-align: center; width: 15%;">{{ lang('BC_USER') }}</dd>
+					{% if S_UPS %}
+					<dd style="text-align: center; width: 9%;">{{ lang('BC_WON') }}</dd>
+					{% endif %}
+				</dl>
+			</li>
+			{% if winners %}
+			{% for winner in winners %}
+			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
+				<dl>
+					<dd style="width: 7%;text-align:center;">
+						{{ winner.RANK }}
+					</dd>
+					<dd style="width: 50%;">
+						<div style="margin: 10px 1px 1px 8px;"><b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,800,550); return false;">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b></div>
+					</dd>
+					<dd style="width: 8%;text-align:center;">
+						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,800,550); return false;" title="{{ winner.VIDEO }}">
+							<img src="{{ U_EXT_PATH }}images/song_video.png" alt="" height="30" />
+						</a>
+					</dd>
+					<dd style="width: 15%;">
+						<div style="margin: 10px 1px 1px 8px;"><span title="{{ winner.USER_TITLE }}">{{ winner.USER }}</span></div>
+					</dd>
+					{% if S_UPS %}
+					<dd style="width: 10%;">
+						<div style="margin: 10px 1px 1px 8px;">{{ winner.WIN }}</div>
+					</dd>
+					{% endif %}
+				</dl>
+			</li>
+			{% endfor %}
+			{% else %}
+			<li class="row">
+				<dl style="text-align:center;font-weight: bold;font-size:1.5em;">
+					<dd style="width:100%;">
+						{{ lang('BC_NO_VOTES') }}
+					</dd>
+				</dl>
+			</li>
+			{% endif %}
+		</ul>
+	</div>
+</div>
+
+{% if S_BONUS_WINNER %}
+<br style="clear:both" />
+
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dd>{{ lang('BC_BONUS_WINNER_HEADER') }}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist forums" style="font-size:1.1em;">
+			<li class="row">
+				<dl style="text-align:center;font-size:1.2em;">
+					<dd style="width:100%;">
+						{{ BONUS_WINNER }}
+					</dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+</div>
+{% endif %}
+
+<br style="clear:both" />
+
+{% INCLUDE 'overall_footer.html' %}

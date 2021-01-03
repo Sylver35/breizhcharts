@@ -1,0 +1,105 @@
+imports:
+- { resource: tables.yml }
+
+services:
+    sylver35.breizhcharts.main.listener:
+        class: sylver35\breizhcharts\event\main_listener
+        arguments:
+            - '@sylver35.breizhcharts.core.functions.charts'
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@config'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+        tags:
+            - { name: event.listener }
+
+    sylver35.breizhcharts.controller.charts:
+        class: sylver35\breizhcharts\controller\breizhcharts
+        arguments:
+            - '@sylver35.breizhcharts.core.functions.charts'
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@ext.manager'
+            - '@path_helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    sylver35.breizhcharts.admin.controller:
+        class: sylver35\breizhcharts\controller\admin_controller
+        arguments:
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@ext.manager'
+            - '@path_helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    sylver35.breizhcharts.admin.config:
+        class: sylver35\breizhcharts\controller\admin_config
+        arguments:
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@ext.manager'
+            - '@path_helper'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    sylver35.breizhcharts.core.functions.charts:
+        class: sylver35\breizhcharts\core\functions_charts
+        arguments:
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@ext.manager'
+            - '@path_helper'
+            - '@service_container'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'

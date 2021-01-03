@@ -1,0 +1,15 @@
+@keyframes blink-song {
+	from {color: blue;}
+    to {color: red;}
+}
+
+@-webkit-keyframes blink-song {
+	from {color: blue;}
+    to {color: red;}
+}
+
+.new-song {
+	color: blue;
+	animation: blink-song 2s steps(2, start) infinite;
+	-webkit-animation: blink-song 2s steps(2, start) infinite;
+}

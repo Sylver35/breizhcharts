@@ -1,0 +1,3 @@
+parameters:
+    sylver35.breizhcharts.table.breizhcharts: '%core.table_prefix%breizhcharts'
+    sylver35.breizhcharts.table.breizhcharts_voters: '%core.table_prefix%breizhcharts_voters'

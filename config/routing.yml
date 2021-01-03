@@ -1,0 +1,27 @@
+sylver35_breizhcharts_page_music:
+    path: /breizhcharts
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:handle }
+sylver35_breizhcharts_add_music:
+    path: /breizhcharts_add
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:add_song }
+sylver35_breizhcharts_delete_music:
+    path: /breizhcharts_del
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:delete_song }
+    requirements:
+        id: \d+
+sylver35_breizhcharts_edit_music:
+    path: /breizhcharts_edit
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:edit_song }
+    requirements:
+        id: \d+
+sylver35_breizhcharts_page_popup:
+    path: /breizhcharts_popup
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:handle_popup, id: 0  }
+    requirements:
+        id: \d+
+sylver35_breizhcharts_vote:
+    path: /breizhcharts_vote
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:handle_vote  }
+sylver35_breizhcharts_check_song:
+    path: /breizhcharts_check_song
+    defaults: { _controller: sylver35.breizhcharts.controller.charts:check_song  }

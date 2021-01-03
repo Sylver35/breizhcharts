@@ -1,0 +1,101 @@
+{% if S_CHECK_FIRST and S_USER_LOGGED_IN %}
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dd style="width:100%; text-align:center;">{{ lang('BC_INDEX_WINNER') }}&nbsp;{{ PERIOD }}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist topics">
+			<li class="bg1">
+			{% if winners %}
+				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
+					<div style="display: table-row;padding: 0;margin: 0;">
+						{% for winner in winners %}
+						<span style="display: table-cell;text-align: center;">
+							{{ winner.RANK }}<br /><br />
+							<b>{{ winner.SONG }}</b><br />
+							{{ lang('BC_FROM') }}<br />
+							<b>{{ winner.ARTIST }}</b>
+							<br /><br />
+							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,800,600);return false;">
+								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px" />
+							</a>
+							<br /><br />
+							<span title="{{ winner.USER_TITLE }}">{{ winner.USER }}</span>: {{ winner.WIN }}
+						</span>
+						{% endfor %}
+					</div>
+				</div>
+				<br />
+				{% if BONUS_WINNER %}
+				<br />
+				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
+					<div style="display: table-row;padding: 0;margin: 0;">
+						<span style="display: table-cell;text-align: center;">
+							<span title="{{ USER_TITLE }}">{{ BONUS_WINNER }}</span>
+						</span>
+					</div>
+				</div>
+				{% endif %}
+			{% endif %}
+			</li>
+		</ul>
+	</div>
+</div>
+
+<div class="rules">
+	<div class="inner">
+		<strong>{{ lang('INFORMATION') }}:</strong> {{ VOTE }}
+	</div>
+</div>
+{% endif %}
+
+{% if S_CHECK_SECOND and S_USER_LOGGED_IN %}
+<div id="message" class="rules">
+	<div class="inner">
+		<strong>{{ lang('INFORMATION') }}:</strong> {{ REMINDER }}
+	</div>
+</div>
+
+{% if newests %}
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dd style="width:100%; text-align:center;">{{ lang('BC_NEWEST_PERIOD') }}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist topics">
+			<li class="bg1">
+				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
+					<div style="display: table-row;padding: 0;margin: 0;">
+					{% for newest in newests %}
+					{% if newest.LINE %}
+					</div>
+					<br />
+					<div style="display: table-row;padding: 0;margin: 0;">
+					{% endif %}
+						<span style="display: table-cell;text-align: center;width: 25%;">
+							<b>{{ newest.SONG }}</b><br />
+							{{ lang('BC_FROM') }}<br />
+							<b>{{ newest.ARTIST }}</b><br /><br />
+							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,800,600); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
+								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px" />
+							</a>
+							<br /><br />
+							<span title="{{ newest.USER_TITLE }}">{{ newest.USER }}</span>
+						</span>
+					{% endfor %}
+					</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+</div>
+{% endif %}
+{% endif %}
