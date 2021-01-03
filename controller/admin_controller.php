@@ -36,13 +36,13 @@ class admin_controller
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
-	/** @var helper */
+	/** @var \phpbb\path_helper */
 	protected $helper;	
 
-	/** @var db_interface */
+	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
-	/** @var pagination */
+	/** @var \phpbb\pagination */
 	protected $pagination;
 
 	/** @var \phpbb\log\log */

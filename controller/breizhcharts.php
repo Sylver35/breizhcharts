@@ -378,10 +378,10 @@ class breizhcharts
 			'S_REQ_4'			=> ($this->config['breizhcharts_required_4']) ? '[*] ' : '',
 		]);
 		
-		$this->functions_charts->create_navigation('add', $this->language->lang('BC_ADD_SONG'));
+		$this->functions_charts->create_navigation('add', $title_mode);
 
 		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_ADD_SONG'));
+		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
 
 		// Load template
 		$this->template->set_filenames([

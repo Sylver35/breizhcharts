@@ -28,7 +28,7 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_version', '1.0.0']],
 
 			['config.add', ['breizhcharts_1st_place', 200]],
-			['config.add', ['breizhcharts_2nd_place',150]],
+			['config.add', ['breizhcharts_2nd_place', 150]],
 			['config.add', ['breizhcharts_3rd_place', 100]],
 			['config.add', ['breizhcharts_acp_page', 15]],
 			['config.add', ['breizhcharts_announce_enable', 0]],

@@ -117,10 +117,6 @@ class admin_config
 
 	public function acp_breizhcharts_config()
 	{
-		$action = $this->request->variable('action', '');
-		$id = $this->request->variable('id', 0);
-		$form_action = $this->u_action . '&amp;action=add';
-		$lang_mode = $this->language->lang('BC_ADD');
 		add_form_key('acp_breizhcharts');
 
 		if ($this->request->is_set_post('submit'))
@@ -251,7 +247,6 @@ class admin_config
 				'VOTERS_POINTS'					=> $this->config['breizhcharts_voters_points'],
 				'LAST_VOTERS_WINNER_ID'			=> $this->config['breizhcharts_winner_id'],
 				'WINNERS_PER_PAGE'				=> $this->config['breizhcharts_winners_per_page'],
-				'L_MODE_TITLE'					=> $lang_mode,
 				'USER_LANG'						=> $this->user->lang_name,
 				'U_ACTION'						=> $this->u_action,
 				'S_BREIZHCHARTS_CONFIG'			=> true,
