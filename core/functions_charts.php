@@ -182,7 +182,13 @@ class functions_charts
 
 	public function get_youtube_img($youtube_id, $get_id = false)
 	{
-		$youtube_id = ($get_id !== false) ? $this->get_youtube_id($youtube_id) : $youtube_id;
+		if ($get_id !== false)
+		{
+			if ($id = $this->get_youtube_id($youtube_id))
+			{
+				$youtube_id = $id;
+			}
+		}
 		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 	}
 

@@ -313,8 +313,11 @@ class admin_controller
 
 	private function get_youtube_img($youtube_id)
 	{
-		$youtube_id = $this->get_youtube_id($youtube_id);
-		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
+		if ($youtube_id = $this->get_youtube_id($youtube_id))
+		{
+			return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
+		}
+		return '';
 	}
 
 	/**
