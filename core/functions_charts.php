@@ -183,7 +183,7 @@ class functions_charts
 	public function get_youtube_img($youtube_id, $get_id = false)
 	{
 		$youtube_id = ($get_id !== false) ? $this->get_youtube_id($youtube_id) : $youtube_id;
-		return 'https://img.youtube.com/vi/' . censor_text($youtube_id) . '/hqdefault.jpg';
+		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 	}
 
 	public function create_announcement($song_name, $artist, $picture, $video)

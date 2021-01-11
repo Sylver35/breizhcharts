@@ -275,7 +275,7 @@ class admin_controller
 					'ARTIST'		=> $row['artist'],
 					'ALBUM'			=> $row['album'],
 					'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-					'PICTURE'		=> $row['picture'] ? $row['picture'] : 'https://img.youtube.com/vi/' . censor_text($this->get_youtube_id($row['video'])) . '/hqdefault.jpg',
+					'PICTURE'		=> $row['picture'] ? $row['picture'] : $this->get_youtube_img($row['video']),
 					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
 					'YEAR'			=> $row['year'],
 					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
@@ -309,6 +309,12 @@ class admin_controller
 		preg_match($pattern, $url, $matches);
 
 		return isset($matches[1]) ? $matches[1] : false;
+	}
+
+	private function get_youtube_img($youtube_id)
+	{
+		$youtube_id = $this->get_youtube_id($youtube_id);
+		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 	}
 
 	/**

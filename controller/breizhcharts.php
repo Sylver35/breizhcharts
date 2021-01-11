@@ -201,6 +201,7 @@ class breizhcharts
 
 	public function tutorial_charts()
 	{
+		$title_mode = 'tutoriel';
 		$this->functions_charts->create_navigation('tuto', $title_mode);
 
 		// Output the page
@@ -273,7 +274,6 @@ class breizhcharts
 			$this->db->sql_freeresult($result);
 			$song = $row['song_name'];
 			$artist = $row['artist'];
-			$song_note = (int) $row['song_note'];
 			$nb_note = (int) $row['nb_note'];
 
 			$total = 0;
