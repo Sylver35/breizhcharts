@@ -39,7 +39,9 @@
 				<td>{{ chart.ARTIST }}</td>
 				<td>{{ chart.ALBUM }}</td>
 				<td>{{ chart.USERNAME }}<br /><span style="font-size: 0.8em;">{{ chart.ADDED_TIME }}</span></td>
-				<td style="text-align: center;">{{ chart.PICTURE }}</td>
+				<td style="text-align: center;">
+					<img src="{{ chart.PICTURE }}" height="35px" alt="" title="{{ chart.TITLE_PIC }}" />
+				</td>
 				<td style="text-align: center;">{{ chart.LAST_RANK }}</td>
 				<td style="text-align: center;"><a href="{{ chart.U_EDIT }}">{{ ICON_EDIT }}</a>&nbsp;&nbsp;<a href="{{ chart.U_DEL }}">{{ ICON_DELETE }}</a></td>
 			</tr>
@@ -105,7 +107,7 @@
 		</dl>
 		<dl>
 			<dt><label for="video">{{ lang('BC_SONG_VIDEO') }}:</label><br /><span>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</span></dt>
-			<dd><textarea onblur="breizhcharts.checkVideo()" required aria-required="true" rows="4" cols="60" name="video" id="video" spellcheck="false">{{ VIDEO }}</textarea></dd>
+			<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ VIDEO }}" /></dd>
 			<dd id="check-video"></dd>
 		</dl>
 	</fieldset>

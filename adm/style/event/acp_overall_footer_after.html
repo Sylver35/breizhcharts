@@ -10,6 +10,7 @@
 <script>
 var breizhcharts = {
 	checkSong: '{{ U_CHECK_SONG }}',
+	checkUrl: '{{ U_CHECK_VIDEO }}',
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="" />',
 	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="" />',
 	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="" />',
@@ -89,14 +90,22 @@ var breizhcharts = {
 		}
 	}
 	breizhcharts.checkVideo = function(){
-		var $valueVideo = $('#video').val();
-		if($valueVideo.indexOf('<iframe') !== -1 && $valueVideo.indexOf('</iframe>') !== -1 || $valueVideo.indexOf('<object') !== -1 && $valueVideo.indexOf('</object>') !== -1){
-			$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+breizhcharts.ok+'</span>');
-			$('#button').attr({'disabled': false, 'title': breizhcharts.submit});
-		}else{
-			$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+breizhcharts.errorVideo+'</span>');
-			$('#button').attr({'disabled': true, 'title': breizhcharts.error});
-		}
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: breizhcharts.checkUrl,
+			data: 'url='+encodeURIComponent($('#video').val()),
+			cache: false,
+			success: function(result){
+				if(result.sort === 1){
+					$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35" />');
+				}else{
+					$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
+					$('#button').attr({'disabled': true, 'title': breizhcharts.error});
+				}
+				$('#check-song > span > strong').css('color','initial');
+			}
+		});
 	}
 	breizhcharts.urlValide = function(url){
 		var regex = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;

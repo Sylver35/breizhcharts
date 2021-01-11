@@ -1,0 +1,38 @@
+{% INCLUDE 'overall_header.html' %}
+
+<h2>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
+
+<p>
+	{% if U_ADD_SONG %}
+	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}">{{ lang('BC_ADD_SONG') }}</a> | 
+	{% endif %}
+	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}">{{ lang('BC_SHOW_ALL') }}</a> | 
+	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}">{{ lang('BC_NEWEST_XX') }}</a> | 
+	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}">{{ lang('BC_LAST_WINNERS') }}</a> | 
+	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}">{{ lang('BC_OWN') }}</a>
+</p>
+
+<div class="forabg">
+	<div class="inner">
+		<ul class="topiclist">
+			<li class="header">
+				<dl class="row-item">
+					<dd>{{ lang('BC_BONUS_WINNER_HEADER') }}</dd>
+				</dl>
+			</li>
+		</ul>
+		<ul class="topiclist forums" style="font-size:1.1em;">
+			<li class="row">
+				<dl style="text-align:center;font-size:1.2em;">
+					<dd style="width:100%;">
+						
+					</dd>
+				</dl>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<br style="clear:both" />
+
+{% INCLUDE 'overall_footer.html' %}

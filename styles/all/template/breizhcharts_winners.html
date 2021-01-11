@@ -4,15 +4,12 @@
 
 <p>
 	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}">{{ lang('BC_ADD_SONG') }}</a> | 
+	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a> | 
 	{% endif %}
-	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}">{{ lang('BC_SHOW_ALL') }}</a> | 
-	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}">{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}">{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}">{{ lang('BC_OWN') }}</a>
-	{% if U_USER_NAV %}
-	 | <a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}">{{ USER_NAV_TITLE }}</a>
-	{% endif %}
+	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_SHOW_ALL') }}</a> | 
+	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
+	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
+	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
 </p>
 
 <div class="forabg">
@@ -45,11 +42,14 @@
 						{{ winner.RANK }}
 					</dd>
 					<dd style="width: 50%;">
-						<div style="margin: 10px 1px 1px 8px;"><b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,800,550); return false;">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b></div>
+						<div style="margin: 10px 1px 1px 8px;">
+							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> 
+							{{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
+						</div>
 					</dd>
 					<dd style="width: 8%;text-align:center;">
-						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,800,550); return false;" title="{{ winner.VIDEO }}">
-							<img src="{{ U_EXT_PATH }}images/song_video.png" alt="" height="30" />
+						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,680,450); return false;" title="{{ winner.VIDEO }}">
+							<img src="{{ winner.THUMBNAIL }}" alt="" height="45px" />
 						</a>
 					</dd>
 					<dd style="width: 15%;">
@@ -65,7 +65,7 @@
 			{% endfor %}
 			{% else %}
 			<li class="row">
-				<dl style="text-align:center;font-weight: bold;font-size:1.5em;">
+				<dl class="dl-default">
 					<dd style="width:100%;">
 						{{ lang('BC_NO_VOTES') }}
 					</dd>

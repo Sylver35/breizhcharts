@@ -1,5 +1,4 @@
 {% INCLUDE 'overall_header.html' %}
-{% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
 
 <h2>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
 
@@ -8,21 +7,23 @@
 	<div class="inner">
 		{{ MC_TITLE_EXPLAIN }}
 		<br /><br />
-		{{ lang('GO_TO_YOUTUBE') }}
+		{{ GO_TO_YOUTUBE }}
 	</div>
 </div>
 {% endif %}
 
 <p>
 	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}">{{ lang('BC_ADD_SONG') }}</a> | 
+	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a> | 
 	{% endif %}
-	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}">{{ lang('BC_SHOW_ALL') }}</a> | 
-	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}">{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}">{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}">{{ lang('BC_OWN') }}</a>
+	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_SHOW_ALL') }}</a> | 
+	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
+	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
+	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
 	{% if U_USER_NAV %}
-	 | <a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}">{{ USER_NAV_TITLE }}</a>
+	<span class="user-navigation">
+		<a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}"><i class="icon fa fa-user"></i>{{ USER_NAV_TITLE }}</a>
+	</span>
 	{% endif %}
 </p>
 
@@ -51,13 +52,12 @@
 			<li class="row bg3">
 				<dl style="text-align:center;font-weight: bold;">
 					<dd style="text-align: center; width: 7%;">{{ lang('BC_CURR_POS') }}</dd>
-					<dd style="text-align: center; width: 34%;">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br />{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
+					<dd style="text-align: center; width: 32%;">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br />{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
 					<dd style="text-align: center; width: 13%;">{{ lang('BC_SONG_ALBUM_PICTURE') }}</dd>
-					<dd style="text-align: center; width: 7%;">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd style="text-align: center; width: 9%;">{{ lang('BC_SONG_VIDEO') }}</dd>
 					<dd style="text-align: center; width: 11%;">{{ lang('BC_ADDED_BY') }}</dd>
-					<dd style="text-align: center; width: 10%;">{{ lang('BC_RATE') }}</dd>
+					<dd style="text-align: center; width: 18%;">{{ lang('BC_RATE') }}</dd>
 					<dd style="text-align: center; width: 9%;">{{ lang('BC_LAST_POS') }}</dd>
-					<dd style="text-align: center; width: 8%;">{{ lang('BC_BEST_POS') }}</dd>
 				</dl>
 			</li>
 			{% if charts %}
@@ -70,41 +70,91 @@
 							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('EDIT_SONG') }}" title="{{ lang('EDIT_SONG') }}" /></span></a>{% endif %}
 						<br /><br />{{ chart.POSITION }}
 					</dd>
-					<dd style="width: 34%;">
+					<dd style="width: 32%;">
 						<b style="font-size: 1.1em;">{{ chart.TITLE }}</b><br />
 						{{ chart.ARTIST }}
 						<br />
 						{{ chart.ALBUM }}
 						{% if chart.YEAR %} | {{ chart.YEAR }}{% endif %}
-						<br /><span style="font-size: 0.9em;">{{ chart.ADDED_TIME }}</span>
-						{% if chart.WEBSITE %}<br /><a href="{{ chart.WEBSITE }}" onclick="window.open(this.href); return false;" title="{{ chart.GO_TO_WEBSITE }}"><img src="{{ U_EXT_PATH }}images/icon_www.png" alt="www" /> {{ chart.GO_TO_WEBSITE }}</a>{% endif %}
+						{% if chart.WEBSITE %}<br /><a href="{{ chart.WEBSITE }}" onclick="window.open(this.href); return false;" title="{{ chart.GOTO_WEBSITE }}"><img src="{{ U_EXT_PATH }}images/icon_www.png" alt="www" /> {{ chart.GOTO_WEBSITE }}</a>{% endif %}
 					</dd>
 					<dd style="width: 13%;">
-						{{ chart.ALBUM_IMG }}
+						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ chart.ALBUM_TITLE }}">
+							{% if chart.ALBUM_IMG %}
+							<img src="{{ chart.ALBUM_IMG }}" alt="" title="{{ chart.ALBUM_TITLE }}" height="50px" />
+							{% else %}
+							<img src="{{ chart.THUMBNAIL }}" alt="" height="50px" />
+							{% endif %}
+						</a>
 					</dd>
-					<dd style="width: 7%;">
-						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,800,550); return false;" title="{{ chart.VIDEO }}">
-							<img src="{{ U_EXT_PATH }}images/song_video.png" alt="" />
+					<dd style="width: 9%;">
+						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ chart.VIDEO }}">
+							<img src="{{ chart.THUMBNAIL }}" alt="" height="50px" />
 						</a>
 					</dd>
 					<dd style="width: 11%;">
 						<br /><span title="{{ chart.USER_TITLE }}">{{ chart.USERNAME }}</span>
+						<div class="add-time">{{ chart.ADDED_TIME }}</div>
 					</dd>
-					<dd id="on_vote-{{ chart.SONG_ID }}" style="width: 10%;">
-						{{ chart.VOTE_HOT }}&nbsp;{{ chart.VOTE_NOT }}<br />{{ chart.SONG_HOT }}<br />{{ chart.SONG_NOT }}<br />{{ chart.AVERAGE }}
+					<dd id="bzh_vote-{{ chart.SONG_ID }}" style="width: 18%;">
+						<div class="song-nforate">
+							<div class="bzh-inline-rating">
+								<ul class="bzh-star-rating" id="stars-{{ chart.SONG_ID }}">
+									<li id="rating-{{ chart.SONG_ID }}" class="{% if chart.VOTE_USER %}current-rating{% else %}current-not-rating{% endif %}" style="width: {{ chart.RESULT }}%;"></li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},1,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 1) }}{% endif %}" class="one-star">1</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},2,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 2) }}{% endif %}" class="two-star">2</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},3,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 3) }}{% endif %}" class="three-star">3</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},4,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 4) }}{% endif %}" class="four-star">4</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},5,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 5) }}{% endif %}" class="five-star">5</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},6,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 6) }}{% endif %}" class="six-star">6</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},7,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 7) }}{% endif %}" class="seven-stars">7</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},8,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 8) }}{% endif %}" class="eight-stars">8</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},8,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 9) }}{% endif %}" class="nine-stars">9</a>
+									</li>
+									<li>
+										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},10,{{ chart.SONG_NOTE }});"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 10) }}{% endif %}" class="ten-stars">10</a>
+									</li>
+								</ul>
+							</div>
+							<div id="bzh_result-{{ chart.SONG_ID }}" class="bzh-box">
+								{{ chart.TOTAL_RATE }}<br />
+								{{ chart.SONG_RATED }}<br />
+								<div class="{% if chart.VOTE_USER %}rated{% else %}not-rated{% endif %}"></div>{{ chart.USER_VOTE }}
+							</div>
+							<div class="bzh-clr"></div>
+						</div>
 					</dd>
 					<dd style="width: 9%;">
-						{{ chart.TENDENCY_IMG }}<br /><br />{{ lang('BC_ACTUAL') }}{{ chart.ACTUAL }}<br />{{ chart.LAST }}
-					</dd>
-					<dd style="width: 8%;">
-						<br />{{ chart.BEST }}
+						{{ chart.TENDENCY_IMG }}
+						<div class="bzh-tendency">
+							{{ chart.ACTUAL }}<br />
+							{{ chart.LAST }}<br />
+							{{ chart.BEST }}
+						</div>
 					</dd>
 				</dl>
 			</li>
 			{% endfor %}
 			{% else %}
 			<li class="row">
-				<dl style="text-align: center;font-weight: bold;font-size: 1.5em;">
+				<dl class="dl-default">
 					<dd style="width:100%;">
 						{{ lang('BC_NO_SONGS') }}
 					</dd>
@@ -135,6 +185,9 @@
 		{% endif %}
 	</div>
 </div>
+
+<div id="succes-div"></div>
+<div id="error-div"></div>
 
 <br style="clear:both" />
 

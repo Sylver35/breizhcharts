@@ -4,15 +4,12 @@
 
 <p>
 	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}">{{ lang('BC_ADD_SONG') }}</a> | 
+	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i> {{ lang('BC_ADD_SONG') }}</a> | 
 	{% endif %}
-	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}">{{ lang('BC_SHOW_ALL') }}</a> | 
-	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}">{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}">{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}">{{ lang('BC_OWN') }}</a>
-	{% if U_USER_NAV %}
-	 | <a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}">{{ USER_NAV_TITLE }}</a>
-	{% endif %}
+	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_SHOW_ALL') }}</a> | 
+	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
+	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
+	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
 </p>
 
 <form id="postform" method="post" action="{{ S_POST_ACTION }}" onsubmit="return checkForm(this);">
@@ -25,36 +22,36 @@
 					<dt style="width: 40%; font-size: 9px">{{ lang('BC_NEEDED') }}<br /><br /></dt>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="song_name" >{{ lang('BC_SONG_TITLE_ADD') }}:</label><br />{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
+					<dt style="width: 40%;"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="song_name" tabindex="1" name="song_name"  size="65" class="inputbox autowidth" value="{{ CHART_SONG_NAME }}" /></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="artist">{{ lang('BC_SONG_ARTIST_ADD') }}:</label><br />{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
+					<dt style="width: 40%;"><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="artist" tabindex="2" name="artist"  size="65" class="inputbox autowidth" value="{{ CHART_ARTIST }}" /></dd>
 					<dd id="check-song"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label>{{ S_REQ_1 }}{{ lang('BC_SONG_ALBUM') }}:</label><br />{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</dt>
+					<dt style="width: 40%;"><label for="album">{{ S_REQ_1 }}{{ lang('BC_SONG_ALBUM') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</dt>
 					<dd><input type="text" id="album" tabindex="3" name="album" size="65" class="inputbox autowidth" value="{{ CHART_ALBUM }}" /></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label>{{ S_REQ_2 }}{{ lang('BC_SONG_ALBUM_PICTURE') }}:</label><br />{{ lang('BC_SONG_PICTURE_EXPLAIN') }}</dt>
+					<dt style="width: 40%;"><label for="picture">{{ S_REQ_2 }}{{ lang('BC_SONG_ALBUM_PICTURE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_PICTURE_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkPicture()" type="text" id="picture" tabindex="4" name="picture" size="65" class="inputbox autowidth" value="{{ CHART_PICTURE }}" /></dd>
 					<dd id="on-picture" style="display: none;"><img src="" id="new-picture" alt="" height="25" /></dd>
 					<dd id="check-picture"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label>{{ S_REQ_3 }}{{ lang('BC_SONG_YEAR') }}:</label><br />{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
+					<dt style="width: 40%;"><label for="year">{{ S_REQ_3 }}{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
 					<dd><input type="text" id="year" tabindex="5" name="year" size="4" class="inputbox autowidth" value="{{ CHART_YEAR }}" /></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label>{{ S_REQ_4 }}{{ lang('BC_SONG_WEBSITE') }}:</label><br />{{ lang('BC_SONG_WEBSITE_EXPLAIN') }}</dt>
-					<dd><input onblur="breizhcharts.checkWebsite()" type="text" id="website" tabindex="6" name="website"  size="65" class="inputbox autowidth" value="{{ CHART_WEBSITE }}" /></dd>
+					<dt style="width: 40%;"><label for="website">{{ S_REQ_4 }}{{ lang('BC_SONG_WEBSITE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_WEBSITE_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkWebsite()" type="text" id="website" tabindex="6" name="website" size="65" class="inputbox autowidth" value="{{ CHART_WEBSITE }}" /></dd>
 					<dd id="check-website"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label>[*] {{ lang('BC_SONG_VIDEO') }}:</label><br />{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
-					<dd><textarea onblur="breizhcharts.checkVideo()" required aria-required="true" rows="4" cols="62" id="video" tabindex="7" name="video" class="inputbox autowidth" spellcheck="false">{{ CHART_VIDEO }}</textarea></dd>
+					<dt style="width: 40%;"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}" /></dd>
 					<dd id="check-video"></dd>
 				</dl>
 			</fieldset>
@@ -65,6 +62,7 @@
 		<div class="inner">
 			<fieldset class="submit-buttons">
 				<span id="result-span" style="display: none;"></span>
+				{{ S_HIDDEN_FIELDS }}
 				<input type="submit" accesskey="s" tabindex="8" id="button" name="post" value="{{ lang('SUBMIT') }}" class="button1" />
 				{{ S_FORM_TOKEN }}
 			</fieldset>

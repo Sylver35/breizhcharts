@@ -121,7 +121,7 @@ $lang = array_merge($lang, array(
 	'BC_SONG_URL'					=> 'Site Web',
 	'BC_SONG_URL_EXPLAIN'			=> 'Entrez ici le lien complet vers ​​le site de l’artiste.',
 	'BC_SONG_VIDEO'					=> 'Vidéo',
-	'BC_SONG_VIDEO_EXPLAIN'			=> 'Entrez ici le code d’intégration, qui peux être reçu avec YouTube.<br /><br /><strong>Veuillez prendre soin de ne pas violer les droits d’auteur.</strong>',
+	'BC_SONG_VIDEO_EXPLAIN'			=> 'Entrez ici l’url de la vidéo Youtube.<br /><br /><strong>Veuillez prendre soin de ne pas violer les droits d’auteur.</strong>',
 	'BC_SONG_VIDEO_ID'				=> 'ID de DM Vidéo',
 	'BC_SONG_VIDEO_ID_EXPLAIN'		=> 'Le Mod DM Video est installé ici. Si la vidéo que vous aimeriez ajouter, existe déjà ici, vous pouvez simplement entrer l’ID de vidéo. Pour obtenir l’ID, s’il vous plaît vérifier le lien pour la vidéo dans votre navigateur. Prenez le nombre après le v=. Si vous utilisez cette option, vous n’aurez pas à entrer dans le code embed.',
 	'BC_SONG_YEAR'					=> 'Année',

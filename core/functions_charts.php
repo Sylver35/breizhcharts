@@ -152,7 +152,7 @@ class functions_charts
 	}
 
 	/**
-	 * test if the extension relaxarcade is running
+	 * test if the extension ultimatepoints is running and active
 	 * @return bool
 	 */
 	public function points_active()
@@ -172,7 +172,21 @@ class functions_charts
 		return strtolower("'%" . $this->db->sql_escape($var) . "%'");
 	}
 
-	public function create_announcement($song_name, $artist, $picture)
+	public function get_youtube_id($url)
+	{
+		$pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i';
+		preg_match($pattern, $url, $matches);
+
+		return isset($matches[1]) ? $matches[1] : false;
+	}
+
+	public function get_youtube_img($youtube_id, $get_id = false)
+	{
+		$youtube_id = ($get_id !== false) ? $this->get_youtube_id($youtube_id) : $youtube_id;
+		return 'https://img.youtube.com/vi/' . censor_text($youtube_id) . '/hqdefault.jpg';
+	}
+
+	public function create_announcement($song_name, $artist, $picture, $video)
 	{
 		if (!function_exists('submit_post'))
 		{
@@ -180,7 +194,7 @@ class functions_charts
 		}
 
 		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
-		$picture = (!empty($picture)) ? $picture : $this->ext_path_web . 'images/breizhcharts.png';
+		$picture = (!empty($picture)) ? $picture : $this->get_youtube_img($video, true);
 		$song_title = $this->language->lang('BC_ANNOUNCE_TITLE', $song_name, $artist);
 		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song_name, $artist, $url, $picture);
 		// variables to hold the parameters for submit_post
@@ -271,7 +285,7 @@ class functions_charts
 		$usernames = [];
 		$sql = 'SELECT u.user_id, u.username, u.user_colour
 			FROM ' . $this->breizhcharts_voters_table . ' v
-			LEFT JOIN ' . USERS_TABLE . ' u
+				LEFT JOIN ' . USERS_TABLE . ' u
 				on v.vote_user_id = u.user_id
 			GROUP BY v.vote_user_id';
 		$result = $this->db->sql_query($sql);
@@ -308,31 +322,6 @@ class functions_charts
 		}
 
 		return $total_charts;
-	}
-
-	private function get_images_vote($voter, $song, $artist)
-	{
-		if (!$this->auth->acl_get('u_breizhcharts_vote'))
-		{
-			return [
-				'hot'	=> '<img src="' . $this->ext_path . 'images/hot_voted.png" alt="" title="' . $this->language->lang('BC_NOT_LOGGED_IN') . '" height="25" />',
-				'not'	=> '<img src="' . $this->ext_path . 'images/not_voted.png" alt="" title="' . $this->language->lang('BC_NOT_LOGGED_IN') . '" height="25" />',
-			];
-		}
-		else if (!$voter)
-		{
-			return [
-				'hot'	=> '<a onclick="breizhcharts.voteMusic(' . $song . ', 1);" style="cursor:pointer;"><img src="' . $this->ext_path . 'images/hot.png" alt="hot" title="' . $this->language->lang('BC_PICTURE_HOT_TITLE', $artist) . '" height="25" /></a>',
-				'not'	=> '<a onclick="breizhcharts.voteMusic(' . $song . ', 2);" style="cursor:pointer;"><img src="' . $this->ext_path . 'images/not.png" alt="not" title="' . $this->language->lang('BC_PICTURE_NOT_TITLE', $artist) . '" height="25" /></a>',
-			];
-		}
-		else
-		{
-			return [
-				'hot'	=> '<img src="' . $this->ext_path . 'images/hot_voted.png" alt="" title="' . $this->language->lang('BC_ALREADY_VOTED') . '" height="25" />',
-				'not'	=> '<img src="' . $this->ext_path . 'images/not_voted.png" alt="" title="' . $this->language->lang('BC_ALREADY_VOTED') . '" height="25" />',
-			];
-		}
 	}
 
 	private function get_tendency_image($pos, $last_pos)
@@ -406,17 +395,17 @@ class functions_charts
 		$i = 1;
 		$tendency = [];
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'song_id, last_pos, best_pos, song_hot, song_not, average',
+			'SELECT'	=> 'song_id, last_pos, best_pos, song_note, nb_note',
 			'FROM'		=> [$this->breizhcharts_table => ''],
-			'ORDER_BY'	=> 'average DESC, song_hot DESC, song_not ASC, last_pos DESC, best_pos DESC',
+			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos DESC, best_pos DESC',
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$tendency[$row['song_id']] = [
-				'position'	=> $i,
+				'position'	=> $this->language->lang('BC_ACTUAL', $i),
 				'image'		=> $this->get_tendency_image($i, (int) $row['last_pos']),
-				'last'		=> ((int) $row['last_pos'] === 0) ? $this->language->lang('DM_ENTER') : $this->language->lang('BC_LATEST') . $row['last_pos'],
+				'last'		=> ((int) $row['last_pos'] === 0) ? $this->language->lang('DM_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
 			];
 			$i++;
 		}
@@ -438,8 +427,8 @@ class functions_charts
 		{
 			$data = [
 				'rules'		=> false,
-				'where'		=> 'c.poster_id = ' . $this->user->data['user_id'],
-				'select'	=> ' WHERE poster_id = ' . $this->user->data['user_id'],
+				'where'		=> 'c.poster_id = ' . (int) $this->user->data['user_id'],
+				'select'	=> ' WHERE poster_id = ' . (int) $this->user->data['user_id'],
 				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $mode]),
 			];
 		}
@@ -458,7 +447,7 @@ class functions_charts
 
 	public function get_list_mode_charts($mode, $order_by, $start, $title_mode, $nav, $userid = 0, $name = '')
 	{
-		$i = 0;
+		$i = 1;
 		$this->update_breizhcharts_check();
 		$data = $this->build_data_in_mode($mode, $userid, $name);
 		$tendency = $this->build_tendency();
@@ -466,7 +455,7 @@ class functions_charts
 		$number = (int) $this->config['breizhcharts_user_page'];
 
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'c.*, v.*, u.user_id, u.username, u.user_colour',
+			'SELECT'	=> 'c.*, v.vote_rate as user_vote, u.user_id, u.username, u.user_colour',
 			'FROM'		=> [$this->breizhcharts_table => 'c'],
 			'LEFT_JOIN'	=> [
 				[
@@ -484,32 +473,36 @@ class functions_charts
 		$result = $this->db->sql_query_limit($sql, $number, $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$vote = $this->get_images_vote($row['vote_user_id'], (int) $row['song_id'], $row['artist']);
 			$is_user = $row['poster_id'] == $this->user->data['user_id'];
 			$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $this->auth->acl_get('a_breizhcharts_manage'));
+			$row['user_vote'] = isset($row['user_vote']) ? $row['user_vote'] : 0;
 
 			$this->template->assign_block_vars('charts', [
-				'TENDENCY_IMG'	=> $tendency[$row['song_id']]['image'],
-				'ACTUAL'		=> $tendency[$row['song_id']]['position'],
-				'LAST'			=> $tendency[$row['song_id']]['last'],
-				'POSITION'		=> $i + 1 + $start,
+				'POSITION'		=> $i + $start,
 				'SONG_ID'		=> $row['song_id'],
 				'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'], '', $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'user', 'user' => $row['user_id'], 'name' => $row['username']])),
 				'USER_TITLE'	=> $this->language->lang('BC_OF_USER_TITLE', $row['username']),
 				'TITLE'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'ALBUM'			=> $row['album'],
-				'ALBUM_IMG'		=> $row['picture'] ? '<img src="' . $row['picture'] . '" height="50px" alt="" title="' . $this->language->lang('BC_PICTURE_TITLE', $row['artist']) . '" />' : '',
+				'ALBUM_IMG'		=> $row['picture'] ? $row['picture'] : '',
+				'ALBUM_TITLE'	=> $row['picture'] ? $this->language->lang('BC_PICTURE_TITLE', $row['artist']) : '',
 				'YEAR'			=> $row['year'],
 				'WEBSITE'		=> $row['website'],
-				'GO_TO_WEBSITE'	=> $row['website'] ? $this->language->lang('BC_GOTO_WEB', $row['artist']) : '',
+				'GOTO_WEBSITE'	=> $row['website'] ? $this->language->lang('BC_GOTO_WEB', $row['artist']) : '',
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
-				'VOTE_HOT'		=> $vote['hot'],
-				'VOTE_NOT'		=> $vote['not'],
-				'AVERAGE'		=> $this->language->lang('BC_AVERAGE', $row['average']),
-				'SONG_HOT' 		=> $this->language->lang('BC_HOT', $row['song_hot']),
-				'SONG_NOT' 		=> $this->language->lang('BC_NOT', $row['song_not']),
-				'BEST'			=> $row['best_pos'],
+				'THUMBNAIL'		=> $this->get_youtube_img($row['video'], true),
+				'RESULT'		=> number_format($row['song_note'] * 10, 2),
+				'VOTE_USER'		=> $row['user_vote'] ? true : false,
+				'RESULT_VOTE'	=> isset($row['user_vote']) ? str_replace(['<span>', '</span>'], '', $this->language->lang('BC_AJAX_NOTE', $row['user_vote'])) : false,
+				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
+				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
+				'USER_VOTE'		=> $this->language->lang('BC_AJAX_NOTE', $row['user_vote']),
+				'SONG_NOTE'		=> (int) $row['song_note'],
+				'TENDENCY_IMG'	=> $tendency[$row['song_id']]['image'],
+				'ACTUAL'		=> $tendency[$row['song_id']]['position'],
+				'LAST'			=> $tendency[$row['song_id']]['last'],
+				'BEST'			=> $this->language->lang('BC_BEST_POS', $row['best_pos']),
 				'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
 				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
 				'U_DELETE_SONG'	=> $this->auth->acl_get('a_breizhcharts_manage') ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
@@ -561,6 +554,7 @@ class functions_charts
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
 				'SONG' 			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
+				'THUMBNAIL'		=> $this->get_youtube_img($row['video'], true),
 				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
 			]);
 			$i++;
@@ -631,6 +625,7 @@ class functions_charts
 			'S_RULES'			=> $rules,
 			'S_LIST_NAV'		=> true,
 			'U_EXT_PATH'		=> $this->ext_path_web,
+			'GO_TO_YOUTUBE'		=> $this->language->lang('GO_TO_YOUTUBE', $this->ext_path . 'images/youtube.png', $this->helper->route('sylver35_breizhcharts_tutorial')),
 			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'))),
 			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
 			'U_ADD_SONG' 		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') : '',
@@ -683,7 +678,7 @@ class functions_charts
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
-				'IMG'			=> (!empty($row['picture'])) ? $row['picture'] : $this->ext_path . 'images/breizhcharts.png',
+				'IMG'			=> (!empty($row['picture'])) ? $row['picture'] : $this->get_youtube_img($row['video'], true),
 				'WIN'			=> $win,
 			]);
 		}
@@ -742,7 +737,7 @@ class functions_charts
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
-				'IMG'			=> (!empty($row['picture'])) ? $row['picture'] : $this->ext_path . 'images/breizhcharts.png',
+				'IMG'			=> (!empty($row['picture'])) ? $row['picture'] : $this->get_youtube_img($row['video'], true),
 				'LINE'			=> $line,
 			));
 			$j++;
@@ -1045,14 +1040,7 @@ class functions_charts
 			$error[] = $this->language->lang('BC_REQUIRED_WEBSITE_ERROR');
 		}
 
-		if (!empty($data['video']))
-		{
-			if (stristr($data['video'], 'object') === false && stristr($data['video'], 'iframe') === false)
-			{
-				$error[] = $this->language->lang('BC_EMBED_FORMAT_ERROR');
-			}
-		}
-		else if (empty($data['video']))
+		if (empty($data['video']))
 		{
 			$error[] = $this->language->lang('BC_REQUIRED_VIDEO_ERROR');
 		}

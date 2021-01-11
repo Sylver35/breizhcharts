@@ -172,6 +172,7 @@ class admin_controller
 						'U_ACTION'				=> $this->u_action . '&amp;action=update',
 						'U_BACK'				=> $this->u_action,
 						'U_CHECK_SONG'			=> $this->helper->route('sylver35_breizhcharts_check_song'),
+						'U_CHECK_VIDEO'			=> $this->helper->route('sylver35_breizhcharts_check_video'),
 						'U_EXT_PATH'			=> $this->ext_path_web,
 					));
 				break;
@@ -274,7 +275,8 @@ class admin_controller
 					'ARTIST'		=> $row['artist'],
 					'ALBUM'			=> $row['album'],
 					'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-					'PICTURE'		=> $row['picture'] ? '<img src="' . $row['picture'] . '" height="35px" alt="" title="' . $this->language->lang('BC_PICTURE_TITLE', $row['artist']) . '" />' : '',
+					'PICTURE'		=> $row['picture'] ? $row['picture'] : 'https://img.youtube.com/vi/' . censor_text($this->get_youtube_id($row['video'])) . '/hqdefault.jpg',
+					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
 					'YEAR'			=> $row['year'],
 					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
 					'LAST_RANK'		=> $row['last_pos'],
@@ -299,6 +301,14 @@ class admin_controller
 			'S_SELECT_SORT_DIR'	=> $s_sort_dir,
 			'S_SELECT_SORT_KEY'	=> $s_sort_key,
 		]);
+	}
+	
+	private function get_youtube_id($url)
+	{
+		$pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i';
+		preg_match($pattern, $url, $matches);
+
+		return isset($matches[1]) ? $matches[1] : false;
 	}
 
 	/**
