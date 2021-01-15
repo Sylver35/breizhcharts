@@ -172,6 +172,20 @@ class functions_charts
 		return strtolower("'%" . $this->db->sql_escape($var) . "%'");
 	}
 
+	public function find_string($string, $start, $end)
+	{
+		$ini = strpos($string, $start);
+		if ($ini == 0)
+		{
+			return $ini;
+		}
+		$ini += strlen($start);
+		$len = strpos($string, $end, $ini) - $ini;
+		$value = substr($string, $ini, $len);
+
+		return $value;
+	}
+
 	public function get_youtube_id($url)
 	{
 		$pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i';
@@ -192,7 +206,7 @@ class functions_charts
 		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 	}
 
-	public function create_announcement($song_name, $artist, $picture, $video)
+	public function create_topic($song_name, $artist, $picture, $video)
 	{
 		if (!function_exists('submit_post'))
 		{
@@ -200,7 +214,7 @@ class functions_charts
 		}
 
 		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
-		$picture = (!empty($picture)) ? $picture : $this->get_youtube_img($video, true);
+		$picture = (empty($picture)) ? $this->get_youtube_img($video, true) : $picture;
 		$song_title = $this->language->lang('BC_ANNOUNCE_TITLE', $song_name, $artist);
 		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song_name, $artist, $url, $picture);
 		// variables to hold the parameters for submit_post
@@ -228,7 +242,9 @@ class functions_charts
 			'forum_name'		=> '',
 			'enable_indexing'	=> true,
 		];
-		submit_post('post', (string) $song_title, '', POST_NORMAL, $poll, $data);
+		$url = submit_post('post', $song_title, '', POST_NORMAL, $poll, $data);
+
+		return $url;
 	}
 
 	public function dm_addpoints($user_id, $amount)
@@ -289,11 +305,17 @@ class functions_charts
 	{
 		$i = 0;
 		$usernames = [];
-		$sql = 'SELECT u.user_id, u.username, u.user_colour
-			FROM ' . $this->breizhcharts_voters_table . ' v
-				LEFT JOIN ' . USERS_TABLE . ' u
-				on v.vote_user_id = u.user_id
-			GROUP BY v.vote_user_id';
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'u.user_id, u.username, u.user_colour',
+			'FROM'		=> [$this->breizhcharts_voters_table => 'v'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [USERS_TABLE => 'u'],
+					'ON'	=> 'u.user_id = v.vote_user_id',
+				],
+			],
+			'GROUP_BY'	=> 'v.vote_user_id',
+		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -946,7 +968,7 @@ class functions_charts
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
 			'FROM'		=> [$this->breizhcharts_table => ''],
-			'ORDER_BY'	=> 'average DESC, song_hot DESC, song_not ASC, last_pos DESC, best_pos DESC',
+			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos DESC, best_pos DESC',
 		]);
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
@@ -974,7 +996,7 @@ class functions_charts
 		}
 
 		// Reset the votes
-		$sql = 'UPDATE ' . $this->breizhcharts_table . ' SET song_hot = 0, song_not = 0, average = 0 WHERE song_id > 0';
+		$sql = 'UPDATE ' . $this->breizhcharts_table . ' SET song_note = 0, nb_note = 0 WHERE song_id > 0';
 		$this->db->sql_query($sql);
 
 		// Empty the voters table

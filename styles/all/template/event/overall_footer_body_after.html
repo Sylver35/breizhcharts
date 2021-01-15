@@ -29,15 +29,16 @@ var breizhcharts = {
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){
-					$('#rating-'+id).css('width',result.newResult);
+					var aTitle = result.userVote.replace('<span>','').replace('</span>','');
+					$('#rating-'+id).css('width',result.newResult).removeClass('current-not-rating').addClass('current-rating') ;
 					$('#stars-'+id+' a').each(function(){
-						$(this).attr({'onclick':'', 'title':result.aTitle}).prop('onclick', null);
+						$(this).attr({'onclick': '', 'title': aTitle}).prop('onclick', null);
 					});
 					$('#bzh_result-'+id).html(result.totalRate+'<br />'+result.songRated+'<br /><div class="rated"></div>'+result.userVote);
-					$('#succes-div').show().html('<span>'+result.message+'</span>');
+					$('#result-div').show().html('<span class="succes-div">'+result.message+'</span>');
 				}else{
 					$('#bzh_result-'+id).html($content);
-					$('#error-div').show().html('<span>'+result.message+'</span>');
+					$('#result-div').show().html('<span class="error-div">'+result.message+'</span>');
 				}
 				setTimeout(breizhcharts.clearMessage,4000);
 			},
@@ -47,8 +48,7 @@ var breizhcharts = {
 		});
 	};
 	breizhcharts.clearMessage = function(){
-		$('#succes-div').hide();
-		$('#error-div').hide();
+		$('#result-div').hide();
 	};
 	breizhcharts.checkSongArtist = function(){
 		var songName = $('#song_name').val(), artist = $('#artist').val();

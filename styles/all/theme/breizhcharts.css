@@ -156,13 +156,13 @@ div.bzh-box {
 }
 
 /* Divs for result vote */
-#succes-div {
+#result-div {
 	top: 45%;
-	left: 35%;
+	left: 45%;
 	position: fixed;
 	z-index: 100;
 	display: none;
-	opacity: 0.9;
+	opacity: 0.93;
     background-color: #fff;
     border: 2px solid #1c1b1b;
     border-radius: 7px;
@@ -172,30 +172,14 @@ div.bzh-box {
 	text-align: center;
 }
 
-#succes-div span {
+#result-div span.succes-div {
 	background: url("./images/rated.png") 0 40% no-repeat;
 	padding-left: 26px;
 	vertical-align: bottom;
 	color: #60ae4a;
 }
 
-#error-div {
-	top: 45%;
-	left: 45%;
-	position: fixed;
-	z-index: 100;
-	display: none;
-	opacity: 0.9;
-    background-color: #fff;
-    border: 2px solid #1c1b1b;
-    border-radius: 7px;
-	padding: 5px;
-    overflow: hidden;
-	font-size: 1.1em;
-	text-align: center;
-}
-
-#error-div span {
+#result-div span.error-div {
 	background: url("./images/rated_no.png") 0 40% no-repeat;
 	padding-left: 26px;
 	vertical-align: bottom;

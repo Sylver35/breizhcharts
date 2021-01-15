@@ -27,7 +27,7 @@
 				<dl style="text-align:center;font-weight: bold;">
 					<dd style="text-align: center; width: 7%;">{{ lang('BC_RANK') }}</dd>
 					<dd style="text-align: center; width: 50%;">{{ lang('BC_SONG') }}</dd>
-					<dd style="text-align: center; width: 8%;">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd style="text-align: center; width: 10%;">{{ lang('BC_SONG_VIDEO') }}</dd>
 					<dd style="text-align: center; width: 15%;">{{ lang('BC_USER') }}</dd>
 					{% if S_UPS %}
 					<dd style="text-align: center; width: 9%;">{{ lang('BC_WON') }}</dd>
@@ -43,11 +43,10 @@
 					</dd>
 					<dd style="width: 50%;">
 						<div style="margin: 10px 1px 1px 8px;">
-							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> 
-							{{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
+							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,680,450); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
 						</div>
 					</dd>
-					<dd style="width: 8%;text-align:center;">
+					<dd style="width: 10%;text-align:center;">
 						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,680,450); return false;" title="{{ winner.VIDEO }}">
 							<img src="{{ winner.THUMBNAIL }}" alt="" height="45px" />
 						</a>
