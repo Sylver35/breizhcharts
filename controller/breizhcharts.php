@@ -226,7 +226,7 @@ class breizhcharts
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$title =  $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']);
+		$title = $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']);
 		$this->template->assign_vars([
 			'S_IN_VIDEO'	=> true,
 			'VIDEO_TITLE' 	=> $title,
