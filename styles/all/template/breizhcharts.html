@@ -11,6 +11,7 @@
 	</div>
 </div>
 {% endif %}
+<span id="start"></span>
 
 <p>
 	{% if U_ADD_SONG %}
@@ -60,14 +61,14 @@
 					<dd style="text-align: center; width: 9%;">{{ lang('BC_LAST_POS') }}</dd>
 				</dl>
 			</li>
-			{% if charts %}
+			{% if charts|length %}
 			{% for chart in charts %}
 			<li class="row {% if chart.POSITION is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
 				<dl style="text-align:center;">
 					<dd style="width:7%;">
 						<br />
-							{% if chart.U_DELETE_SONG %}<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_delete.png" alt="{{ lang('DELETE_SONG') }}" title="{{ lang('DELETE_SONG') }}" /></span></a>{% endif %}
-							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('EDIT_SONG') }}" title="{{ lang('EDIT_SONG') }}" /></span></a>{% endif %}
+							{% if chart.U_DELETE_SONG %}<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_delete.png" alt="{{ lang('BC_DELETE_SONG') }}" title="{{ lang('BC_DELETE_SONG') }}" /></span></a>{% endif %}
+							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('BC_EDIT_SONG') }}" title="{{ lang('BC_EDIT_SONG') }}" /></span></a>{% endif %}
 						<br /><br />{{ chart.POSITION }}
 					</dd>
 					<dd style="width: 32%;">
@@ -79,7 +80,7 @@
 						{% if chart.WEBSITE %}<br /><a href="{{ chart.WEBSITE }}" onclick="window.open(this.href); return false;" title="{{ chart.GOTO_WEBSITE }}"><img src="{{ U_EXT_PATH }}images/icon_www.png" alt="www" /> {{ chart.GOTO_WEBSITE }}</a>{% endif %}
 					</dd>
 					<dd style="width: 11%;">
-						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ chart.ALBUM_TITLE }}">
+						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.ALBUM_TITLE }}">
 							{% if chart.ALBUM_IMG %}
 							<img src="{{ chart.ALBUM_IMG }}" alt="" title="{{ chart.ALBUM_TITLE }}" height="50px" />
 							{% else %}
@@ -88,7 +89,7 @@
 						</a>
 					</dd>
 					<dd style="width: 11%;">
-						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ chart.VIDEO }}">
+						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">
 							<img src="{{ chart.THUMBNAIL }}" alt="" height="50px" />
 						</a>
 					</dd>

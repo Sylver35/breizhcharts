@@ -1,4 +1,4 @@
-{% if S_CHECK_FIRST and S_USER_LOGGED_IN %}
+{% if S_CHECK_FIRST %}
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -10,7 +10,7 @@
 		</ul>
 		<ul class="topiclist topics">
 			<li class="bg1">
-			{% if winners %}
+			{% if winners|length %}
 				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
 					<div style="display: table-row;padding: 0;margin: 0;">
 						{% for winner in winners %}
@@ -20,7 +20,7 @@
 							{{ lang('BC_FROM') }}<br />
 							<b>{{ winner.ARTIST }}</b>
 							<br /><br />
-							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,450);return false;">
+							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,410);return false;">
 								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px" />
 							</a>
 							<br /><br />
@@ -53,14 +53,14 @@
 </div>
 {% endif %}
 
-{% if S_CHECK_SECOND and S_USER_LOGGED_IN %}
+{% if S_CHECK_SECOND %}
 <div id="message" class="rules">
 	<div class="inner">
 		<strong>{{ lang('INFORMATION') }}:</strong> {{ REMINDER }}
 	</div>
 </div>
 
-{% if newests %}
+{% if newests|length %}
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -84,7 +84,7 @@
 							<b>{{ newest.SONG }}</b><br />
 							{{ lang('BC_FROM') }}<br />
 							<b>{{ newest.ARTIST }}</b><br /><br />
-							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,450); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
+							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
 								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px" />
 							</a>
 							<br /><br />

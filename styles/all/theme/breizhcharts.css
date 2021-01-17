@@ -82,6 +82,14 @@ div.bzh-box {
 	clear: both;
 }
 
+h3.video-title {
+	margin-top: 8px;
+}
+
+.video-frame {
+	text-align: center;
+}
+
 /* Css for ajaxvote */
 .song-nforate {
 	margin: auto;

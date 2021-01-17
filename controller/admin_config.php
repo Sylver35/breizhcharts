@@ -8,6 +8,20 @@
 
 namespace sylver35\breizhcharts\controller;
 
+use phpbb\template\template;
+use phpbb\language\language;
+use phpbb\user;
+use phpbb\auth\auth;
+use phpbb\controller\helper;
+use phpbb\db\driver\driver_interface as db;
+use phpbb\pagination;
+use phpbb\log\log;
+use phpbb\cache\service as cache;
+use phpbb\request\request;
+use phpbb\config\config;
+use phpbb\extension\manager as ext_manager;
+use phpbb\path_helper;
+
 class admin_config
 {
 	/** @var \phpbb\template\template */
@@ -43,7 +57,7 @@ class admin_config
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\extension\manager "Extension Manager" */
+	/** @var \phpbb\extension\manager */
 	protected $ext_manager;
 
 	/** @var \phpbb\path_helper */
@@ -74,25 +88,7 @@ class admin_config
 	/**
 	 * Constructor
 	 */
-	public function __construct(
-		\phpbb\template\template $template,
-		\phpbb\language\language $language,
-		\phpbb\user $user,
-		\phpbb\auth\auth $auth,
-		\phpbb\controller\helper $helper,
-		\phpbb\db\driver\driver_interface $db,
-		\phpbb\pagination $pagination,
-		\phpbb\log\log $log,
-		\phpbb\cache\service $cache,
-		\phpbb\request\request $request,
-		\phpbb\config\config $config,
-		\phpbb\extension\manager $ext_manager,
-		\phpbb\path_helper $path_helper,
-		$root_path,
-		$php_ext,
-		$breizhcharts_table,
-		$breizhcharts_voters_table
-	)
+	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -140,9 +136,9 @@ class admin_config
 				'breizhcharts_check_1'				=> $this->request->variable('breizhcharts_check_1', 0),
 				'breizhcharts_check_2'				=> $this->request->variable('breizhcharts_check_2', 0),
 				'breizhcharts_check_time'			=> $this->request->variable('breizhcharts_check_time', 1),
-				'breizhcharts_1st_place'			=> $this->request->variable('breizhcharts_1st_place', 0),
-				'breizhcharts_2nd_place'			=> $this->request->variable('breizhcharts_2nd_place', 0),
-				'breizhcharts_3rd_place'			=> $this->request->variable('breizhcharts_3rd_place', 0),
+				'breizhcharts_place_1'				=> $this->request->variable('breizhcharts_place_1', 0),
+				'breizhcharts_place_2'				=> $this->request->variable('breizhcharts_place_2', 0),
+				'breizhcharts_place_3'				=> $this->request->variable('breizhcharts_place_3', 0),
 				'breizhcharts_required_1'			=> $this->request->variable('breizhcharts_required_1', 0),
 				'breizhcharts_required_2'			=> $this->request->variable('breizhcharts_required_2', 0),
 				'breizhcharts_required_3'			=> $this->request->variable('breizhcharts_required_3', 0),
@@ -159,7 +155,7 @@ class admin_config
 
 			$this->update_config($data);
 
-			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_CONFIG_UPDATED');
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_BC_UPDATED');
 			trigger_error($this->language->lang('BC_CONFIG_UPDATED') . adm_back_link($this->u_action));
 		}
 		else
@@ -175,9 +171,9 @@ class admin_config
 					'UPS_EXPLAIN'					=> $this->language->lang('BC_UPS_EXPLAIN', $this->config['points_name']),
 					'POINTS'						=> $this->language->lang('BC_RANKING', $this->config['points_name']),
 					'POINTS_EXPLAIN'				=> $this->language->lang('BC_RANKING_EXPLAIN', $this->config['points_name']),
-					'FIRST'							=> $this->language->lang('BC_FIRST', $this->config['points_name']),
-					'SECOND'						=> $this->language->lang('BC_SECOND', $this->config['points_name']),
-					'THIRD'							=> $this->language->lang('BC_THIRD', $this->config['points_name']),
+					'FIRST'							=> $this->language->lang('BC_PLACE_FIRST', $this->config['points_name']),
+					'SECOND'						=> $this->language->lang('BC_PLACE_SECOND', $this->config['points_name']),
+					'THIRD'							=> $this->language->lang('BC_PLACE_THIRD', $this->config['points_name']),
 					'POINTS_PER_VOTE_DESC'			=> $this->language->lang('BC_POINTS_PER_VOTE', $this->config['points_name']),
 					'POINTS_PER_VOTE_DESC_EXPLAIN'	=> $this->language->lang('BC_POINTS_PER_VOTE_EXPLAIN', $this->config['points_name']),
 					'POINTS_VOTERS_BONUS'			=> $this->language->lang('BC_VOTERS_POINTS', $this->config['points_name']),
@@ -231,9 +227,9 @@ class admin_config
 				'CHART_CHECK_TIME'				=> $this->days_select($this->config['breizhcharts_check_time']),
 				'CHART_CHECK_1'					=> $this->config['breizhcharts_check_1'],
 				'CHART_CHECK_2'					=> $this->config['breizhcharts_check_2'],
-				'CHART_1ST_PLACE'				=> $this->config['breizhcharts_1st_place'],
-				'CHART_2ND_PLACE'				=> $this->config['breizhcharts_2nd_place'],
-				'CHART_3RD_PLACE'				=> $this->config['breizhcharts_3rd_place'],
+				'CHART_1ST_PLACE'				=> $this->config['breizhcharts_place_1'],
+				'CHART_2ND_PLACE'				=> $this->config['breizhcharts_place_2'],
+				'CHART_3RD_PLACE'				=> $this->config['breizhcharts_place_3'],
 				'REQUIRED_1'					=> $this->config['breizhcharts_required_1'],
 				'REQUIRED_2'					=> $this->config['breizhcharts_required_2'],
 				'REQUIRED_3'					=> $this->config['breizhcharts_required_3'],

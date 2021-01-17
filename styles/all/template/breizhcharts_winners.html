@@ -34,7 +34,7 @@
 					{% endif %}
 				</dl>
 			</li>
-			{% if winners %}
+			{% if winners|length %}
 			{% for winner in winners %}
 			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
 				<dl>

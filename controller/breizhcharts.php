@@ -91,26 +91,7 @@ class breizhcharts
 	/**
 	 * Constructor
 	 */
-	public function __construct(
-		functions_charts $functions_charts,	
-		template $template,
-		language $language,
-		user $user,
-		auth $auth,
-		helper $helper,
-		db $db,
-		pagination $pagination,
-		log $log,
-		cache $cache,
-		request $request,
-		config $config,
-		ext_manager $ext_manager,
-		path_helper $path_helper,
-		$root_path,
-		$php_ext,
-		$breizhcharts_table,
-		$breizhcharts_voters_table
-	)
+	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
 		$this->functions_charts = $functions_charts;
 		$this->template = $template;
@@ -163,7 +144,7 @@ class breizhcharts
 
 			case 'list':
 				$title_mode = $this->language->lang('BC_BEST_RATED');
-				$order_by = 'c.song_note DESC, c.nb_note DESC, c.last_pos DESC, c.best_pos DESC';
+				$order_by = 'c.song_note DESC, c.nb_note DESC, c.last_pos ASC, c.best_pos ASC';
 				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode, 'top');
 			break;
 
@@ -189,7 +170,7 @@ class breizhcharts
 		$this->functions_charts->create_navigation($mode, $title_mode, $song_id, $userid, $name);
 
 		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
+		page_header($this->language->lang('BC_CHARTS') . ' &bull; ' . $title_mode);
 
 		// Load charts template
 		$this->template->set_filenames([
@@ -205,7 +186,7 @@ class breizhcharts
 		$this->functions_charts->create_navigation('tuto', $title_mode);
 
 		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
+		page_header($this->language->lang('BC_CHARTS') . ' &bull; ' . $title_mode);
 
 		// Load charts template
 		$this->template->set_filenames([
@@ -233,7 +214,7 @@ class breizhcharts
 			'YOUTUBE_ID'	=> $this->functions_charts->get_youtube_id($row['video']),
 		]);
 
-		return $this->helper->render('breizhcharts_video_popup.html', $title);
+		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' &bull; ' . $title);
 	}
 
 	public function handle_vote()
@@ -304,15 +285,12 @@ class breizhcharts
 			];
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . $song_id);
 
-			// Giving points for voting, if UPS is installed and active
+			$message = $this->language->lang('BC_VOTE_SUCCESS', $song, $artist);
 			if ($this->functions_charts->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
 			{
+				// Giving points for voting, if UPS is installed and active
 				$this->functions_charts->dm_addpoints($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
-				$message = $this->language->lang('BC_VOTE_SUCCESS_UPS', $song, $artist, $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
-			}
-			else
-			{
-				$message = $this->language->lang('BC_VOTE_SUCCESS', $song, $artist);
+				$message .= $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
 			}
 
 			// Send the response to the browser now
@@ -461,7 +439,6 @@ class breizhcharts
 		{
 			$data = array_merge($data, [
 				'poster_id'		=> $this->user->data['user_id'],
-				'user_points'	=> ($this->functions_charts->points_active()) ? $this->config['breizhcharts_ups_points'] : 0,
 				'add_time'		=> time(),
 			]);
 
@@ -585,7 +562,7 @@ class breizhcharts
 		$delete_id = (int) $this->request->variable('id', 0);
 		if (confirm_box(true))
 		{
-			$sql = 'SELECT poster_id, song_name, artist, user_points, topic_id
+			$sql = 'SELECT poster_id, song_name, artist, topic_id
 				FROM ' . $this->breizhcharts_table . '
 					WHERE song_id = ' . $delete_id;
 			$result = $this->db->sql_query($sql);
@@ -594,14 +571,6 @@ class breizhcharts
 			$artist = $row['artist'];
 			$topic_id = (int) $row['topic_id'];
 			$this->db->sql_freeresult($result);
-
-			// Delete points, if UPS exists
-			if ($this->functions_charts->points_active())
-			{
-				// Substract the points from the user account
-				$sql = 'UPDATE ' . USERS_TABLE . ' SET user_points = user_points - ' . (int) $row['user_points'] . ' WHERE user_id = ' . (int) $row['poster_id'];
-				$this->db->sql_query($sql);
-			}
 
 			$sql = 'DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $delete_id;
 			$this->db->sql_query($sql);
@@ -629,20 +598,10 @@ class breizhcharts
 			}
 			else
 			{
-				if ($this->functions_charts->points_active())
-				{
-					confirm_box(false, $this->language->lang('BC_DELETE_SONG_UPS', $this->config['points_name']), build_hidden_fields([
-						'id'		=> $delete_id,
-						'action'	=> 'delete',
-					]));
-				}
-				else
-				{
-					confirm_box(false, $this->language->lang('BC_DELETE_SONG_REGULAR'), build_hidden_fields([
-						'id'		=> $delete_id,
-						'action'	=> 'delete',
-					]));
-				}
+				confirm_box(false, $this->language->lang('BC_DELETE_SONG_EXPLAIN'), build_hidden_fields([
+					'id'		=> $delete_id,
+					'action'	=> 'delete',
+				]));
 			}
 		}
 	}

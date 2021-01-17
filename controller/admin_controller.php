@@ -87,24 +87,7 @@ class admin_controller
 	/**
 	 * Constructor
 	 */
-	public function __construct(
-		template $template,
-		language $language,
-		user $user,
-		auth $auth,
-		helper $helper,
-		db $db,
-		pagination $pagination,
-		log $log,
-		cache $cache,
-		request $request,
-		config $config,
-		ext_manager $ext_manager,
-		path_helper $path_helper,
-		$root_path,
-		$php_ext,
-		$breizhcharts_table
-	)
+	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -193,20 +176,13 @@ class admin_controller
 						'video'			=> $this->request->variable('video', '', true),
 					];
 
-					if ($data['song_name'] === '' || $data['artist'] === '')
+					if ($data['song_name'] === '')
 					{
-						if ($data['song_name'] === '' && $data['artist'] === '')
-						{
-							trigger_error($this->language->lang('BC_NEED_DATA') . adm_back_link($this->u_action));	
-						}
-						else if ($data['song_name'] === '')
-						{
-							trigger_error($this->language->lang('BC_NEED_TITLE') . adm_back_link($this->u_action));	
-						}
-						else if ($data['artist'] === '')
-						{
-							trigger_error($this->language->lang('BC_NEED_ARTIST') . adm_back_link($this->u_action));	
-						}
+						trigger_error($this->language->lang('BC_NEED_TITLE') . adm_back_link($this->u_action));	
+					}
+					else if ($data['artist'] === '')
+					{
+						trigger_error($this->language->lang('BC_NEED_ARTIST') . adm_back_link($this->u_action));	
 					}
 					else
 					{
@@ -221,20 +197,26 @@ class admin_controller
 				case 'delete':
 					if (confirm_box(true))
 					{
-						$sql = 'SELECT song_name
+						$sql = 'SELECT song_name, artist, topic_id
 							FROM ' . $this->breizhcharts_table . '
 								WHERE song_id = ' . $id;
 						$result = $this->db->sql_query_limit($sql, 1);
-						$title = $this->db->sql_fetchfield('song_name');
+						$row = $this->db->sql_fetchrow($result);
+						$title = $row['song_name'];
+						$artist = $row['artist'];
+						$topic_id = (int) $row['topic_id'];
 						$this->db->sql_freeresult($result);
 
 						$sql = 'DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $id;
 						$this->db->sql_query($sql);
+						if ($topic_id)
+						{
+							delete_topics('topic_id', [$topic_id], false);
+						}
 
 						$this->config->increment('breizhcharts_songs_nb', -1, true);
-						$message = $this->language->lang('LOG_ADMIN_CHART_DELETED', $title);
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, $message, time());
-						trigger_error($this->language->lang('BC_DELETED') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
+						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_DELETED', time(), [$this->language->lang('BC_FROM_OF', $title, $artist)]);
+						trigger_error($this->language->lang('BC_DELETE_OK') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
 					}
 					else
 					{
@@ -274,10 +256,10 @@ class admin_controller
 					'TITLE'			=> $row['song_name'],
 					'ARTIST'		=> $row['artist'],
 					'ALBUM'			=> $row['album'],
-					'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
-					'PICTURE'		=> $row['picture'] ? $row['picture'] : $this->get_youtube_img($row['video']),
-					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
 					'YEAR'			=> $row['year'],
+					'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+					'PICTURE'		=> $this->get_youtube_img($row['video']),
+					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
 					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
 					'LAST_RANK'		=> $row['last_pos'],
 					'URL'			=> $row['website'],
@@ -289,8 +271,8 @@ class admin_controller
 			$this->db->sql_freeresult($result);
 
 			$this->template->assign_vars([
-				'S_ON_PAGE'			=> $total_charts > (int) $this->config['breizhcharts_acp_page'],
-				'PAGE_NUMBER' 		=> $this->pagination->validate_start($total_charts, (int) $this->config['breizhcharts_acp_page'], $start),
+				'S_ON_PAGE'		=> $total_charts > (int) $this->config['breizhcharts_acp_page'],
+				'PAGE_NUMBER'	=> $this->pagination->validate_start($total_charts, (int) $this->config['breizhcharts_acp_page'], $start),
 			]);
 			$this->pagination->generate_template_pagination($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir, 'pagination', 'start', $total_charts, (int) $this->config['breizhcharts_acp_page'], $start);
 		}
@@ -302,7 +284,7 @@ class admin_controller
 			'S_SELECT_SORT_KEY'	=> $s_sort_key,
 		]);
 	}
-	
+
 	private function get_youtube_id($url)
 	{
 		$pattern = '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i';

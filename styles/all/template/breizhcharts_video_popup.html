@@ -1,9 +1,9 @@
 {% INCLUDE 'simple_header.html' %}
 {% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
 
-<h3>{{ VIDEO_TITLE }}</h3>
+<h3 class="video-title">{{ VIDEO_TITLE }}</h3>
 
-<div class="videoWrapper">
+<div class="video-frame">
 	<div id="ytplayer"></div>
 </div>
 <script>
@@ -16,9 +16,10 @@
 	// Replace the 'ytplayer' element with an <iframe> and
 	// YouTube player after the API code downloads.
 	var player;
-	function onYouTubePlayerAPIReady() {
+	function onYouTubePlayerAPIReady(){
 		player = new YT.Player('ytplayer', {
-			videoId: '{{ YOUTUBE_ID }}'
+			videoId: '{{ YOUTUBE_ID }}',
+			playerVars: {'autoplay': 1, 'controls': 0, 'html5': 1},
 		});
 	}
 </script>

@@ -54,17 +54,7 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(
-		functions_charts $functions_charts,
-		template $template,
-		language $language,
-		user $user,
-		auth $auth,
-		helper $helper,
-		db $db,
-		config $config,
-		$breizhcharts_table
-	)
+	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $breizhcharts_table)
 	{
 		$this->functions_charts = $functions_charts;
 		$this->template = $template;
@@ -151,15 +141,12 @@ class main_listener implements EventSubscriberInterface
 
 	public function page_footer()
 	{
-		$data = $this->functions_charts->get_version();
-		$this->template->assign_vars([
-			'BC_COPYRIGHT'	=> $this->language->lang('BC_COPYRIGHT', $data['version'], $data['homepage1']),
-		]);
+		$this->functions_charts->get_version();
 	}
 
 	public function index_modify_page_title()
 	{
-		if ($this->auth->acl_get('u_breizhcharts_view') && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		if ($this->auth->acl_gets(['u_breizhcharts_view', 'u_breizhcharts_vote']) && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
 			$this->functions_charts->check_charts_voted();
 		}

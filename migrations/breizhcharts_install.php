@@ -27,9 +27,6 @@ class breizhcharts_install extends migration
 		return [
 			['config.add', ['breizhcharts_version', '1.0.0']],
 
-			['config.add', ['breizhcharts_1st_place', 200]],
-			['config.add', ['breizhcharts_2nd_place', 150]],
-			['config.add', ['breizhcharts_3rd_place', 100]],
 			['config.add', ['breizhcharts_acp_page', 15]],
 			['config.add', ['breizhcharts_announce_enable', 0]],
 			['config.add', ['breizhcharts_check_1', 1]],
@@ -39,6 +36,9 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_max_entries', 150]],
 			['config.add', ['breizhcharts_period', 1209600]],
 			['config.add', ['breizhcharts_period_val', 604800]],
+			['config.add', ['breizhcharts_place_1', 200]],
+			['config.add', ['breizhcharts_place_2', 150]],
+			['config.add', ['breizhcharts_place_3', 100]],
 			['config.add', ['breizhcharts_pm_enable', 1]],
 			['config.add', ['breizhcharts_pm_user', 2]],
 			['config.add', ['breizhcharts_points_per_vote', 3]],
@@ -106,7 +106,6 @@ class breizhcharts_install extends migration
 						'website'			=> ['TEXT_UNI', ''],
 						'video'				=> ['TEXT_UNI', ''],
 						'poster_id'			=> ['UINT:10', 0],
-						'user_points'		=> ['UINT:10', 0],
 						'song_note'			=> ['DECIMAL', 0.00],
 						'nb_note'			=> ['UINT:4', 0],
 						'last_pos'			=> ['UINT:4', 0],

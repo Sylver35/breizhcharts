@@ -1,0 +1,21 @@
+{% if S_LIST or S_LAST_WINNERS or S_ADD_SONG or S_EDIT_SONG %}
+{% INCLUDEJS '@sylver35_breizhcharts/breizhcharts.js' %}
+<script>
+var breizhcharts = {};
+var bcConfig = {
+	voteUrl: '{{ U_VOTE_MUSIC }}',
+	checkSong: '{{ U_CHECK_SONG }}',
+	checkUrl: '{{ U_CHECK_VIDEO }}',
+	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="" />',
+	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="" />',
+	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="" />',
+	submit: '{{ lang("SUBMIT")|escape("js") }}',
+	error: '{{ lang("ERROR")|escape("js") }}',
+	ok: '{{ lang("BC_OK")|escape("js") }}',
+	nav: '{{ NAV_ID }}',
+	errorPicture: '{{ lang("BC_COVER_FORMAT_ERROR")|escape("js") }}',
+	errorWebsite: '{{ lang("BC_WEBSITE_FORMAT_ERROR")|escape("js") }}',
+	id: {% if S_EDIT_SONG %}{{ CHART_ID }}{% else %}0{% endif %},
+};
+</script>
+{% endif %}
