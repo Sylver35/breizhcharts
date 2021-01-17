@@ -879,27 +879,8 @@ class functions_charts
 			return;
 		}
 
-		// Select the current best rating
-		$i = 1;
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> '*',
-			'FROM'		=> [$this->breizhcharts_table => ''],
-			'WHERE'		=> 'nb_note > 0',
-			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
-		]);
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$sql_ary = [
-				'song_note'	=> 0,
-				'nb_note'	=> 0,
-				'last_pos'	=> $i,
-				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : $row['best_pos'],
-			];
-			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . $row['song_id']);
-			$i++;
-		}
-		$this->db->sql_freeresult($result);
+		// Reset all notes
+		$this->reset_all_notes();
 
 		if ($this->points_active())
 		{
@@ -920,6 +901,30 @@ class functions_charts
 
 		// Add a log entry, when the job is done
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_RESET', time());
+	}
+
+	private function reset_all_notes()
+	{
+		$i = 1;
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'song_id, best_pos, last_pos',
+			'FROM'		=> [$this->breizhcharts_table => ''],
+			'WHERE'		=> 'nb_note > 0',
+			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
+		]);
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$sql_ary = [
+				'song_note'	=> 0,
+				'nb_note'	=> 0,
+				'last_pos'	=> $i,
+				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : $row['best_pos'],
+			];
+			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . $row['song_id']);
+			$i++;
+		}
+		$this->db->sql_freeresult($result);
 	}
 
 	public function verify_chart_before_send($data, $id)
@@ -982,7 +987,6 @@ class functions_charts
 
 	private function verify_song_name($id, $song, $artist)
 	{
-		$song_name = '';
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'song_name',
 			'FROM'		=> [$this->breizhcharts_table => ''],

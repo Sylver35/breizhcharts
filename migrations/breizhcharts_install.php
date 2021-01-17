@@ -70,6 +70,7 @@ class breizhcharts_install extends migration
 			['permission.permission_set', ['REGISTERED', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'group']],
 			['permission.permission_set', ['ROLE_USER_LIMITED', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
 			['permission.permission_set', ['ROLE_USER_NEW_MEMBER', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
+			['permission.permission_set', ['GUESTS', ['u_breizhcharts_view'], 'group']],
 
 			['module.add', [
 				'acp',

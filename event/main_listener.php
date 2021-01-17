@@ -129,14 +129,12 @@ class main_listener implements EventSubscriberInterface
 			]);
 		}
 
-		if (!$this->config['breizhcharts_start_time'] || !$this->config['breizhcharts_period'])
+		if ($this->config['breizhcharts_start_time'] && $this->config['breizhcharts_period'])
 		{
-			return;
-		}
-
-		if (time() - $this->config['breizhcharts_start_time'] > $this->config['breizhcharts_period'])
-		{
-			$this->functions_charts->run_vote_charts_period();
+			if (time() - $this->config['breizhcharts_start_time'] > $this->config['breizhcharts_period'])
+			{
+				$this->functions_charts->run_vote_charts_period();
+			}
 		}
 	}
 
