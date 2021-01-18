@@ -51,9 +51,26 @@ div.not-rated {
 	-webkit-animation: blink-song 2s steps(2, start) infinite;
 }
 
+h2.charts {
+	margin-bottom: 0.7em;
+}
+
+.bc-nagigation {
+	font-size: 1.2em;
+}
+
 .user-navigation {
 	display: block;
 	margin: 3px auto;
+	text-align: center;
+}
+
+ul.topiclist li.bg3 dl.title_tab dd {
+	text-align: center;
+	font-weight: bold;
+}
+
+ul.topiclist li.row dl.content_tab dd {
 	text-align: center;
 }
 
@@ -78,8 +95,25 @@ div.bzh-box {
 	line-height: 1.3em;
 }
 
+#error.error strong {
+	color: initial;
+}
+
 .bzh-clr {
 	clear: both;
+}
+
+span.song-title {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+span.total {
+	color: #ff6000;
+}
+
+img.youtube-img {
+	vertical-align: baseline;
 }
 
 h3.video-title {

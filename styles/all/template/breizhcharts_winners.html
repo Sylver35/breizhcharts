@@ -1,16 +1,6 @@
 {% INCLUDE 'overall_header.html' %}
 
-<h2>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
-
-<p>
-	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a> | 
-	{% endif %}
-	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_SHOW_ALL') }}</a> | 
-	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
-</p>
+{% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
 <div class="forabg">
 	<div class="inner">

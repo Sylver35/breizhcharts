@@ -12,14 +12,17 @@
 	$('div.pagination a').each(function(){
 		$(this).prop('href', $(this).attr('href')+'#start');
 	});
-	breizhcharts.voteMusic = function(id, rate, note){
+	$('a.username-coloured').each(function(){
+		$(this).prop('href', $(this).attr('href')+'#start');
+	});
+	breizhcharts.voteMusic = function(id, rate){
 		var $content = $('#bzh_result-'+id).html();
 		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');
 		$.ajax({
 			type: 'POST',
 			dataType: 'json',
 			url: bcConfig.voteUrl,
-			data: 'id='+id+'&rate='+rate+'&note='+note,
+			data: 'id='+id+'&rate='+rate,
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){

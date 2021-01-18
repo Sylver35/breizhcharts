@@ -1,22 +1,14 @@
 {% INCLUDE 'overall_header.html' %}
 
-<h2>{{ lang('BC_CHARTS') }} - {% if S_ADD_SONG %}{{ lang('BC_ADD_SONG') }}{% else %}{{ lang('BC_EDIT_SONG') }}{% endif %}</h2>
-
-<p>
-	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i> {{ lang('BC_ADD_SONG') }}</a> | 
-	{% endif %}
-	<a id="nav-top" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_SHOW_ALL') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_SHOW_ALL') }}</a> | 
-	<a id="nav-new" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
-</p>
+{% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
 <form id="postform" method="post" action="{{ S_POST_ACTION }}" onsubmit="return checkForm(this);">
 	<div class="panel" id="postingbox">
 		<div class="inner">
-			<h3>{% if S_ADD_SONG %}{{ lang('BC_ADD_SONG') }}{% else %}{{ lang('BC_EDIT_SONG') }}{% endif %}</h3>
-			{% if ERROR %}<p class="error">{{ ERROR }}</p>{% endif %}
+			<h3>{{ TITLE_PAGE }}</h3>
+			{% if ERROR %}
+			<p id="error" class="error">{{ ERROR }}</p>
+			{% endif %}
 			<fieldset>
 				<dl>
 					<dt style="width: 40%; font-size: 9px">{{ lang('BC_NEEDED') }}<br /><br /></dt>
