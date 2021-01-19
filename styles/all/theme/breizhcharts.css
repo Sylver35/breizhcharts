@@ -2,9 +2,44 @@
 	text-shadow: -2px 2px 2px #959dc5;
 }
 
-.navigation_actual {
+.navbar a.navigation_actual {
 	color: red;
 	font-weight: bold;
+}
+
+#nav-charts {
+	margin-bottom: 0.6em;
+}
+
+#nav-charts ul.nav-main {
+	margin: 0;
+	padding: 2px 0;
+	display: block;
+	height: 2.2em;
+	list-style-type: none;
+}
+
+#nav-charts ul.nav-main li {
+	float: left;
+	font-size: 1.1em;
+	line-height: 2.2em;
+	list-style-type: none;
+	margin-right: 7px;
+	padding-top: 1px;
+	width: auto;
+}
+
+#nav-charts ul.nav-main.nav-second {
+	float: none;
+	display: block;
+	text-align: center;
+}
+
+#nav-charts ul.nav-main.nav-second li.user-nav {
+	float: none;
+	text-align: center;
+	margin: auto;
+	line-height: 1.2em;
 }
 
 i.fa-music {
@@ -52,7 +87,7 @@ div.not-rated {
 }
 
 h2.charts {
-	margin-bottom: 0.7em;
+	margin: 0.5em 0;
 }
 
 .bc-nagigation {

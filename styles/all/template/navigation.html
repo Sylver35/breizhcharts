@@ -1,17 +1,24 @@
 <a id="start"></a>
 <h2 class="charts">{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
 
-<p>
-	{% if U_ADD_SONG %}
-	<a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a> | 
-	{% endif %}
-	<a id="nav-list" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_BEST_RATED') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_BEST_RATED') }}</a> | 
-	<a id="nav-list_newest" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a> | 
-	<a id="nav-win" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a> | 
-	<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a>
-	{% if U_USER_NAV %}
-	<span class="user-navigation">
-		<a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}"><i class="icon fa fa-user"></i>{{ USER_NAV_TITLE }}</a>
-	</span>
-	{% endif %}
-</p>
+<div id="nav-charts" class="navbar" role="navigation">
+	<div class="inner">
+		<ul id="nav-songs" class="nav-main" role="menubar">
+			{% if U_ADD_SONG %}
+			<li><a id="nav-add" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a></li>
+			{% endif %}
+			<li><a id="nav-list" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_BEST_RATED') }}"><i class="icon fa fa-line-chart"></i>{{ lang('BC_BEST_RATED') }}</a></li>
+			<li><a id="nav-list_newest" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST_XX') }}"><i class="icon fa fa-sign-in"></i>{{ lang('BC_NEWEST_XX') }}</a></li>
+			<li><a id="nav-winners" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a></li>
+			<li><a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a></li>
+		</ul>
+		<hr />
+		{% if U_USER_NAV %}
+		<ul id="nav-songs2" class="nav-main nav-second" role="menubar">
+			<li class="user-nav">
+				<a id="nav-user" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}"><i class="icon fa fa-user"></i>{{ USER_NAV_TITLE }}</a>
+			</li>
+		</ul>
+		{% endif %}
+	</div>
+</div>

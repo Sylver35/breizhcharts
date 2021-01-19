@@ -159,7 +159,7 @@ class breizhcharts
 			case 'winners':
 				$body = 'breizhcharts_winners.html';
 				$title_mode = $this->language->lang('BC_LAST_WINNERS', $this->config['breizhcharts_winners_per_page']);
-				$this->functions_charts->get_winners_charts($title_mode);
+				$this->functions_charts->get_winners_charts($mode, $title_mode);
 			break;
 		}
 
@@ -311,7 +311,7 @@ class breizhcharts
 		if ($this->functions_charts->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
 		{
 			// Giving points for voting, if UPS is installed and active
-			$this->functions_charts->dm_addpoints($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
+			$this->functions_charts->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
 			$message .= $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
 		}
 
@@ -480,7 +480,7 @@ class breizhcharts
 			meta_refresh(3, $this->helper->route('sylver35_breizhcharts_page_music'));
 			if ($this->functions_charts->points_active() && $this->config['breizhcharts_ups_points'] > 0)
 			{
-				$this->functions_charts->dm_addpoints($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
+				$this->functions_charts->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
 				trigger_error($this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br />' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
 			}
 			else

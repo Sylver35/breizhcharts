@@ -103,7 +103,7 @@ $lang = array_merge($lang, [
 	'BC_LAST_WINNERS'				=> 'Résultats du dernier vote',
 	'BC_LAST_WINNERS_PORTAL'		=> 'Les gagnants du dernier vote',
 	'BC_MULTI_VOTERS'				=> '<strong>Actuellement %1$s utilisateurs ont voté dans notre classement</strong>.',
-	'BC_NEEDED'						=> 'Les champs avec [*] sont obligatoires, tous les autres sont optionnels.<br /><strong>Ne fonctionne QUE avec les vidéos YouTube.</strong>',
+	'BC_NEEDED'						=> 'Les champs avec [*] sont obligatoires, tous les autres sont optionnels.<br /><strong>Ne fonctionne QUE avec les <a href="https://www.youtube.com" onclick="window.open(this.href);return false;">vidéos YouTube</a></strong>',
 	'BC_NEWEST_XX'					=> 'Les nouvelles chansons',
 	'BC_NEWEST_PERIOD'				=> 'Les dernières chansons ajoutées pour le vote',
 	'BC_NEW_PLACED'					=> 'Cette chanson a été ajoutée dans les nouveautés : %s',
@@ -117,7 +117,7 @@ $lang = array_merge($lang, [
 	'BC_NO_WINNER'					=> 'Pas de gagnants actuellement',
 	'BC_OK'							=> 'Conforme',
 	'BC_OF_USER'					=> 'Les Chansons de %s',
-	'BC_OF_USER_TITLE'				=> 'Voir toutes les Chansons de %s',
+	'BC_OF_USER_TITLE'				=> '🎶 Voir toutes les Chansons de %s',
 	'BC_OWN'						=> 'Mes Chansons',
 	'BC_OWN_CHARTS'					=> [
 		0				=> 'n’a ajouté aucune chanson jusqu’à maintenant',

@@ -232,7 +232,7 @@ class functions_charts
 		return $url;
 	}
 
-	public function dm_addpoints($user_id, $amount)
+	public function add_user_points($user_id, $amount)
 	{
 		$sql = 'UPDATE ' . USERS_TABLE . ' SET user_points = user_points + ' . (int) $amount . ' WHERE user_id = ' . (int) $user_id;
 		$this->db->sql_query($sql);
@@ -524,8 +524,8 @@ class functions_charts
 		$this->get_template_charts($data['rules']);
 		$this->template->assign_vars([
 			'S_LIST'			=> true,
-			'TITLE_PAGE'		=> $title_mode,
 			'NAV_ID'			=> $mode,
+			'TITLE_PAGE'		=> $title_mode,
 			'U_USER_NAV'		=> $userid ? $data['pagin'] : '',
 			'USER_NAV_TITLE'	=> $userid ? $title_mode : '',
 			'TOTAL_CHARTS'		=> $this->language->lang('BC_SONG_NB', $total_charts),
@@ -535,7 +535,7 @@ class functions_charts
 		$this->pagination->generate_template_pagination($data['pagin'], 'pagination', 'start', $total_charts, $number, $start);
 	}
 
-	public function get_winners_charts($title_mode)
+	public function get_winners_charts($mode, $title_mode)
 	{
 		$i = 0;
 		$points_active = $this->points_active();
@@ -592,7 +592,7 @@ class functions_charts
 		$this->get_template_charts(false);
 		$this->template->assign_vars([
 			'S_LAST_WINNERS'	=> true,
-			'NAV_ID'			=> 'win',
+			'NAV_ID'			=> $mode,
 			'TITLE_PAGE'		=> $title_mode,
 		]);
 	}
@@ -616,8 +616,8 @@ class functions_charts
 	public function get_template_charts($rules)
 	{
 		$this->template->assign_vars([
-			'S_RULES'			=> $rules,
 			'S_LIST_NAV'		=> true,
+			'S_RULES'			=> $rules,
 			'U_EXT_PATH'		=> $this->ext_path_web,
 			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'))),
 			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
@@ -711,13 +711,13 @@ class functions_charts
 				$i = 0;
 			}
 			$this->template->assign_block_vars('newests', array(
+				'LINE'			=> $line,
 				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'USER_TITLE'	=> $this->language->lang('BC_OF_USER_TITLE', $row['username']),
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
 				'IMG'			=> (empty($row['picture'])) ? $this->get_youtube_img($row['video'], true) : $row['picture'],
-				'LINE'			=> $line,
 			));
 			$i++;
 		}
@@ -753,7 +753,7 @@ class functions_charts
 		if ($row = $this->db->sql_fetchrow($result))
 		{
 			// Add the points
-			$this->dm_addpoints((int) $row['user_id'], (int) $this->config['breizhcharts_voters_points']);
+			$this->add_user_points((int) $row['user_id'], (int) $this->config['breizhcharts_voters_points']);
 
 			// Update last winner id
 			$this->config->set('breizhcharts_last_voters_winner', $row['user_id']);
@@ -798,7 +798,7 @@ class functions_charts
 		{
 			if ($this->config['breizhcharts_place_' . $row['last_pos']] > 0)
 			{
-				$this->dm_addpoints((int) $row['poster_id'], (int) $this->config['breizhcharts_place_' . $row['last_pos']]);
+				$this->add_user_points((int) $row['poster_id'], (int) $this->config['breizhcharts_place_' . $row['last_pos']]);
 			}
 		}
 		$this->db->sql_freeresult($result);
@@ -812,7 +812,6 @@ class functions_charts
 		}
 		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
 
-		// Find the three winners
 		$i = 1;
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
@@ -829,17 +828,15 @@ class functions_charts
 		$result = $this->db->sql_query_limit($sql, 3);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$price = 0;
+			$options = 0;
+			$uid = $bitfield = '';
 			$last_pos = (int) $row['last_pos'];
 			$message = $this->language->lang('BC_PM_MESSAGE', $row['username'], $this->language->lang('BC_PLACE_LIST_' . $last_pos), $row['song_name'], $row['artist']);
 			if ($this->points_active())
 			{
-				$price = $this->config['breizhcharts_place_' . $last_pos];
-				$message .= $this->language->lang('BC_PM_MESSAGE_UPS', $price, $this->config['points_name']);
+				$message .= $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']);
 			}
 
-			$options = 0;
-			$uid = $bitfield = '';
 			$subject = utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . $last_pos));
 			generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
 
@@ -883,14 +880,13 @@ class functions_charts
 
 		// Reset all notes
 		$this->reset_all_notes();
-
 		if ($this->points_active())
 		{
 			$this->run_random_winner();
 			$this->points_to_winners();
 		}
 
-		// Send PM to the winners, if enabled
+		// Send PM to the winners
 		$this->send_pm_to_winners();
 
 		// Empty the voters table
@@ -958,23 +954,17 @@ class functions_charts
 				{
 					$error[] = $this->language->lang($lang);
 				}
-				else if ($i === 2 || $i === 4)
+				else if (($i === 2 || $i === 4) && !empty($data[$key]))
 				{
-					if (!empty($data[$key]))
+					if (stripos($data[$key], 'http://') === false && stripos($data[$key], 'https://') === false)
 					{
-						if (stripos($data[$key], 'http://') === false && stripos($data[$key], 'https://') === false)
-						{
-							$error[] = $this->language->lang(str_replace('REQUIRED', 'FORMAT', $lang));
-						}
+						$error[] = $this->language->lang(str_replace('REQUIRED', 'FORMAT', $lang));
 					}
 				}
 			}
-			else if ($i < 8)
+			else if (empty($data[$key]))
 			{
-				if (empty($data[$key]))
-				{
-					$error[] = $this->language->lang($lang);
-				}
+				$error[] = $this->language->lang($lang);
 			}
 			$i++;
 		}

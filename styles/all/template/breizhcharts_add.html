@@ -1,6 +1,7 @@
 {% INCLUDE 'overall_header.html' %}
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
+<br />
 
 <form id="postform" method="post" action="{{ S_POST_ACTION }}" onsubmit="return checkForm(this);">
 	<div class="panel" id="postingbox">
@@ -11,7 +12,7 @@
 			{% endif %}
 			<fieldset>
 				<dl>
-					<dt style="width: 40%; font-size: 9px">{{ lang('BC_NEEDED') }}<br /><br /></dt>
+					<dt style="width: 40%; font-size: 9px">{{ lang('BC_NEEDED') }} <img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube" height="12" /><br /><br /></dt>
 				</dl>
 				<dl>
 					<dt style="width: 40%;"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
@@ -55,8 +56,9 @@
 			<fieldset class="submit-buttons">
 				<span id="result-span" style="display: none;"></span>
 				{{ S_HIDDEN_FIELDS }}
-				<input type="submit" accesskey="s" tabindex="8" id="button" name="post" value="{{ lang('SUBMIT') }}" class="button1" />
 				{{ S_FORM_TOKEN }}
+				<input type="submit" accesskey="s" tabindex="8" id="button" name="post" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" class="button1" />
+				<input type="Button" tabindex="9" onclick="window.history.go(-1); return false;" value="{{ lang('CANCEL') }}" title="{{ lang('CANCEL') }}" class="button1" />
 			</fieldset>
 		</div>
 	</div>
