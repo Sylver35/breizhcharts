@@ -15,7 +15,6 @@ class breizhcharts_install extends migration
 	public function effectively_installed()
 	{
 		return phpbb_version_compare($this->config['breizhcharts_version'], '1.0.0', '>=');
-		return phpbb_version_compare($this->config['version'], '3.2.2', '>=');
 	}
 
 	static public function depends_on()
