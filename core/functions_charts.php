@@ -193,7 +193,7 @@ class functions_charts
 		return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 	}
 
-	public function create_topic($song_name, $artist, $video)
+	public function create_topic($song, $artist, $video)
 	{
 		if (!function_exists('submit_post'))
 		{
@@ -203,8 +203,8 @@ class functions_charts
 		$options = 0;
 		$poll = $uid = $bitfield = '';
 		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
-		$song_title = utf8_encode_ucr($this->language->lang('BC_ANNOUNCE_TITLE', $song_name, $artist));
-		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song_name, $artist, $url, $this->get_youtube_img($video, true));
+		$song_title = utf8_encode_ucr($this->language->lang('BC_ANNOUNCE_TITLE', $song, $artist));
+		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song, $artist, $url, $this->get_youtube_img($video, true));
 		generate_text_for_storage($song_msg, $uid, $bitfield, $options, true, true, true);
 
 		$data = [
@@ -262,13 +262,13 @@ class functions_charts
 		$modified = false;
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			if ($this->user->data['breizhchart_check_1'] == 0)
+			if ($this->user->data['breizhchart_check_1'] === false)
 			{
 				$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id'];
 				$this->db->sql_query($sql);
 				$modified = true;
 			}
-			else if ($this->user->data['breizhchart_check_2'] == 0)
+			else if ($this->user->data['breizhchart_check_2'] === false)
 			{
 				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
 				{
