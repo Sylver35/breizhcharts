@@ -141,8 +141,6 @@ class admin_config
 				'breizhcharts_place_3'				=> $this->request->variable('breizhcharts_place_3', 0),
 				'breizhcharts_required_1'			=> $this->request->variable('breizhcharts_required_1', 0),
 				'breizhcharts_required_2'			=> $this->request->variable('breizhcharts_required_2', 0),
-				'breizhcharts_required_3'			=> $this->request->variable('breizhcharts_required_3', 0),
-				'breizhcharts_required_4'			=> $this->request->variable('breizhcharts_required_4', 0),
 				'breizhcharts_pm_user'				=> $this->request->variable('breizhcharts_pm_user', 0),
 				'breizhcharts_pm_enable'			=> $this->request->variable('breizhcharts_pm_enable', 0),
 				'breizhcharts_announce_enable'		=> $this->request->variable('breizhcharts_announce_enable', 0),
@@ -181,19 +179,6 @@ class admin_config
 				]);
 			}
 
-			// Check PM username
-			$username = '';
-			if ($this->config['breizhcharts_pm_user'])
-			{
-				$sql1 = 'SELECT user_id, username, user_colour
-					FROM ' . USERS_TABLE . '
-						WHERE user_id = ' . $this->config['breizhcharts_pm_user'];
-				$result1 = $this->db->sql_query_limit($sql1, 1);
-				$row1 = $this->db->sql_fetchrow($result1);
-				$username = get_username_string('full', $row1['user_id'], $row1['username'], $row1['user_colour']);
-				$this->db->sql_freeresult($result1);
-			}
-
 			// Check last bonus winner
 			$bonus_winner = $this->language->lang('BC_NO_BONUS_WINNER');
 			if ($this->config['breizhcharts_winner_id'] > 0)
@@ -209,7 +194,7 @@ class admin_config
 				$this->db->sql_freeresult($result);
 			}
 
-			$lang_period = ((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK';
+			$lang_period = ($this->config['breizhcharts_period_val'] == 86400) ? 'BC_DAY' : 'BC_WEEK';
 			// Send all values to the template
 			$this->template->assign_vars([
 				'BONUS_WINNER_NAME'				=> $bonus_winner,
@@ -232,11 +217,9 @@ class admin_config
 				'CHART_3RD_PLACE'				=> $this->config['breizhcharts_place_3'],
 				'REQUIRED_1'					=> $this->config['breizhcharts_required_1'],
 				'REQUIRED_2'					=> $this->config['breizhcharts_required_2'],
-				'REQUIRED_3'					=> $this->config['breizhcharts_required_3'],
-				'REQUIRED_4'					=> $this->config['breizhcharts_required_4'],
 				'PM_USER'						=> $this->config['breizhcharts_pm_user'],
 				'PM_ENABLE'						=> $this->config['breizhcharts_pm_enable'],
-				'PM_USER_NAME'					=> $username,
+				'PM_USER_NAME'					=> ($this->config['breizhcharts_pm_user']) ? $this->get_pm_user() : '',
 				'ANNOUNCE_FORUM_LIST'			=> make_forum_select((int) $this->config['breizhcharts_song_forum'], false, true, true),
 				'ANNOUNCE_ENABLE'				=> $this->config['breizhcharts_announce_enable'],
 				'POINTS_PER_VOTE'				=> $this->config['breizhcharts_points_per_vote'],
@@ -282,6 +265,19 @@ class admin_config
 		}
 
 		return $select;
+	}
+
+	private function get_pm_user()
+	{
+		$sql = 'SELECT user_id, username, user_colour
+			FROM ' . USERS_TABLE . '
+				WHERE user_id = ' . $this->config['breizhcharts_pm_user'];
+		$result = $this->db->sql_query_limit($sql, 1);
+		$row = $this->db->sql_fetchrow($result);
+		$username = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
+		$this->db->sql_freeresult($result);
+
+		return $username;
 	}
 
 	/**

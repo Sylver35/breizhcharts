@@ -74,44 +74,6 @@
 			}
 		});
 	}
-	breizhcharts.checkPicture = function(){
-		var $valuePicture = $('#picture').val();
-		if($valuePicture === ''){
-			return;
-		}
-		$('#check-picture').html(bcConfig.loader);
-		var urls = [$valuePicture];
-		for(var i in urls){
-			var img = new Image();
-			img.onload = function(){
-				$('#check-picture').html(bcConfig.ajaxTrue+' <span style="color:green;">'+bcConfig.ok+'</span> '+$('#on-picture').html());
-				$('#button').attr({'disabled': false, 'title': bcConfig.submit});
-			};
-			img.onerror = function(){
-				$('#check-picture').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorPicture+'</span>');
-				$('#button').attr({'disabled': true, 'title': bcConfig.error});
-			};
-			img.onabort = function(){
-				$('#check-picture').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorPicture+'</span>');
-				$('#button').attr({'disabled': true, 'title': bcConfig.error});
-			};
-			img.src = urls[i];
-			$('#new-picture').attr('src', img.src);
-		}
-	}
-	breizhcharts.checkWebsite = function(){
-		var $valueWebsite = $('#website').val();
-		if($valueWebsite === ''){
-			return;
-		}
-		if(breizhcharts.urlValide($valueWebsite) !== false){
-			$('#check-website').html(bcConfig.ajaxTrue+' <span style="color:green;">'+bcConfig.ok+'</span>');
-			$('#button').attr({'disabled': false, 'title': bcConfig.submit});
-		}else{
-			$('#check-website').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorWebsite+'</span>');
-			$('#button').attr({'disabled': true, 'title': bcConfig.error});
-		}
-	}
 	breizhcharts.checkVideo = function(){
 		$.ajax({
 			type: 'POST',

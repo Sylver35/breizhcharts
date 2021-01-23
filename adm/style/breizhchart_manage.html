@@ -26,13 +26,13 @@
 				<th style="width: 18%;text-align: center;">{{ lang('BC_SONG_ARTIST') }}</th>
 				<th style="width: 15%;text-align: center;">{{ lang('BC_SONG_ALBUM') }}</th>
 				<th style="width: 15%;text-align: center;">{{ lang('BC_ADDED_BY') }}</th>
-				<th style="width: 10%;text-align: center;">{{ lang('BC_SONG_ALBUM_PICTURE') }}</th>
+				<th style="width: 10%;text-align: center;">{{ lang('BC_SONG_VIDEO') }}</th>
 				<th style="width: 10%;text-align: center;">{{ lang('BC_LAST_RANK') }}</th>
 				<th style="width: 8%;text-align: center;">{{ lang('ACTION') }}</th>
 			</tr>
 		</thead>
 		<tbody>
-		{% if charts %}
+		{% if charts|length %}
 		{% for chart in charts %}
 			<tr class="{% if chart.S_ROW_COUNT is even %}row1{% else %}row2{% endif %}">
 				<td><strong>{{ chart.TITLE }}</strong></td>
@@ -79,11 +79,11 @@
 		<legend>{{ lang('BC_EDIT') }}</legend>
 		<dl>
 			<dt><label for="song_name">{{ lang('BC_SONG_TITLE') }}:</label><br /><span>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</span></dt>
-			<dd><input onblur="breizhcharts.checkSongArtist()" type="text" name="song_name" id="song_name" size="70" value="{{ TITLE }}" /></dd>
+			<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" name="song_name" id="song_name" size="70" value="{{ TITLE }}" /></dd>
 		</dl>
 		<dl>
 			<dt><label for="artist">{{ lang('BC_SONG_ARTIST') }}:</label><br /><span>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</span></dt>
-			<dd><input onblur="breizhcharts.checkSongArtist()" type="text" name="artist" id="artist" size="70" value="{{ ARTIST }}" /></dd>
+			<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" name="artist" id="artist" size="70" value="{{ ARTIST }}" /></dd>
 			<dd id="check-song"></dd>
 		</dl>
 		<dl>
@@ -91,19 +91,8 @@
 			<dd><input type="text" name="album" id="album" size="70" value="{{ ALBUM }}" /></dd>
 		</dl>
 		<dl>
-			<dt><label for="picture">{{ lang('BC_SONG_PICTURE') }}:</label><br /><span>{{ lang('BC_SONG_PICTURE_EXPLAIN') }}</span></dt>
-			<dd><input onblur="breizhcharts.checkPicture()" type="text" name="picture" id="picture" size="70" value="{{ PICTURE }}" /></dd>
-			<dd id="on-picture" style="display: none;"><img src="" id="new-picture" alt="" height="25" /></dd>
-			<dd id="check-picture"></dd>
-		</dl>
-		<dl>
 			<dt><label for="year">{{ lang('BC_SONG_YEAR') }}:</label><br /><span>{{ lang('BC_SONG_YEAR_EXPLAIN') }}</span></dt>
 			<dd><input type="text" name="year" id="year" size="4" value="{{ YEAR }}" /></dd>
-		</dl>
-		<dl>
-			<dt><label for="website">{{ lang('BC_SONG_URL') }}:</label><br /><span>{{ lang('BC_SONG_URL_EXPLAIN') }}</span></dt>
-			<dd><input onblur="breizhcharts.checkWebsite()" type="text" name="website" id="website" size="70" value="{{ URL }}" /></dd>
-			<dd id="check-website"></dd>
 		</dl>
 		<dl>
 			<dt><label for="video">{{ lang('BC_SONG_VIDEO') }}:</label><br /><span>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</span></dt>

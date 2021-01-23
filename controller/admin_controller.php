@@ -148,9 +148,7 @@ class admin_controller
 						'TITLE'					=> $row['song_name'],
 						'ARTIST'				=> $row['artist'],
 						'ALBUM'					=> $row['album'],
-						'PICTURE'				=> $row['picture'],
 						'YEAR'					=> $row['year'],
-						'URL'					=> $row['website'],
 						'VIDEO'					=> $row['video'],
 						'U_ACTION'				=> $this->u_action . '&amp;action=update',
 						'U_BACK'				=> $this->u_action,
@@ -171,8 +169,6 @@ class admin_controller
 						'artist'		=> $this->request->variable('artist', '', true),
 						'album'			=> $this->request->variable('album', '', true),
 						'year'			=> $this->request->variable('year', ''),
-						'picture'		=> $this->request->variable('picture', '', true),
-						'website'		=> $this->request->variable('website', '', true),
 						'video'			=> $this->request->variable('video', '', true),
 					];
 
@@ -262,7 +258,6 @@ class admin_controller
 					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
 					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
 					'LAST_RANK'		=> $row['last_pos'],
-					'URL'			=> $row['website'],
 					'VIDEO'			=> $row['video'],
 					'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['song_id'] . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir,
 					'U_DEL'			=> $this->u_action . '&amp;action=delete&amp;id=' . $row['song_id'] . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir,

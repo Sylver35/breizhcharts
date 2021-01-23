@@ -97,19 +97,9 @@
 				<label><input type="radio" class="radio" name="breizhcharts_required_1" value="0"{% if not REQUIRED_1 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
 			</dl>
 			<dl>
-				<dt><label>{{ lang('BC_REQUIRED_ALBUMCOVER') }}:</label></dt>
+				<dt><label>{{ lang('BC_REQUIRED_YEAR') }}:</label></dt>
 				<dd><label><input type="radio" class="radio" name="breizhcharts_required_2" value="1"{% if REQUIRED_2 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
 				<label><input type="radio" class="radio" name="breizhcharts_required_2" value="0"{% if not REQUIRED_2 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label>{{ lang('BC_REQUIRED_YEAR') }}:</label></dt>
-				<dd><label><input type="radio" class="radio" name="breizhcharts_required_3" value="1"{% if REQUIRED_3 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="breizhcharts_required_3" value="0"{% if not REQUIRED_3 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
-			</dl>
-			<dl>
-				<dt><label>{{ lang('BC_REQUIRED_WEBSITE') }}:</label></dt>
-				<dd><label><input type="radio" class="radio" name="breizhcharts_required_4" value="1"{% if REQUIRED_4 %} checked="checked" {% endif %} /> {{ lang('YES') }}</label>
-				<label><input type="radio" class="radio" name="breizhcharts_required_4" value="0"{% if not REQUIRED_4 %} checked="checked" {% endif %} /> {{ lang('NO') }}</label></dd>
 			</dl>
 	</fieldset>
 
@@ -123,21 +113,21 @@
 			</dl>
 			<dl>
 				<dt><label>{POINTS}:</label><br /><span>{POINTS_EXPLAIN}</span></dt>
-				<dd><input type="text" id="breizhcharts_1st_place" name="breizhcharts_1st_place" value="{CHART_1ST_PLACE}" maxlength="8" size="10" /> {FIRST}</dd>
-				<dd><input type="text" id="breizhcharts_2nd_place" name="breizhcharts_2nd_place" value="{CHART_2ND_PLACE}" maxlength="8" size="10" /> {SECOND}</dd>
-				<dd><input type="text" id="breizhcharts_3rd_place" name="breizhcharts_3rd_place" value="{CHART_3RD_PLACE}" maxlength="8" size="10" /> {THIRD}</dd>
+				<dd><input type="text" id="breizhcharts_place_1" name="breizhcharts_place_1" value="{CHART_1ST_PLACE}" maxlength="6" size="8" /> {FIRST}</dd>
+				<dd><input type="text" id="breizhcharts_place_2" name="breizhcharts_place_2" value="{CHART_2ND_PLACE}" maxlength="6" size="8" /> {SECOND}</dd>
+				<dd><input type="text" id="breizhcharts_place_3" name="breizhcharts_place_3" value="{CHART_3RD_PLACE}" maxlength="6" size="8" /> {THIRD}</dd>
 			</dl>
 			<dl>
 				<dt><label>{POINTS_PER_VOTE_DESC}:</label><br /><span>{POINTS_PER_VOTE_DESC_EXPLAIN}</span></dt>
-				<dd><input type="text" id="breizhcharts_points_per_vote" name="breizhcharts_points_per_vote" value="{POINTS_PER_VOTE}" maxlength="8" size="10" /> {POINTS_NAME}</dd>
+				<dd><input type="text" id="breizhcharts_points_per_vote" name="breizhcharts_points_per_vote" value="{POINTS_PER_VOTE}" maxlength="8" size="8" /> {POINTS_NAME}</dd>
 			</dl>
 			<dl>
 				<dt><label>{POINTS_VOTERS_BONUS}:</label><br /><span>{POINTS_VOTERS_BONUS_EXPLAIN}</span></dt>
-				<dd><input type="text" id="breizhcharts_voters_points" name="breizhcharts_voters_points" value="{VOTERS_POINTS}" maxlength="8" size="10" /> {POINTS_NAME}</dd>
+				<dd><input type="text" id="breizhcharts_voters_points" name="breizhcharts_voters_points" value="{VOTERS_POINTS}" maxlength="8" size="8" /> {POINTS_NAME}</dd>
 			</dl>
 			<dl>
 				<dt><label>{{ lang('BC_LAST_VOTERS_WINNER_ID') }}:</label><br /><span>{{ lang('BC_LAST_VOTERS_WINNER_ID_EX') }}</span></dt>
-				<dd><input id="breizhcharts_winner_id" name="breizhcharts_winner_id" value="{LAST_VOTERS_WINNER_ID}" maxlength="8" size="10" /> {{ BONUS_WINNER_NAME }}</dd>
+				<dd><input id="breizhcharts_winner_id" name="breizhcharts_winner_id" value="{LAST_VOTERS_WINNER_ID}" maxlength="8" size="8" /> {{ BONUS_WINNER_NAME }}</dd>
 			</dl>
 	</fieldset>
 {% endif %}

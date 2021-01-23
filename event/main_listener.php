@@ -123,7 +123,7 @@ class main_listener implements EventSubscriberInterface
 		{
 			$this->template->assign_vars([
 				'S_CHARTS_EXIST'	=> true,
-				'BC_TITLE_EXT'		=> str_replace('🎼', '<span class="bc-nagigation">🎼</span>', $this->language->lang('BC_CHARTS')),
+				'BC_TITLE_EXT'		=> str_replace('🎼', '<span class="bc-navigation">🎼</span>', $this->language->lang('BC_CHARTS')),
 				'U_BC_CHARTS'		=> $this->helper->route('sylver35_breizhcharts_page_music'),
 				'NEW_SONG'			=> $this->user->data['breizhchart_last'] < $this->config['breizhcharts_last_song'],
 			]);

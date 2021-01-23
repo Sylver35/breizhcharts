@@ -4,9 +4,6 @@ sylver35_breizhcharts_page_music:
 sylver35_breizhcharts_add_music:
     path: /breizhcharts_add
     defaults: { _controller: sylver35.breizhcharts.controller.charts:add_song }
-sylver35_breizhcharts_tutorial:
-    path: /breizhcharts_tuto
-    defaults: { _controller: sylver35.breizhcharts.controller.charts:tutorial_charts }
 sylver35_breizhcharts_check_video:
     path: /breizhcharts_check_video
     defaults: { _controller: sylver35.breizhcharts.controller.charts:check_youtube_video }

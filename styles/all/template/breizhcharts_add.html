@@ -8,7 +8,7 @@
 		<div class="inner">
 			<h3>{{ TITLE_PAGE }}</h3>
 			{% if ERROR %}
-			<p id="error" class="error">{{ ERROR }}</p>
+			<p class="error">{{ ERROR }}</p>
 			{% endif %}
 			<fieldset>
 				<dl>
@@ -28,19 +28,8 @@
 					<dd><input type="text" id="album" tabindex="3" name="album"{% if S_REQ_1 %} required aria-required="true"{% endif %} size="65" class="inputbox autowidth" value="{{ CHART_ALBUM }}" /></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="picture">{% if S_REQ_2 %}[*] {% endif %}{{ lang('BC_SONG_ALBUM_PICTURE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_PICTURE_EXPLAIN') }}</dt>
-					<dd><input onblur="breizhcharts.checkPicture()" type="text" id="picture"{% if S_REQ_2 %} required aria-required="true"{% endif %} tabindex="4" name="picture" size="65" class="inputbox autowidth" value="{{ CHART_PICTURE }}" /></dd>
-					<dd id="on-picture" style="display: none;"><img src="" id="new-picture" alt="" height="25" /></dd>
-					<dd id="check-picture"></dd>
-				</dl>
-				<dl>
-					<dt style="width: 40%;"><label for="year">{% if S_REQ_3 %}[*] {% endif %}{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
-					<dd><input type="text" id="year" name="year"{% if S_REQ_3 %} required aria-required="true"{% endif %} tabindex="5" size="4" class="inputbox autowidth" value="{{ CHART_YEAR }}" /></dd>
-				</dl>
-				<dl>
-					<dt style="width: 40%;"><label for="website">{% if S_REQ_4 %}[*] {% endif %}{{ lang('BC_SONG_WEBSITE') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_WEBSITE_EXPLAIN') }}</dt>
-					<dd><input onblur="breizhcharts.checkWebsite()" type="text" id="website" name="website"{% if S_REQ_4 %} required aria-required="true"{% endif %} tabindex="6" size="65" class="inputbox autowidth" value="{{ CHART_WEBSITE }}" /></dd>
-					<dd id="check-website"></dd>
+					<dt style="width: 40%;"><label for="year">{% if S_REQ_2 %}[*] {% endif %}{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
+					<dd><input type="text" id="year" name="year"{% if S_REQ_2 %} required aria-required="true"{% endif %} tabindex="5" size="4" class="inputbox autowidth" value="{{ CHART_YEAR }}" /></dd>
 				</dl>
 				<dl>
 					<dt style="width: 40%;"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br />{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>

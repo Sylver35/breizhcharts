@@ -158,8 +158,8 @@ class breizhcharts
 
 			case 'winners':
 				$body = 'breizhcharts_winners.html';
-				$title_mode = $this->language->lang('BC_LAST_WINNERS', $this->config['breizhcharts_winners_per_page']);
-				$this->functions_charts->get_winners_charts($mode, $title_mode);
+				$title_mode = $this->language->lang('BC_LAST_WINNERS');
+				$this->functions_charts->get_winners_charts();
 			break;
 		}
 
@@ -172,22 +172,6 @@ class breizhcharts
 		// Load charts template
 		$this->template->set_filenames([
 			'body' => $body,
-		]);
-
-		page_footer();
-	}
-
-	public function tutorial_charts()
-	{
-		$title_mode = 'tutoriel';
-		$this->functions_charts->create_navigation('tuto', $title_mode);
-
-		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
-
-		// Load charts template
-		$this->template->set_filenames([
-			'body' => 'breizhcharts_tutorial.html',
 		]);
 
 		page_footer();
@@ -331,17 +315,7 @@ class breizhcharts
 		$artist = (string) $this->request->variable('artist', '', true);
 		$json_response = new json_response;
 
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'song_id',
-			'FROM'		=> [$this->breizhcharts_table => ''],
-			'WHERE'		=> $this->db->sql_lower_text('song_name') . ' LIKE ' . $this->functions_charts->get_like($song) . ' AND ' . $this->db->sql_lower_text('artist') . ' LIKE ' . $this->functions_charts->get_like($artist) . ' AND song_id <> ' . $id,
-		]);
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		// Send the response to the browser now
-		if (isset($row['song_id']))
+		if ($this->functions_charts->verify_song_name($id, $song, $artist) !== false)
 		{
 			$json_response->send([
 				'sort'		=> 2,
@@ -393,8 +367,6 @@ class breizhcharts
 			'artist'		=> $this->request->variable('artist', '', true),
 			'album'			=> $this->request->variable('album', '', true),
 			'year'			=> $this->request->variable('year', ''),
-			'picture'		=> $this->request->variable('picture', '', true),
-			'website'		=> $this->request->variable('website', '', true),
 			'video'			=> $this->request->variable('video', '', true),
 		];
 
@@ -403,33 +375,28 @@ class breizhcharts
 			$error = $this->validate_add_song();
 		}
 
-		$title_mode = $this->language->lang('BC_ADD_SONG');
 		$this->functions_charts->get_template_charts(false);
-		$this->functions_charts->create_navigation('add', $title_mode);
+		$this->functions_charts->create_navigation('add', $this->language->lang('BC_ADD_SONG'));
 
 		$this->template->assign_vars([
 			'NAV_ID'			=> 'add',
 			'S_ADD_SONG'		=> true,
 			'ERROR'				=> $error,
-			'TITLE_PAGE'		=> $title_mode,
+			'TITLE_PAGE'		=> $this->language->lang('BC_ADD_SONG'),
 			'CHART_SONG_NAME'	=> $data['song_name'],
 			'CHART_ARTIST'		=> $data['artist'],
 			'CHART_ALBUM'		=> $data['album'],
 			'CHART_YEAR'		=> $data['year'],
-			'CHART_PICTURE'		=> $data['picture'],
-			'CHART_WEBSITE'		=> $data['website'],
 			'CHART_VIDEO'		=> $data['video'],
+			'S_REQ_1'			=> $this->config['breizhcharts_required_1'],
+			'S_REQ_2'			=> $this->config['breizhcharts_required_2'],
 			'U_EXT_PATH'		=> $this->ext_path_web,
 			'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video'),
-			'S_REQ_1'			=> $this->config['breizhcharts_required_1'] ? true : false,
-			'S_REQ_2'			=> $this->config['breizhcharts_required_3'] ? true : false,
-			'S_REQ_3'			=> $this->config['breizhcharts_required_3'] ? true : false,
-			'S_REQ_4'			=> $this->config['breizhcharts_required_4'] ? true : false,
 		]);
 
 		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
+		page_header($this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_ADD_SONG'));
 
 		// Load template
 		$this->template->set_filenames([
@@ -442,13 +409,11 @@ class breizhcharts
 	private function validate_add_song()
 	{
 		$data = [
-			'song_name'	=> $this->request->variable('song_name', '', true),
-			'artist'	=> $this->request->variable('artist', '', true),
-			'album'		=> $this->request->variable('album', '', true),
-			'year'		=> $this->request->variable('year', ''),
-			'picture'	=> $this->request->variable('picture', '', true),
-			'website'	=> $this->request->variable('website', '', true),
-			'video'		=> $this->request->variable('video', '', true),
+			'song_name'		=> $this->request->variable('song_name', '', true),
+			'artist'		=> $this->request->variable('artist', '', true),
+			'album'			=> $this->request->variable('album', '', true),
+			'year'			=> $this->request->variable('year', ''),
+			'video'			=> $this->request->variable('video', '', true),
 		];
 
 		if ($error = $this->functions_charts->verify_chart_before_send($data, 0))
@@ -460,16 +425,14 @@ class breizhcharts
 			$data = array_merge($data, [
 				'poster_id'		=> $this->user->data['user_id'],
 				'add_time'		=> time(),
+				'topic_id'		=> 0,
 			]);
 
 			// Announce new songs, if enabled
 			if ($this->config['breizhcharts_announce_enable'])
 			{
-				$url = $this->functions_charts->create_topic($data['song_name'], $data['artist'], $data['picture'], $data['video']);
-				$topic_id = $this->functions_charts->find_string($url . '#', 't=', '#');
-				$data = array_merge($data, [
-					'topic_id'	=> (int) $topic_id,
-				]);
+				$url = $this->functions_charts->create_topic($data['song_name'], $data['artist'], $data['video']);
+				$data['topic_id'] = (int) $this->functions_charts->find_string($url . '#', 't=', '#');
 			}
 
 			$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_table . $this->db->sql_build_array('INSERT', $data));
@@ -523,16 +486,12 @@ class breizhcharts
 			'CHART_ARTIST'		=> $data['artist'],
 			'CHART_ALBUM'		=> $data['album'],
 			'CHART_YEAR'		=> $data['year'],
-			'CHART_PICTURE'		=> $data['picture'],
-			'CHART_WEBSITE'		=> $data['website'],
 			'CHART_VIDEO'		=> $data['video'],
+			'S_REQ_1'			=> $this->config['breizhcharts_required_1'],
+			'S_REQ_2'			=> $this->config['breizhcharts_required_2'],
 			'U_EXT_PATH'		=> $this->ext_path_web,
 			'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video'),
-			'S_REQ_1'			=> $this->config['breizhcharts_required_1'],
-			'S_REQ_2'			=> $this->config['breizhcharts_required_3'],
-			'S_REQ_3'			=> $this->config['breizhcharts_required_3'],
-			'S_REQ_4'			=> $this->config['breizhcharts_required_4'],
 		]);
 
 		$this->functions_charts->create_navigation('edit', $title_mode, $song_id);
@@ -555,8 +514,6 @@ class breizhcharts
 			'artist'		=> $this->request->variable('artist', '', true),
 			'album'			=> $this->request->variable('album', '', true),
 			'year'			=> $this->request->variable('year', ''),
-			'picture'		=> $this->request->variable('picture', '', true),
-			'website'		=> $this->request->variable('website', '', true),
 			'video'			=> $this->request->variable('video', '', true),
 		];
 

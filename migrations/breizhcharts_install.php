@@ -15,6 +15,7 @@ class breizhcharts_install extends migration
 	public function effectively_installed()
 	{
 		return phpbb_version_compare($this->config['breizhcharts_version'], '1.0.0', '>=');
+		return phpbb_version_compare($this->config['version'], '3.2.2', '>=');
 	}
 
 	static public function depends_on()
@@ -38,22 +39,20 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_period_val', 604800]],
 			['config.add', ['breizhcharts_place_1', 200]],
 			['config.add', ['breizhcharts_place_2', 150]],
-			['config.add', ['breizhcharts_place_3', 100]],
 			['config.add', ['breizhcharts_pm_enable', 1]],
 			['config.add', ['breizhcharts_pm_user', 2]],
 			['config.add', ['breizhcharts_points_per_vote', 3]],
 			['config.add', ['breizhcharts_required_1', 0]],
 			['config.add', ['breizhcharts_required_2', 0]],
 			['config.add', ['breizhcharts_required_3', 0]],
-			['config.add', ['breizhcharts_required_4', 0]],
 			['config.add', ['breizhcharts_song_forum', 0]],
 			['config.add', ['breizhcharts_songs_nb', 0, true]],
 			['config.add', ['breizhcharts_start_time', time()]],
-			['config.add', ['breizhcharts_start_time_bis', date('m-d-Y H:i', time())]],
+			['config.add', ['breizhcharts_start_time_bis', date('d-m-Y H:i', time())]],
 			['config.add', ['breizhcharts_ups_points', 10]],
 			['config.add', ['breizhcharts_user_page', 15]],
 			['config.add', ['breizhcharts_voters_points', 100]],
-			['config.add', ['breizhcharts_winner', 0]],
+			['config.add', ['breizhcharts_winner_id', 0]],
 			['config.add', ['breizhcharts_winners_per_page', 10]],
 
 			['permission.add', ['a_breizhcharts_manage', true]],
@@ -102,9 +101,7 @@ class breizhcharts_install extends migration
 						'song_name'			=> ['VCHAR', ''],
 						'artist'			=> ['VCHAR', ''],
 						'album'				=> ['VCHAR', ''],
-						'picture'			=> ['TEXT_UNI', ''],
 						'year'				=> ['VCHAR:4', ''],
-						'website'			=> ['TEXT_UNI', ''],
 						'video'				=> ['TEXT_UNI', ''],
 						'poster_id'			=> ['UINT:10', 0],
 						'song_note'			=> ['DECIMAL', 0.00],

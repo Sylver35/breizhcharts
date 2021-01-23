@@ -103,3 +103,6 @@ services:
             - '%core.php_ext%'
             - '%sylver35.breizhcharts.table.breizhcharts%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    _defaults:
+        public: true

@@ -90,7 +90,7 @@ h2.charts {
 	margin: 0.5em 0;
 }
 
-.bc-nagigation {
+.bc-navigation {
 	font-size: 1.2em;
 }
 
@@ -128,6 +128,12 @@ div.bzh-box {
 	margin-top: 6px;
 	padding: 0;
 	line-height: 1.3em;
+}
+
+div.close {
+	text-align: center;
+	width: 100%;
+	font-weight: bold;
 }
 
 #error.error strong {

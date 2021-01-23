@@ -24,7 +24,7 @@
 								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px" />
 							</a>
 							<br /><br />
-							<span title="{{ winner.USER_TITLE }}">{{ winner.USER }}</span>: {{ winner.WIN }}
+							{{ winner.USER }}: {{ winner.WIN }}
 						</span>
 						{% endfor %}
 					</div>
@@ -35,7 +35,7 @@
 				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
 					<div style="display: table-row;padding: 0;margin: 0;">
 						<span style="display: table-cell;text-align: center;">
-							<span title="{{ USER_TITLE }}">{{ BONUS_WINNER }}</span>
+							{{ BONUS_WINNER }}
 						</span>
 					</div>
 				</div>
@@ -88,7 +88,7 @@
 								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px" />
 							</a>
 							<br /><br />
-							<span title="{{ newest.USER_TITLE }}">{{ newest.USER }}</span>
+							{{ newest.USER }}
 						</span>
 					{% endfor %}
 					</div>
