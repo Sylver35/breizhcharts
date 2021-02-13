@@ -263,15 +263,14 @@ class breizhcharts
 					'ON'	=> 'v.vote_song_id = c.song_id',
 				],
 			],
-			'WHERE'		=> 'song_id = 1',
+			'WHERE'		=> 'song_id = ' . $song_id,
 		]);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 		$song = $row['song_name'];
 		$artist = $row['artist'];
 		$nb_note = (int) $row['nb_note'];
-		$total = (int) $row['total'];
-		$total = (isset($total)) ? $total : 0;
+		$total = (isset($row['total'])) ? (int) $row['total'] : 0;
 		$this->db->sql_freeresult($result);
 
 		// Create array for the voting

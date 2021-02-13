@@ -14,7 +14,7 @@ class breizhcharts_install extends migration
 {
 	public function effectively_installed()
 	{
-		return version_compare($this->config['breizhcharts_version'], '1.0.0', '>=');
+		return (bool) phpbb_version_compare(strtolower($this->config['breizhcharts_version']), '1.0.0', '>=');
 	}
 
 	static public function depends_on()
@@ -38,12 +38,12 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_period_val', 604800]],
 			['config.add', ['breizhcharts_place_1', 200]],
 			['config.add', ['breizhcharts_place_2', 150]],
+			['config.add', ['breizhcharts_place_3', 100]],
 			['config.add', ['breizhcharts_pm_enable', 1]],
 			['config.add', ['breizhcharts_pm_user', 2]],
 			['config.add', ['breizhcharts_points_per_vote', 3]],
 			['config.add', ['breizhcharts_required_1', 0]],
 			['config.add', ['breizhcharts_required_2', 0]],
-			['config.add', ['breizhcharts_required_3', 0]],
 			['config.add', ['breizhcharts_song_forum', 0]],
 			['config.add', ['breizhcharts_songs_nb', 0, true]],
 			['config.add', ['breizhcharts_start_time', time()]],

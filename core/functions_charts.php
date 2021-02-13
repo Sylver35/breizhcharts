@@ -262,13 +262,13 @@ class functions_charts
 		$modified = false;
 		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			if ($this->user->data['breizhchart_check_1'] === false)
+			if ($this->user->data['breizhchart_check_1'] == false)
 			{
 				$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id'];
 				$this->db->sql_query($sql);
 				$modified = true;
 			}
-			else if ($this->user->data['breizhchart_check_2'] === false)
+			else if ($this->user->data['breizhchart_check_2'] == false)
 			{
 				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
 				{
@@ -609,11 +609,15 @@ class functions_charts
 
 	public function get_template_charts($rules)
 	{
+		$lang_period = ($this->config['breizhcharts_period_val'] == 86400) ? 'BC_DAY' : 'BC_WEEK';
+		$period = $this->language->lang($lang_period, $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']);
+		$date_finish = $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'));
+
 		$this->template->assign_vars([
 			'S_LIST_NAV'		=> true,
 			'S_RULES'			=> $rules,
 			'U_EXT_PATH'		=> $this->ext_path_web,
-			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'))),
+			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $period, $date_finish),
 			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
 			'U_ADD_SONG' 		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') . '#start' : '',
 			'U_LIST_TOP'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list']) . '#start',

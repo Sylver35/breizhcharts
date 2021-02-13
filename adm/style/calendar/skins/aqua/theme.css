@@ -240,3 +240,10 @@ div.calendar { position: relative; }
 .calendar td.time span.active {
   background: url("active-bg.gif"); color: #fff;
 }
+
+#button_time {
+	background-color: black;
+	color: white;
+	font-weight: bold;
+	cursor: pointer;
+}
