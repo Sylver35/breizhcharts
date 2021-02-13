@@ -526,7 +526,7 @@ class functions_charts
 			'USER_NAV_TITLE'	=> $userid ? $title_mode : '',
 			'TOTAL_CHARTS'		=> $this->language->lang('BC_SONG_NB', $total_charts),
 			'S_ON_PAGE'			=> $total_charts > $number,
-			'PAGE_NUMBER' 		=> $this->pagination->validate_start($total_charts, $number, $start),
+			'PAGE_NUMBER'		=> $this->pagination->validate_start($total_charts, $number, $start),
 		]);
 		$this->pagination->generate_template_pagination($data['pagin'], 'pagination', 'start', $total_charts, $number, $start);
 	}
@@ -553,11 +553,11 @@ class functions_charts
 			$data = $this->get_win_charts((int) $row['last_pos'], $points_active);
 			$this->template->assign_block_vars('winners', [
 				'NB'			=> $i,
-				'RANK' 			=> $data['img'],
+				'RANK'			=> $data['img'],
 				'WIN'			=> $data['win'],
-				'SONG' 			=> $row['song_name'],
+				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
-				'USER' 			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
+				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
 				'THUMBNAIL'		=> $this->get_youtube_img($row['video'], true),
 				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
@@ -619,12 +619,12 @@ class functions_charts
 			'U_EXT_PATH'		=> $this->ext_path_web,
 			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $period, $date_finish),
 			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
-			'U_ADD_SONG' 		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') . '#start' : '',
+			'U_ADD_SONG'		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') . '#start' : '',
 			'U_LIST_TOP'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list']) . '#start',
 			'U_LIST_NEWEST'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . '#start',
 			'U_LAST_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']) . '#start',
 			'U_LIST_OWN'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own']) . '#start',
-			'U_VOTE_MUSIC' 		=> $this->helper->route('sylver35_breizhcharts_vote'),
+			'U_VOTE_MUSIC'		=> $this->helper->route('sylver35_breizhcharts_vote'),
 		]);
 	}
 
@@ -673,7 +673,7 @@ class functions_charts
 		}
 
 		$this->template->assign_vars(array(
-			'S_CHECK_FIRST' => true,
+			'S_CHECK_FIRST'	=> true,
 			'BONUS_WINNER'	=> $bonus_winner,
 			'PERIOD'		=> $this->user->format_date($this->config['breizhcharts_start_time']),         
 			'VOTE'			=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
@@ -763,17 +763,17 @@ class functions_charts
 
 				$data = [
 					'address_list'		=> ['u' => [$row['user_id'] => 'to']],
-					'from_user_id' 		=> (int) $this->config['breizhcharts_pm_user'],
-					'from_username' 	=> 'Administration',
+					'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
+					'from_username'		=> 'Administration',
 					'icon_id'			=> 0,
 					'from_user_ip'		=> '',
-					'enable_bbcode' 	=> true,
-					'enable_smilies' 	=> true,
-					'enable_urls' 		=> true,
-					'enable_sig' 		=> true,
-					'message' 			=> $text,
-					'bbcode_bitfield' 	=> $bitfield,
-					'bbcode_uid' 		=> $uid,
+					'enable_bbcode'		=> true,
+					'enable_smilies'	=> true,
+					'enable_urls'		=> true,
+					'enable_sig'		=> true,
+					'message'			=> $text,
+					'bbcode_bitfield'	=> $bitfield,
+					'bbcode_uid'		=> $uid,
 				];
 				submit_pm('post', $subject, $data, false);
 			}
@@ -835,17 +835,17 @@ class functions_charts
 
 			$data = [
 				'address_list'		=> ['u' => [$row['user_id'] => 'to']],
-				'from_user_id' 		=> (int) $this->config['breizhcharts_pm_user'],
-				'from_username' 	=> 'Administration',
+				'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
+				'from_username'		=> 'Administration',
 				'icon_id'			=> 0,
 				'from_user_ip'		=> '',
-				'enable_bbcode' 	=> true,
-				'enable_smilies' 	=> true,
-				'enable_urls' 		=> true,
-				'enable_sig' 		=> true,
-				'message' 			=> $message,
-				'bbcode_bitfield' 	=> $bitfield,
-				'bbcode_uid' 		=> $uid,
+				'enable_bbcode'		=> true,
+				'enable_smilies'	=> true,
+				'enable_urls'		=> true,
+				'enable_sig'		=> true,
+				'message'			=> $message,
+				'bbcode_bitfield'	=> $bitfield,
+				'bbcode_uid'		=> $uid,
 			];
 			submit_pm('post', $subject, $data, false);
 			$i++;

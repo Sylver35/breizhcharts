@@ -160,7 +160,7 @@ class admin_controller
 
 				case 'update':
 					if (!check_form_key('acp_breizhcharts'))
-					{
++					{
 						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 					}
 
