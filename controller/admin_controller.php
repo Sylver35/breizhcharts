@@ -194,10 +194,10 @@ class admin_controller
 		}
 
 		$this->template->assign_vars([
-			'S_MANAGE'			=> true,
-			'BC_VERSION'		=> $this->config['breizhcharts_version'],
-			'S_SELECT_SORT_DIR'	=> $s_sort_dir,
-			'S_SELECT_SORT_KEY'	=> $s_sort_key,
+			'S_MANAGE'				=> true,
+			'BC_CHARTS_VERSION'		=> $this->config['breizhcharts_version'],
+			'S_SELECT_SORT_DIR'		=> $s_sort_dir,
+			'S_SELECT_SORT_KEY'		=> $s_sort_key,
 		]);
 	}
 

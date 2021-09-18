@@ -194,7 +194,7 @@ class admin_config
 				$this->db->sql_freeresult($result);
 			}
 
-			$lang_period = ($this->config['breizhcharts_period_val'] == 86400) ? 'BC_DAY' : 'BC_WEEK';
+			$lang_period = ((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK';
 			// Send all values to the template
 			$this->template->assign_vars([
 				'BONUS_WINNER_NAME'				=> $bonus_winner,
