@@ -35,6 +35,7 @@ services:
             - '@config'
             - '@ext.manager'
             - '@path_helper'
+            - '@dispatcher'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%sylver35.breizhcharts.table.breizhcharts%'
@@ -99,9 +100,11 @@ services:
             - '@ext.manager'
             - '@path_helper'
             - '@service_container'
+            - '@dispatcher'
             - '%core.root_path%'
             - '%core.php_ext%'
             - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_result%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
 
     _defaults:

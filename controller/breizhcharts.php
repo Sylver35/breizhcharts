@@ -24,6 +24,7 @@ use phpbb\request\request;
 use phpbb\config\config;
 use phpbb\extension\manager as ext_manager;
 use phpbb\path_helper;
+use phpbb\event\dispatcher_interface as phpbb_dispatcher;
 
 class breizhcharts
 {
@@ -69,6 +70,9 @@ class breizhcharts
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
+	/** @var \phpbb\event\dispatcher_interface */
+	protected $phpbb_dispatcher;
+
 	/** @var string phpBB root path */
 	protected $root_path;
 
@@ -91,7 +95,7 @@ class breizhcharts
 	/**
 	 * Constructor
 	 */
-	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
 		$this->functions_charts = $functions_charts;
 		$this->template = $template;
@@ -107,6 +111,7 @@ class breizhcharts
 		$this->config = $config;
 		$this->ext_manager = $ext_manager;
 		$this->path_helper = $path_helper;
+		$this->phpbb_dispatcher = $phpbb_dispatcher;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->breizhcharts_table = $breizhcharts_table;
@@ -126,9 +131,20 @@ class breizhcharts
 		$start = (int) $this->request->variable('start', 0);
 		$song_id = (int) $this->request->variable('id', 0);
 		$userid = (int) $this->request->variable('user', 0);
+		$winner = (int) $this->request->variable('winner', 0);
 		$name = (string) $this->request->variable('name', '', true);
-		$title_mode = $this->language->lang('BC_NEWEST_XX');
+		$title_mode = $this->language->lang('BC_NEWEST');
 		$body = 'breizhcharts.html';
+
+		/**
+		 * You can use this event before all modes listed here
+		 *
+		 * @event breizhcharts.list_mode_before
+		 * @var	array
+		 * @since 1.1.0
+		 */
+		$vars = ['mode', 'title_mode'];
+		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_before', compact($vars)));
 
 		// Switch the mode
 		switch ($mode)
@@ -159,7 +175,7 @@ class breizhcharts
 			case 'winners':
 				$body = 'breizhcharts_winners.html';
 				$title_mode = $this->language->lang('BC_LAST_WINNERS');
-				$this->functions_charts->get_winners_charts();
+				$this->functions_charts->get_winners_charts($winner);
 			break;
 		}
 
@@ -168,6 +184,16 @@ class breizhcharts
 
 		// Output the page
 		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
+
+		/**
+		 * You can use this event after all modes listed here
+		 *
+		 * @event breizhcharts.list_mode_after
+		 * @var	array
+		 * @since 1.1.0
+		 */
+		$vars = ['mode', 'title_mode'];
+		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_after', compact($vars)));
 
 		// Load charts template
 		$this->template->set_filenames([
@@ -289,6 +315,7 @@ class breizhcharts
 			'nb_note'	=> (int) $new_nb,
 		];
 		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . $song_id);
+		$this->cache->destroy('sql', $this->breizhcharts_table);
 
 		$message = $this->language->lang('BC_VOTE_SUCCESS', $song, $artist);
 		if ($this->functions_charts->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
@@ -360,7 +387,6 @@ class breizhcharts
 		}
 
 		$error = '';
-		$this->functions_charts->verify_max_entries();
 		$data = [
 			'song_name'		=> $this->request->variable('song_name', '', true),
 			'artist'		=> $this->request->variable('artist', '', true),
@@ -372,6 +398,10 @@ class breizhcharts
 		if ($this->request->is_set_post('post'))
 		{
 			$error = $this->validate_add_song();
+		}
+		else
+		{
+			$this->functions_charts->verify_max_entries();
 		}
 
 		$this->functions_charts->get_template_charts(false);
@@ -407,12 +437,16 @@ class breizhcharts
 
 	private function validate_add_song()
 	{
+		$url = '';
 		$data = [
 			'song_name'		=> $this->request->variable('song_name', '', true),
 			'artist'		=> $this->request->variable('artist', '', true),
 			'album'			=> $this->request->variable('album', '', true),
 			'year'			=> $this->request->variable('year', ''),
 			'video'			=> $this->request->variable('video', '', true),
+			'poster_id'		=> $this->user->data['user_id'],
+			'add_time'		=> time(),
+			'topic_id'		=> 0,
 		];
 
 		if ($error = $this->functions_charts->verify_chart_before_send($data, 0))
@@ -421,13 +455,7 @@ class breizhcharts
 		}
 		else
 		{
-			$data = array_merge($data, [
-				'poster_id'		=> $this->user->data['user_id'],
-				'add_time'		=> time(),
-				'topic_id'		=> 0,
-			]);
-
-			// Announce new songs, if enabled
+			// Announce new songs, if enabled, create topic
 			if ($this->config['breizhcharts_announce_enable'])
 			{
 				$url = $this->functions_charts->create_topic($data['song_name'], $data['artist'], $data['video']);
@@ -435,8 +463,19 @@ class breizhcharts
 			}
 
 			$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_table . $this->db->sql_build_array('INSERT', $data));
+			$id = (int) $this->db->sql_nextid();
 			$this->config->increment('breizhcharts_songs_nb', 1, true);
 			$this->config->set('breizhcharts_last_song', time(), true);
+
+			/**
+			 * You can use this event when a song is added
+			 *
+			 * @event breizhcharts.add_song_after
+			 * @var	array
+			 * @since 1.1.0
+			 */
+			$vars = ['data', 'id', 'url'];
+			extract($this->phpbb_dispatcher->trigger_event('breizhcharts.add_song_after', compact($vars)));
 
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_ADDED_SONG', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $data['song_name'], $data['artist'])]);
 			meta_refresh(3, $this->helper->route('sylver35_breizhcharts_page_music'));
@@ -548,11 +587,9 @@ class breizhcharts
 			$topic_id = (int) $row['topic_id'];
 			$this->db->sql_freeresult($result);
 
-			$sql = 'DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $delete_id;
-			$this->db->sql_query($sql);
-
-			$sql = 'DELETE FROM ' . $this->breizhcharts_voters_table . ' WHERE vote_song_id = ' . $delete_id;
-			$this->db->sql_query($sql);
+			$this->db->sql_query('DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $delete_id);
+			$this->db->sql_query('DELETE FROM ' . $this->breizhcharts_voters_table . ' WHERE vote_song_id = ' . $delete_id);
+			$this->cache->destroy('sql', $this->breizhcharts_table);
 			
 			if ($topic_id)
 			{

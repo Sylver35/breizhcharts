@@ -203,8 +203,7 @@ class admin_controller
 						$topic_id = (int) $row['topic_id'];
 						$this->db->sql_freeresult($result);
 
-						$sql = 'DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $id;
-						$this->db->sql_query($sql);
+						$this->db->sql_query('DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $id);
 						if ($topic_id)
 						{
 							delete_topics('topic_id', [$topic_id], false);

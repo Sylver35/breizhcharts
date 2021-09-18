@@ -104,7 +104,7 @@ class main_listener implements EventSubscriberInterface
 		{
 			$sql = 'SELECT COUNT(song_id) AS own_charts
 				FROM ' . $this->breizhcharts_table . '
-					WHERE poster_id = '. (int) $event['member']['user_id'];
+					WHERE poster_id = ' . (int) $event['member']['user_id'];
 			$result = $this->db->sql_query($sql);
 			$own_charts = (int) $this->db->sql_fetchfield('own_charts');
 			$this->db->sql_freeresult($result);
@@ -125,7 +125,7 @@ class main_listener implements EventSubscriberInterface
 				'S_CHARTS_EXIST'	=> true,
 				'BC_TITLE_EXT'		=> str_replace('🎼', '<span class="bc-navigation">🎼</span>', $this->language->lang('BC_CHARTS')),
 				'U_BC_CHARTS'		=> $this->helper->route('sylver35_breizhcharts_page_music'),
-				'NEW_SONG'			=> $this->user->data['breizhchart_last'] < $this->config['breizhcharts_last_song'],
+				'NEW_SONG'			=> $this->user->data['is_registered'] && ($this->user->data['breizhchart_last'] < $this->config['breizhcharts_last_song']),
 			]);
 		}
 

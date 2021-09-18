@@ -22,6 +22,7 @@ use phpbb\config\config;
 use phpbb\extension\manager as ext_manager;
 use phpbb\path_helper;
 use Symfony\Component\DependencyInjection\Container as phpbb_container;
+use phpbb\event\dispatcher_interface as phpbb_dispatcher;
 
 class functions_charts
 {
@@ -67,6 +68,9 @@ class functions_charts
 	/** @var \Symfony\Component\DependencyInjection\Container */
 	protected $phpbb_container;
 
+	/** @var \phpbb\event\dispatcher_interface */
+	protected $phpbb_dispatcher;
+
 	/** @var string phpBB root path */
 	protected $root_path;
 
@@ -84,12 +88,13 @@ class functions_charts
 	 * @var string
 	 */
 	protected $breizhcharts_table;
+	protected $breizhcharts_result_table;
 	protected $breizhcharts_voters_table;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_result_table, $breizhcharts_voters_table)
 	{
 		$this->template = $template;
 		$this->language = $language;
@@ -105,9 +110,11 @@ class functions_charts
 		$this->ext_manager = $ext_manager;
 		$this->path_helper = $path_helper;
 		$this->phpbb_container = $phpbb_container;
+		$this->phpbb_dispatcher = $phpbb_dispatcher;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;
 		$this->breizhcharts_table = $breizhcharts_table;
+		$this->breizhcharts_result_table = $breizhcharts_result_table;
 		$this->breizhcharts_voters_table = $breizhcharts_voters_table;
 		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
 		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
@@ -141,6 +148,9 @@ class functions_charts
 		{
 			if ($this->config['points_enable'])
 			{
+				$this->template->assign_vars([
+					'S_UPS'		=> true,
+				]);
 				return true;
 			}
 		}
@@ -234,8 +244,7 @@ class functions_charts
 
 	public function add_user_points($user_id, $amount)
 	{
-		$sql = 'UPDATE ' . USERS_TABLE . ' SET user_points = user_points + ' . (int) $amount . ' WHERE user_id = ' . (int) $user_id;
-		$this->db->sql_query($sql);
+		$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET user_points = user_points + ' . (int) $amount . ' WHERE user_id = ' . (int) $user_id);
 	}
 
 	public function check_charts_voted()
@@ -264,23 +273,20 @@ class functions_charts
 		{
 			if ($this->user->data['breizhchart_check_1'] == false)
 			{
-				$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id'];
-				$this->db->sql_query($sql);
+				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 				$modified = true;
 			}
 			else if ($this->user->data['breizhchart_check_2'] == false)
 			{
 				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
 				{
-					$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id'];
-					$this->db->sql_query($sql);
+					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 					$modified = true;
 				}
 			}
 			if (!$modified)
 			{
-				$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id'];
-				$this->db->sql_query($sql);
+				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 			}
 		}
 	}
@@ -343,7 +349,7 @@ class functions_charts
 			$img = 'new.png';
 			$title = 'BC_NEW_PLACED';
 		}
-		else if ($pos === $last_pos)
+		else if ($last_pos === $pos)
 		{
 			$img = 'equal.png';
 			$title = 'BC_POSITION_EQUAL';
@@ -366,6 +372,7 @@ class functions_charts
 	{
 		$url_array = [];
 		$url = 'sylver35_breizhcharts_page_music';
+
 		if ($mode == 'add')
 		{
 			$url = 'sylver35_breizhcharts_add_music';
@@ -380,11 +387,12 @@ class functions_charts
 				'mode'	=> $mode,
 			];
 		}
+
 		if ($song)
 		{
 			$url_array['id'] = $song;
 		}
-		else if ($userid)
+		else if ($userid && $name)
 		{
 			$url_array['user'] = $userid;
 			$url_array['name'] = $name;
@@ -446,13 +454,15 @@ class functions_charts
 				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $mode, 'user' => $user, 'name' => $name]),
 			];
 		}
-		
-		return [
-			'rules'		=> true,
-			'where'		=> '',
-			'select'	=> '',
-			'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $mode]),
-		];
+		else
+		{
+			return [
+				'rules'		=> true,
+				'where'		=> '',
+				'select'	=> '',
+				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $mode]),
+			];
+		}
 	}
 
 	public function get_list_mode_charts($mode, $order_by, $start, $title_mode, $userid = 0, $name = '')
@@ -463,6 +473,7 @@ class functions_charts
 		$tendency = $this->build_tendency();
 		$total_charts = $this->get_total_charts($data['select']);
 		$number = (int) $this->config['breizhcharts_user_page'];
+		$this->get_template_charts($data['rules']);
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, v.vote_rate as user_vote, u.user_id, u.username, u.user_colour',
@@ -483,9 +494,9 @@ class functions_charts
 		$result = $this->db->sql_query_limit($sql, $number, $start);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$is_user = $row['poster_id'] == $this->user->data['user_id'];
+			$is_user = (int) $row['poster_id'] === (int) $this->user->data['user_id'];
 			$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $this->auth->acl_get('a_breizhcharts_manage'));
-			$row['user_vote'] = isset($row['user_vote']) ? $row['user_vote'] : 0;
+			$row['user_vote'] = isset($row['user_vote']) ? (int) $row['user_vote'] : 0;
 			$user_vote = $this->language->lang('BC_AJAX_NOTE', $row['user_vote']);
 
 			$this->template->assign_block_vars('charts', [
@@ -498,12 +509,11 @@ class functions_charts
 				'YEAR'			=> $row['year'],
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
 				'THUMBNAIL'		=> $this->get_youtube_img($row['video'], true),
-				'RESULT'		=> number_format($row['song_note'] * 10, 2),
-				'VOTE_USER'		=> $row['user_vote'] ? true : false,
+				'STARS_VOTE'	=> $this->stars_vote($row['song_id'], $row['user_vote'], $user_vote, $row['song_note']),
 				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
 				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
 				'USER_VOTE'		=> $user_vote,
-				'RESULT_VOTE'	=> str_replace(['<span>', '</span>'], '', $user_vote),
+				'VOTED_IMG'		=> (!$row['user_vote']) ? 'not-rated' : 'rated',
 				'TENDENCY_IMG'	=> $tendency[$row['song_id']]['image'],
 				'ACTUAL'		=> $tendency[$row['song_id']]['position'],
 				'LAST'			=> $tendency[$row['song_id']]['last'],
@@ -517,7 +527,6 @@ class functions_charts
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->get_template_charts($data['rules']);
 		$this->template->assign_vars([
 			'S_LIST'			=> true,
 			'NAV_ID'			=> $mode,
@@ -531,36 +540,66 @@ class functions_charts
 		$this->pagination->generate_template_pagination($data['pagin'], 'pagination', 'start', $total_charts, $number, $start);
 	}
 
-	public function get_winners_charts()
+	private function stars_vote($song_id, $vote, $user_vote, $song_note)
 	{
-		$i = 0;
+		$current = (!$vote) ? 'current-not-rating' : 'current-rating';
+		$content = '<li id="rating-' . $song_id . '" class="' . $current . '" style="width: ' . number_format($song_note * 10, 2) . '%;"></li>';
+
+		for ($i = 1, $nb = 11; $i < $nb; $i++)
+		{
+			$content .= '<li><a';
+			if (!$vote)
+			{
+				$content .= ' onclick="breizhcharts.voteMusic(' . $song_id . ', ' . $i . ');"';
+				$content .= ' title="' . $this->language->lang('BC_AJAX_STARS',  $i) . '"';
+			}
+			else
+			{
+				$content .= ' title="' . strip_tags($user_vote) . '"';
+			}
+			$content .= ' class="star-' . $i . '">' . $i . '</a></li>';
+		}
+
+		return $content;
+	}
+
+	public function get_winners_charts($winner)
+	{
+		$i = $nb_win = 0;
 		$points_active = $this->points_active();
+		$date_result = $this->config['breizhcharts_last_result'];
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
-			'FROM'		=> [$this->breizhcharts_table => 'c'],
+			'FROM'		=> [$this->breizhcharts_result_table => 'c'],
 			'LEFT_JOIN'	=> [
 				[
 					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = c.poster_id',
+					'ON'	=> 'u.user_id = c.result_poster_id',
 				],
 			],
-			'WHERE'		=> 'last_pos > 0',
-			'ORDER_BY'	=> 'last_pos ASC',
+			'WHERE'		=> ($winner) ? 'c.result_nb = ' . $winner  : "c.result_time = '$date_result'",
+			'ORDER_BY'	=> 'c.result_nb DESC, c.result_pos ASC',
 		]);
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['breizhcharts_winners_per_page']);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$data = $this->get_win_charts((int) $row['last_pos'], $points_active);
+			$nb_win = (int) $row['result_nb'];
+			$date_result = $row['result_time'];
+			$data = $this->get_win_charts((int) $row['result_pos'], $points_active);
 			$this->template->assign_block_vars('winners', [
 				'NB'			=> $i,
 				'RANK'			=> $data['img'],
 				'WIN'			=> $data['win'],
-				'SONG'			=> $row['song_name'],
-				'ARTIST'		=> $row['artist'],
+				'SONG'			=> $row['result_song_name'],
+				'ARTIST'		=> $row['result_artist'],
 				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
-				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
-				'THUMBNAIL'		=> $this->get_youtube_img($row['video'], true),
-				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
+				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['result_song_name']),
+				'THUMBNAIL'		=> $this->get_youtube_img($row['result_video'], true),
+				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['result_song_id']]),
+				'RESULT'		=> number_format($row['result_song_note'] * 10, 2),
+				'TITLE_RATE'	=> strip_tags($this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2))),
+				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2)),
+				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', $row['result_nb_note']),
 			]);
 			$i++;
 		}
@@ -577,8 +616,7 @@ class functions_charts
 			$this->db->sql_freeresult($result);
 
 			$this->template->assign_vars([
-				'S_UPS'				=> true,
-				'S_BONUS_WINNER'	=> ($this->config['breizhcharts_winner_id'] > 0) ? true : false,
+				'S_BONUS_WINNER'	=> true,
 				'BONUS_WINNER'		=> $this->language->lang('BC_BONUS_WINNER', $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']),
 			]);
 		}
@@ -587,8 +625,27 @@ class functions_charts
 		$this->template->assign_vars([
 			'S_LAST_WINNERS'	=> true,
 			'NAV_ID'			=> 'winners',
-			'TITLE_PAGE'		=> $this->language->lang('BC_LAST_WINNERS'),
+			'SELECT_WINS'		=> $this->get_all_wins($nb_win),
+			'TITLE_PAGE'		=> $this->language->lang('BC_LAST_WINNERS_DATE', $this->user->format_date($date_result, $this->language->lang('BC_LAST_WINNERS_FORMAT'))),
 		]);
+	}
+
+	private function get_all_wins($nb_win)
+	{
+		$options = '';
+		$sql = 'SELECT result_nb, result_time
+			FROM ' . $this->breizhcharts_result_table . '
+				GROUP BY result_nb
+				ORDER BY result_nb DESC';
+		$result = $this->db->sql_query($sql);
+		while ($row = $this->db->sql_fetchrow($result))
+		{
+			$select = ($nb_win === (int) $row['result_nb']) ? ' selected="selected"' : '';
+			$options .= '<option value="' . $row['result_nb'] . '"' . $select . '>' . $this->user->format_date($row['result_time'], $this->language->lang('BC_LAST_WINNERS_FORMAT')) . '</option>';
+		}
+		$this->db->sql_freeresult($result);
+
+		return $options;
 	}
 
 	private function get_win_charts($last_pos, $points_active)
@@ -596,20 +653,22 @@ class functions_charts
 		if ($last_pos > 3)
 		{
 			return [
-				'img'	=> '',
+				'img'	=> $last_pos,
 				'win'	=> '',
 			];
 		}
-
-		return [
-			'img'	=> '<img src="' . $this->ext_path . 'images/place_' . $last_pos . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" />',
-			'win'	=> ($points_active) ? $this->language->lang('BC_WON_VALUE', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']) : '',
-		];
+		else
+		{
+			return [
+				'img'	=> '<img src="' . $this->ext_path . 'images/place_' . $last_pos . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" />',
+				'win'	=> ($points_active) ? $this->language->lang('BC_WON_VALUE', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']) : '',
+			];
+		}
 	}
 
 	public function get_template_charts($rules)
 	{
-		$lang_period = ($this->config['breizhcharts_period_val'] == 86400) ? 'BC_DAY' : 'BC_WEEK';
+		$lang_period = ((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK';
 		$period = $this->language->lang($lang_period, $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']);
 		$date_finish = $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'));
 
@@ -622,8 +681,9 @@ class functions_charts
 			'U_ADD_SONG'		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') . '#start' : '',
 			'U_LIST_TOP'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list']) . '#start',
 			'U_LIST_NEWEST'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . '#start',
-			'U_LAST_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']) . '#start',
 			'U_LIST_OWN'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own']) . '#start',
+			'U_LAST_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']) . '#start',
+			'U_SELECT_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']),
 			'U_VOTE_MUSIC'		=> $this->helper->route('sylver35_breizhcharts_vote'),
 		]);
 	}
@@ -634,34 +694,37 @@ class functions_charts
 		$points_active = $this->points_active();
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
-			'FROM'		=> [$this->breizhcharts_table => 'c'],
+			'FROM'		=> [$this->breizhcharts_result_table => 'c'],
 			'LEFT_JOIN'	=> [
 				[
 					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = c.poster_id',
+					'ON'	=> 'u.user_id = c.result_poster_id',
 				]
 			],
-			'WHERE'		=> 'c.last_pos > 0',
-			'ORDER_BY'	=> 'c.last_pos ASC',
+			'ORDER_BY'	=> 'c.result_nb DESC, c.result_pos ASC',
 		]);
 		$result = $this->db->sql_query_limit($sql, 3);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$data = $this->get_win_charts((int) $row['last_pos'], $points_active);
+			$data = $this->get_win_charts((int) $row['result_pos'], $points_active);
 			$this->template->assign_block_vars('winners', [
 				'RANK' 			=> $data['img'],
 				'WIN'			=> $data['win'],
 				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
-				'SONG'			=> $row['song_name'],
-				'ARTIST'		=> $row['artist'],
-				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
-				'IMG'			=> (empty($row['picture'])) ? $this->get_youtube_img($row['video'], true) : $row['picture'],
+				'SONG'			=> $row['result_song_name'],
+				'ARTIST'		=> $row['result_artist'],
+				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['result_song_id']]),
+				'IMG'			=> $this->get_youtube_img($row['result_video'], true),
+				'RESULT'		=> number_format($row['result_song_note'] * 10, 2),
+				'TITLE_RATE'	=> strip_tags($this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2))),
+				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2)),
+				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['result_nb_note']),
 			]);
 		}
 
 		// Last bonus winner
 		$bonus_winner = '';
-		if ($this->config['breizhcharts_winner_id'] > 0)
+		if (($this->config['breizhcharts_winner_id'] > 0) && isset($this->config['points_name']))
 		{
 			$sql = 'SELECT user_id, username, user_colour
 				FROM ' . USERS_TABLE . '
@@ -672,12 +735,12 @@ class functions_charts
 			$bonus_winner = $this->language->lang('BC_BONUS_WINNER', $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']);
 		}
 
-		$this->template->assign_vars(array(
-			'S_CHECK_FIRST'	=> true,
-			'BONUS_WINNER'	=> $bonus_winner,
-			'PERIOD'		=> $this->user->format_date($this->config['breizhcharts_start_time']),         
-			'VOTE'			=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
-		));
+		$this->template->assign_vars([
+			'S_CHECK_FIRST'		=> true,
+			'BONUS_WINNER'		=> $bonus_winner,
+			'RESULT_PERIOD'		=> ($this->config['breizhcharts_last_result']) ? $this->language->lang('BC_INDEX_WINNER', $this->user->format_date($this->config['breizhcharts_last_result'])) : '',
+			'VOTE'				=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
+		]);
 	}
 
 	private function second_check_charts()
@@ -699,27 +762,27 @@ class functions_charts
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$line = false;
-			if ($i == 4)
+			if ($i === 4)
 			{
 				$line = true;
 				$i = 0;
 			}
-			$this->template->assign_block_vars('newests', array(
+			$this->template->assign_block_vars('newests', [
 				'LINE'			=> $line,
 				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
-				'IMG'			=> (empty($row['picture'])) ? $this->get_youtube_img($row['video'], true) : $row['picture'],
-			));
+				'IMG'			=> $this->get_youtube_img($row['video'], true),
+			]);
 			$i++;
 		}
 		$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars(array(
+		$this->template->assign_vars([
 			'S_CHECK_SECOND'	=> true,
 			'REMINDER'			=> $this->language->lang('BC_VOTE_CHECK_SECOND', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
-		));
+		]);
 	}
 
 	private function run_random_winner()
@@ -754,11 +817,9 @@ class functions_charts
 			// Inform the lucky winner by PM, if PM is enabled
 			if ($this->config['breizhcharts_pm_enable'])
 			{
-				$subject = utf8_encode_ucr($this->language->lang('BC_PM_VOTERS_SUBJECT'));
-				$text = $this->language->lang('BC_PM_VOTERS_MESSAGE', $row['username'], $this->config['breizhcharts_voters_points'], $this->config['points_name']);
-
 				$options = 0;
 				$uid = $bitfield = '';
+				$text = $this->language->lang('BC_PM_VOTERS_MESSAGE', $row['username'], $this->config['breizhcharts_voters_points'], $this->config['points_name']);
 				generate_text_for_storage($text, $uid, $bitfield, $options, true, true, true);
 
 				$data = [
@@ -775,7 +836,7 @@ class functions_charts
 					'bbcode_bitfield'	=> $bitfield,
 					'bbcode_uid'		=> $uid,
 				];
-				submit_pm('post', $subject, $data, false);
+				submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_VOTERS_SUBJECT')), $data, false);
 			}
 		}
 	}
@@ -797,15 +858,12 @@ class functions_charts
 		$this->db->sql_freeresult($result);
 	}
 
-	private function send_pm_to_winners($points_active)
+	private function send_pm_to_winners()
 	{
-		if (!$this->config['breizhcharts_pm_enable'])
-		{
-			return;
-		}
 		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
 
 		$i = 1;
+		$points_active = $this->points_active();
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
 			'FROM'		=> [$this->breizhcharts_table => 'c'],
@@ -823,14 +881,8 @@ class functions_charts
 		{
 			$options = 0;
 			$uid = $bitfield = '';
-			$last_pos = (int) $row['last_pos'];
-			$message = $this->language->lang('BC_PM_MESSAGE', $row['username'], $this->language->lang('BC_PLACE_LIST_' . $last_pos), $row['song_name'], $row['artist']);
-			if ($points_active)
-			{
-				$message .= $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']);
-			}
-
-			$subject = utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . $last_pos));
+			$message = $this->language->lang('BC_PM_MESSAGE', $row['username'], $this->language->lang('BC_PLACE_LIST_' . (int) $row['last_pos']), $row['song_name'], $row['artist']);
+			$message .= ($points_active) ? $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . (int) $row['last_pos']], $this->config['points_name']) : '';
 			generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
 
 			$data = [
@@ -847,7 +899,7 @@ class functions_charts
 				'bbcode_bitfield'	=> $bitfield,
 				'bbcode_uid'		=> $uid,
 			];
-			submit_pm('post', $subject, $data, false);
+			submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . (int) $row['last_pos'])), $data, false);
 			$i++;
 		}
 		$this->db->sql_freeresult($result);
@@ -859,6 +911,7 @@ class functions_charts
 		$new_period = $this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'];
 		$this->config->set('breizhcharts_start_time', $new_period);
 		$this->config->set('breizhcharts_start_time_bis', date('d-m-Y H:i', $new_period));
+		$this->config->set('breizhcharts_last_result', time());
 
 		// Check if there are any voters - needed to decide, if we have winners in this period
 		$sql = 'SELECT COUNT(vote_id) AS total_votes
@@ -872,24 +925,24 @@ class functions_charts
 		}
 
 		// Reset all notes
-		$points_active = $this->points_active();
 		$this->reset_all_notes();
-		if ($points_active)
+		if ($this->points_active())
 		{
 			$this->run_random_winner();
 			$this->points_to_winners();
 		}
 
 		// Send PM to the winners
-		$this->send_pm_to_winners($points_active);
+		if ($this->config['breizhcharts_pm_enable'])
+		{
+			$this->send_pm_to_winners();
+		}
 
 		// Empty the voters table
-		$sql = 'TRUNCATE ' . $this->breizhcharts_voters_table;
-		$this->db->sql_query($sql);
+		$this->db->sql_query('TRUNCATE ' . $this->breizhcharts_voters_table);
 
 		// Reset the checks value
-		$sql = 'UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 0, breizhchart_check_2 = 0 WHERE breizhchart_check_1 <> 0';
-		$this->db->sql_query($sql);
+		$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 0, breizhchart_check_2 = 0 WHERE breizhchart_check_1 <> 0');
 
 		// Add a log entry, when the job is done
 		$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_RESET', time());
@@ -898,8 +951,18 @@ class functions_charts
 	private function reset_all_notes()
 	{
 		$i = 1;
+		$time = time();
+		$sql_insert = $winner = [];
+
+		$sql = 'SELECT MAX(result_nb) AS old_result
+			FROM ' . $this->breizhcharts_result_table;
+		$result = $this->db->sql_query($sql);
+		$old_result = (int) $this->db->sql_fetchfield('old_result');
+		$this->db->sql_freeresult($result);
+		$new_result = $old_result + 1;
+
 		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'song_id, best_pos, last_pos',
+			'SELECT'	=> '*',
 			'FROM'		=> [$this->breizhcharts_table => ''],
 			'WHERE'		=> 'nb_note > 0',
 			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
@@ -911,24 +974,59 @@ class functions_charts
 				'song_note'	=> 0,
 				'nb_note'	=> 0,
 				'last_pos'	=> $i,
-				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : $row['best_pos'],
+				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : (int) $row['best_pos'],
 			];
-			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . $row['song_id']);
+
+			if (($i < 11) && ($row['nb_note'] > 0))
+			{
+				$sql_insert[] = [
+					'result_song_id'		=> $row['song_id'],
+					'result_nb'				=> $new_result,
+					'result_time'			=> $time,
+					'result_pos'			=> $i,
+					'result_song_name'		=> $row['song_name'],
+					'result_artist'			=> $row['artist'],
+					'result_video'			=> $row['video'],
+					'result_poster_id'		=> $row['poster_id'],
+					'result_song_note'		=> $row['song_note'],
+					'result_nb_note'		=> $row['nb_note'],
+					'result_add_time'		=> $row['add_time'],
+				];
+			}
+			if ($i === 1)
+			{
+				$winner = [
+					'song_id'		=> $row['song_id'],
+					'song_name'		=> $row['song_name'],
+					'artist'		=> $row['artist'],
+					'video'			=> $row['video'],
+					'poster_id'		=> $row['poster_id'],
+					'song_note'		=> $row['song_note'],
+				];
+			}
+
+			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . (int) $row['song_id']);
 			$i++;
 		}
 		$this->db->sql_freeresult($result);
+
+		/**
+		 * You can use this event when the period has come to an end
+		 *
+		 * @event breizhcharts.reset_all_notes
+		 * @var	array
+		 * @since 1.1.0
+		 */
+		$vars = ['sql_result', 'winner'];
+		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
+
+		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
 	}
 
 	public function verify_chart_before_send($data, $id)
 	{
 		$i = 1;
 		$error = [];
-		// Check if new song probably already exist
-		if ($this->verify_song_name($id, $data['song_name'], $data['artist']) !== false)
-		{
-			$error[] = $this->language->lang('BC_ALREADY_EXISTS_ERROR', $data['song_name'], $data['artist']);
-		}
-
 		$list = [
 			'album'		=> 'BC_REQUIRED_ALBUM_ERROR',
 			'year'		=> 'BC_REQUIRED_YEAR_ERROR',
@@ -936,6 +1034,12 @@ class functions_charts
 			'artist'	=> 'BC_ARTIST_ERROR',
 			'video'		=> 'BC_REQUIRED_VIDEO_ERROR',
 		];
+
+		// Check if new song probably already exist
+		if ($this->verify_song_name($id, $data['song_name'], $data['artist']) !== false)
+		{
+			$error[] = $this->language->lang('BC_ALREADY_EXISTS_ERROR', $data['song_name'], $data['artist']);
+		}
 
 		foreach ($list as $key => $lang)
 		{
@@ -964,10 +1068,10 @@ class functions_charts
 			'WHERE'		=> $this->db->sql_lower_text('song_name') . ' LIKE ' . $this->get_like($song) . ' AND ' . $this->db->sql_lower_text('artist') . ' LIKE ' . $this->get_like($artist) . ' AND song_id <> ' . $id,
 		]);
 		$result = $this->db->sql_query($sql);
-		$song_id = $this->db->sql_fetchfield('song_id');
+		$song_exist = (bool) $this->db->sql_fetchfield('song_id');
 		$this->db->sql_freeresult($result);
 
-		return $song_id;
+		return $song_exist;
 	}
 
 	public function verify_max_entries()

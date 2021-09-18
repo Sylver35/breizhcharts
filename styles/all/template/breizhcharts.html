@@ -1,5 +1,7 @@
 {% INCLUDE 'overall_header.html' %}
 
+{% EVENT breizhcharts_header %}
+
 {% if S_RULES %}
 <div class="rules">
 	<div class="inner">
@@ -64,7 +66,7 @@
 					</dd>
 					<dd style="width: 12%;">
 						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">
-							<img src="{{ chart.THUMBNAIL }}" alt="" height="50px" />
+							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" height="50px" />
 						</a>
 					</dd>
 					<dd style="width: 13%;">
@@ -75,43 +77,13 @@
 						<div class="song-nforate">
 							<div class="bzh-inline-rating">
 								<ul class="bzh-star-rating" id="stars-{{ chart.SONG_ID }}">
-									<li id="rating-{{ chart.SONG_ID }}" class="{% if chart.VOTE_USER %}current-rating{% else %}current-not-rating{% endif %}" style="width: {{ chart.RESULT }}%;"></li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},1);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 1) }}{% endif %}" class="one-star">1</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},2);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 2) }}{% endif %}" class="two-star">2</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},3);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 3) }}{% endif %}" class="three-star">3</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},4);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 4) }}{% endif %}" class="four-star">4</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},5);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 5) }}{% endif %}" class="five-star">5</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},6);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 6) }}{% endif %}" class="six-star">6</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},7);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 7) }}{% endif %}" class="seven-stars">7</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},8);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 8) }}{% endif %}" class="eight-stars">8</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},9);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 9) }}{% endif %}" class="nine-stars">9</a>
-									</li>
-									<li>
-										<a{% if not chart.VOTE_USER %} onclick="breizhcharts.voteMusic({{ chart.SONG_ID }},10);"{% endif %} title="{% if chart.VOTE_USER %}{{ chart.RESULT_VOTE }}{% else %}{{ lang('BC_AJAX_STARS', 10) }}{% endif %}" class="ten-stars">10</a>
-									</li>
+									{{ chart.STARS_VOTE }}
 								</ul>
 							</div>
 							<div id="bzh_result-{{ chart.SONG_ID }}" class="bzh-box">
 								{{ chart.TOTAL_RATE }}<br />
 								{{ chart.SONG_RATED }}<br />
-								<div class="{% if not chart.VOTE_USER %}not-{% endif %}rated"></div>{{ chart.USER_VOTE }}
+								<div class="{{ chart.VOTED_IMG }}"></div>{{ chart.USER_VOTE }}
 							</div>
 							<div class="bzh-clr"></div>
 						</div>
@@ -164,5 +136,7 @@
 <div id="result-div"></div>
 
 <br style="clear:both" />
+
+{% EVENT breizhcharts_footer %}
 
 {% INCLUDE 'overall_footer.html' %}

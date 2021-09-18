@@ -1,7 +1,8 @@
 {% INCLUDE 'overall_header.html' %}
 
+{% EVENT breizhcharts_header %}
+
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
-<br />
 
 <div class="forabg">
 	<div class="inner">
@@ -19,9 +20,10 @@
 					<dd style="text-align: center; width: 7%;">{{ lang('BC_RANK') }}</dd>
 					<dd style="text-align: center; width: 50%;">{{ lang('BC_SONG') }}</dd>
 					<dd style="text-align: center; width: 10%;">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd style="text-align: center; width: 15%;">{{ lang('BC_USER') }}</dd>
+					<dd style="text-align: center; width: 10%;">{{ lang('BC_USER') }}</dd>
+					<dd style="text-align: center; width: 15%;">{{ lang('BC_LAST_POS') }}</dd>
 					{% if S_UPS %}
-					<dd style="text-align: center; width: 9%;">{{ lang('BC_WON') }}</dd>
+					<dd style="text-align: center; width: 7%;">{{ lang('BC_WON') }}</dd>
 					{% endif %}
 				</dl>
 			</li>
@@ -30,24 +32,72 @@
 			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
 				<dl>
 					<dd style="width: 7%;text-align:center;">
-						{{ winner.RANK }}
+						<div style="margin: 10px 1px 1px 8px;">
+							{{ winner.RANK }}
+						</div>
 					</dd>
 					<dd style="width: 50%;">
 						<div style="margin: 10px 1px 1px 8px;">
-							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,680,450); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
+							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
 						</div>
 					</dd>
 					<dd style="width: 10%;text-align:center;">
-						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,680,450); return false;" title="{{ winner.VIDEO }}">
-							<img src="{{ winner.THUMBNAIL }}" alt="" height="45px" />
+						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">
+							<img src="{{ winner.THUMBNAIL }}" alt="{{ winner.SONG }}" height="45px" />
 						</a>
 					</dd>
+					<dd style="width: 10%;">
+						<div style="margin: 10px 1px 1px 8px;text-align:center;">{{ winner.USER }}</div>
+					</dd>
 					<dd style="width: 15%;">
-						<div style="margin: 10px 1px 1px 8px;">{{ winner.USER }}</div>
+						<div class="song-nforate">
+							<div class="bzh-inline-rating">
+								<ul class="bzh-star-rating">
+									<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="one-star">1</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="two-star">2</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="three-star">3</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="four-star">4</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="five-star">5</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="six-star">6</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a>
+									</li>
+									<li>
+										<a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a>
+									</li>
+								</ul>
+							</div>
+							<div class="bzh-box">
+								{{ winner.TOTAL_RATE }}<br />
+								{{ winner.SONG_RATED }}<br />
+							</div>
+							<div class="bzh-clr"></div>
+						</div>
 					</dd>
 					{% if S_UPS %}
-					<dd style="width: 10%;">
-						<div style="margin: 10px 1px 1px 8px;">{{ winner.WIN }}</div>
+					<dd style="width: 7%;">
+						<div style="margin: 10px 1px 1px 8px;text-align:center;">
+							{{ winner.WIN }}
+						</div>
 					</dd>
 					{% endif %}
 				</dl>
@@ -64,6 +114,10 @@
 			{% endif %}
 		</ul>
 	</div>
+</div>
+
+<div>
+	{{ lang('BC_LAST_WINNERS_SELECT') }} <select id="select_wins" onchange="breizhcharts.selectWins(this.value);">{{ SELECT_WINS }}</select>
 </div>
 
 {% if S_BONUS_WINNER %}
@@ -92,5 +146,7 @@
 {% endif %}
 
 <br style="clear:both" />
+
+{% EVENT breizhcharts_footer %}
 
 {% INCLUDE 'overall_footer.html' %}

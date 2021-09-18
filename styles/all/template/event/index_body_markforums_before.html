@@ -4,7 +4,7 @@
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dd style="width:100%; text-align:center;">{{ lang('BC_INDEX_WINNER') }}&nbsp;{{ PERIOD }}</dd>
+					<dd style="width:100%; text-align:center;">{{ RESULT_PERIOD }}</dd>
 				</dl>
 			</li>
 		</ul>
@@ -23,8 +23,52 @@
 							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,410);return false;">
 								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px" />
 							</a>
-							<br /><br />
-							{{ winner.USER }}: {{ winner.WIN }}
+							<br />
+							<div>
+								<div class="song-nforate">
+									<div class="bzh-inline-rating">
+										<ul class="bzh-star-rating">
+											<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="one-star">1</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="two-star">2</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="three-star">3</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="four-star">4</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="five-star">5</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="six-star">6</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a>
+											</li>
+											<li>
+												<a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a>
+											</li>
+										</ul>
+									</div>
+									<div class="bzh-box">
+										{{ winner.TOTAL_RATE }}<br />
+										{{ winner.SONG_RATED }}<br />
+									</div>
+									<div class="bzh-clr"></div>
+								</div>
+							</div>
+							{{ winner.USER }}{{ lang('COLON') }} {{ winner.WIN }}
 						</span>
 						{% endfor %}
 					</div>
@@ -48,7 +92,7 @@
 
 <div class="rules">
 	<div class="inner">
-		<strong>{{ lang('INFORMATION') }}:</strong> {{ VOTE }}
+		<strong>{{ lang('INFORMATION') }}{{ lang('COLON') }}</strong> {{ VOTE }}
 	</div>
 </div>
 {% endif %}
@@ -56,7 +100,7 @@
 {% if S_CHECK_SECOND %}
 <div id="message" class="rules">
 	<div class="inner">
-		<strong>{{ lang('INFORMATION') }}:</strong> {{ REMINDER }}
+		<strong>{{ lang('INFORMATION') }}{{ lang('COLON') }}</strong> {{ REMINDER }}
 	</div>
 </div>
 

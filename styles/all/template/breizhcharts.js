@@ -47,6 +47,9 @@
 	breizhcharts.clearMessage = function(){
 		$('#result-div').hide();
 	};
+	breizhcharts.selectWins = function(winner){
+		$(location).attr('href', bcConfig.winUrl+'&winner='+winner+'#start');
+	};
 	breizhcharts.checkSongArtist = function(){
 		var songName = $('#song_name').val(), artist = $('#artist').val();
 		if(songName === '' || artist === ''){
