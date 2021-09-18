@@ -551,7 +551,7 @@ class functions_charts
 			if (!$vote)
 			{
 				$content .= ' onclick="breizhcharts.voteMusic(' . $song_id . ', ' . $i . ');"';
-				$content .= ' title="' . $this->language->lang('BC_AJAX_STARS',  $i) . '"';
+				$content .= ' title="' . $this->language->lang('BC_AJAX_STARS', $i) . '"';
 			}
 			else
 			{
@@ -577,7 +577,7 @@ class functions_charts
 					'ON'	=> 'u.user_id = c.result_poster_id',
 				],
 			],
-			'WHERE'		=> ($winner) ? 'c.result_nb = ' . $winner  : "c.result_time = '$date_result'",
+			'WHERE'		=> ($winner) ? 'c.result_nb = ' . $winner : "c.result_time = '$date_result'",
 			'ORDER_BY'	=> 'c.result_nb DESC, c.result_pos ASC',
 		]);
 		$result = $this->db->sql_query_limit($sql, (int) $this->config['breizhcharts_winners_per_page']);

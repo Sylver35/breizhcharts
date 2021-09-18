@@ -133,93 +133,15 @@ class admin_controller
 			switch ($action)
 			{
 				case 'edit':
-					$sql = 'SELECT *
-						FROM ' . $this->breizhcharts_table . ' 
-							WHERE song_id = ' . $id;
-					$result = $this->db->sql_query_limit($sql, 1);
-					$row = $this->db->sql_fetchrow($result);
-					$this->db->sql_freeresult($result);
-
-					$this->template->assign_vars(array(
-						'S_BREIZHCHARTS_EDIT'	=> true,
-						'ID'					=> $id,
-						'SK'					=> $sort_key,
-						'SD'					=> $sort_dir,
-						'TITLE'					=> $row['song_name'],
-						'ARTIST'				=> $row['artist'],
-						'ALBUM'					=> $row['album'],
-						'YEAR'					=> $row['year'],
-						'VIDEO'					=> $row['video'],
-						'U_ACTION'				=> $this->u_action . '&amp;action=update',
-						'U_BACK'				=> $this->u_action,
-						'U_CHECK_SONG'			=> $this->helper->route('sylver35_breizhcharts_check_song'),
-						'U_CHECK_VIDEO'			=> $this->helper->route('sylver35_breizhcharts_check_video'),
-						'U_EXT_PATH'			=> $this->ext_path_web,
-					));
+					$this->action_edit($id, $sort_key, $sort_dir);
 				break;
 
 				case 'update':
-					if (!check_form_key('acp_breizhcharts'))
-					{
-						trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
-					}
-
-					$data = [
-						'song_name'		=> $this->request->variable('song_name', '', true),
-						'artist'		=> $this->request->variable('artist', '', true),
-						'album'			=> $this->request->variable('album', '', true),
-						'year'			=> $this->request->variable('year', ''),
-						'video'			=> $this->request->variable('video', '', true),
-					];
-
-					if ($data['song_name'] === '')
-					{
-						trigger_error($this->language->lang('BC_NEED_TITLE') . adm_back_link($this->u_action));	
-					}
-					else if ($data['artist'] === '')
-					{
-						trigger_error($this->language->lang('BC_NEED_ARTIST') . adm_back_link($this->u_action));	
-					}
-					else
-					{
-						$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . $id);
-
-						$message = $this->language->lang('LOG_ADMIN_CHART_UPDATED', $data['song_name']);
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, $message, time());
-						trigger_error($this->language->lang('BC_UPDATED') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
-					}
+					$this->action_update($id, $sort_key, $sort_dir);
 				break;
 
 				case 'delete':
-					if (confirm_box(true))
-					{
-						$sql = 'SELECT song_name, artist, topic_id
-							FROM ' . $this->breizhcharts_table . '
-								WHERE song_id = ' . $id;
-						$result = $this->db->sql_query_limit($sql, 1);
-						$row = $this->db->sql_fetchrow($result);
-						$title = $row['song_name'];
-						$artist = $row['artist'];
-						$topic_id = (int) $row['topic_id'];
-						$this->db->sql_freeresult($result);
-
-						$this->db->sql_query('DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $id);
-						if ($topic_id)
-						{
-							delete_topics('topic_id', [$topic_id], false);
-						}
-
-						$this->config->increment('breizhcharts_songs_nb', -1, true);
-						$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_DELETED', time(), [$this->language->lang('BC_FROM_OF', $title, $artist)]);
-						trigger_error($this->language->lang('BC_DELETE_OK') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
-					}
-					else
-					{
-						confirm_box(false, $this->language->lang('BC_REALLY_DELETE'), build_hidden_fields([
-							'song_id'	=> $id,
-							'action'	=> 'delete',
-						]));
-					}
+					$this->action_delete($id, $sort_key, $sort_dir);
 				break;
 			}
 		}
@@ -273,7 +195,7 @@ class admin_controller
 
 		$this->template->assign_vars([
 			'S_MANAGE'			=> true,
-			'DM_VERSION'		=> $this->config['breizhcharts_version'],
+			'BC_VERSION'		=> $this->config['breizhcharts_version'],
 			'S_SELECT_SORT_DIR'	=> $s_sort_dir,
 			'S_SELECT_SORT_KEY'	=> $s_sort_key,
 		]);
@@ -293,7 +215,103 @@ class admin_controller
 		{
 			return 'https://img.youtube.com/vi/' . $youtube_id . '/hqdefault.jpg';
 		}
-		return '';
+		else
+		{
+			return '';
+		}
+	}
+
+	private function action_edit($id, $sort_key, $sort_dir)
+	{
+		$sql = 'SELECT *
+			FROM ' . $this->breizhcharts_table . ' 
+				WHERE song_id = ' . $id;
+		$result = $this->db->sql_query_limit($sql, 1);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars(array(
+			'S_BREIZHCHARTS_EDIT'	=> true,
+			'ID'					=> $id,
+			'SK'					=> $sort_key,
+			'SD'					=> $sort_dir,
+			'TITLE'					=> $row['song_name'],
+			'ARTIST'				=> $row['artist'],
+			'ALBUM'					=> $row['album'],
+			'YEAR'					=> $row['year'],
+			'VIDEO'					=> $row['video'],
+			'U_ACTION'				=> $this->u_action . '&amp;action=update',
+			'U_BACK'				=> $this->u_action,
+			'U_CHECK_SONG'			=> $this->helper->route('sylver35_breizhcharts_check_song'),
+			'U_CHECK_VIDEO'			=> $this->helper->route('sylver35_breizhcharts_check_video'),
+			'U_EXT_PATH'			=> $this->ext_path_web,
+		));
+	}
+
+	private function action_update($id, $sort_key, $sort_dir)
+	{
+		if (!check_form_key('acp_breizhcharts'))
+		{
+			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
+		}
+
+		$data = [
+			'song_name'		=> $this->request->variable('song_name', '', true),
+			'artist'		=> $this->request->variable('artist', '', true),
+			'album'			=> $this->request->variable('album', '', true),
+			'year'			=> $this->request->variable('year', ''),
+			'video'			=> $this->request->variable('video', '', true),
+		];
+
+		if ($data['song_name'] === '')
+		{
+			trigger_error($this->language->lang('BC_NEED_TITLE') . adm_back_link($this->u_action));	
+		}
+		else if ($data['artist'] === '')
+		{
+			trigger_error($this->language->lang('BC_NEED_ARTIST') . adm_back_link($this->u_action));	
+		}
+		else
+		{
+			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . $id);
+
+			$message = $this->language->lang('LOG_ADMIN_CHART_UPDATED', $data['song_name']);
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, $message, time());
+			trigger_error($this->language->lang('BC_UPDATED') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
+		}
+	}
+
+	private function action_delete($id, $sort_key, $sort_dir)
+	{
+		if (confirm_box(true))
+		{
+			$sql = 'SELECT song_name, artist, topic_id
+				FROM ' . $this->breizhcharts_table . '
+					WHERE song_id = ' . $id;
+			$result = $this->db->sql_query_limit($sql, 1);
+			$row = $this->db->sql_fetchrow($result);
+			$title = $row['song_name'];
+			$artist = $row['artist'];
+			$topic_id = (int) $row['topic_id'];
+			$this->db->sql_freeresult($result);
+
+			$this->db->sql_query('DELETE FROM ' . $this->breizhcharts_table . ' WHERE song_id = ' . $id);
+			if ($topic_id)
+			{
+				delete_topics('topic_id', [$topic_id], false);
+			}
+
+			$this->config->increment('breizhcharts_songs_nb', -1, true);
+			$this->log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_DELETED', time(), [$this->language->lang('BC_FROM_OF', $title, $artist)]);
+			trigger_error($this->language->lang('BC_DELETE_OK') . adm_back_link($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir));
+		}
+		else
+		{
+			confirm_box(false, $this->language->lang('BC_REALLY_DELETE'), build_hidden_fields([
+				'song_id'	=> $id,
+				'action'	=> 'delete',
+			]));
+		}
 	}
 
 	/**

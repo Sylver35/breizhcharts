@@ -126,8 +126,8 @@ class breizhcharts_install extends migration
 
 			'add_columns' => [
 				$this->table_prefix . 'users' => [
-					'breizhchart_check_1'		=> ['TINT:1', 0],
-					'breizhchart_check_2'		=> ['TINT:1', 0],
+					'breizhchart_check_1'		=> ['BOOL', 0],
+					'breizhchart_check_2'		=> ['BOOL', 0],
 					'breizhchart_last'			=> ['UINT:11', 0],
 				],
 			],

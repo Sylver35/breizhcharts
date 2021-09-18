@@ -8,7 +8,7 @@
 
 <h1>{{ lang('BC_PAGE_TITLE') }}</h1>
 <p>{{ lang('BC_PAGE_DESC') }}</p>
-<p><img src="https://img.shields.io/badge/{{ lang('Version') }}-{{ DM_VERSION }}-green.svg?style=plastic" title="{{ lang('Version') }} {{ DM_VERSION }}" /></p>
+<p><img src="https://img.shields.io/badge/{{ lang('Version') }}-{{ BC_VERSION }}-green.svg?style=plastic" title="{{ lang('Version') }} {{ BC_VERSION }}" /></p>
 
 {% if not S_BREIZHCHARTS_EDIT %}
 <form id="breizhchart_manage" method="post" action="{{ U_ACTION }}">
@@ -107,6 +107,7 @@
 		<input type="hidden" name="sd" value="{{ SD }}" />
 		<input class="button1" id="submit" name="submit" value="{{ lang('SUBMIT') }}" type="submit" />&nbsp;
 		<input class="button2" id="reset" name="reset" value="{{ lang('RESET') }}" type="reset" />
+		{{ S_FORM_TOKEN }}
 	</fieldset>
 </form>
 {% endif %}
