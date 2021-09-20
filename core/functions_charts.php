@@ -1017,7 +1017,7 @@ class functions_charts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['sql_result', 'winner'];
+		$vars = ['sql_insert', 'winner'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
 
 		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
