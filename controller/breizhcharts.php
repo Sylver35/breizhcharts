@@ -393,11 +393,14 @@ class breizhcharts
 			'album'			=> $this->request->variable('album', '', true),
 			'year'			=> $this->request->variable('year', ''),
 			'video'			=> $this->request->variable('video', '', true),
+			'poster_id'		=> $this->user->data['user_id'],
+			'add_time'		=> time(),
+			'topic_id'		=> 0,
 		];
 
 		if ($this->request->is_set_post('post'))
 		{
-			$error = $this->validate_add_song();
+			$error = $this->validate_add_song($data);
 		}
 		else
 		{
@@ -435,20 +438,8 @@ class breizhcharts
 		page_footer();
 	}
 
-	private function validate_add_song()
+	private function validate_add_song($data)
 	{
-		$url = '';
-		$data = [
-			'song_name'		=> $this->request->variable('song_name', '', true),
-			'artist'		=> $this->request->variable('artist', '', true),
-			'album'			=> $this->request->variable('album', '', true),
-			'year'			=> $this->request->variable('year', ''),
-			'video'			=> $this->request->variable('video', '', true),
-			'poster_id'		=> $this->user->data['user_id'],
-			'add_time'		=> time(),
-			'topic_id'		=> 0,
-		];
-
 		if ($error = $this->functions_charts->verify_chart_before_send($data, 0))
 		{
 			return implode('<br />', $error);
