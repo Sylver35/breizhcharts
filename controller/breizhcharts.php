@@ -134,6 +134,7 @@ class breizhcharts
 		$winner = (int) $this->request->variable('winner', 0);
 		$name = (string) $this->request->variable('name', '', true);
 		$title_mode = $this->language->lang('BC_NEWEST');
+		$order_by = 'c.song_id DESC';
 		$body = 'breizhcharts.html';
 
 		/**
@@ -150,7 +151,6 @@ class breizhcharts
 		switch ($mode)
 		{
 			case 'list_newest':
-				$order_by = 'c.song_id DESC';
 				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode);
 			break;
 
@@ -162,13 +162,11 @@ class breizhcharts
 
 			case 'own':
 				$title_mode = $this->language->lang('BC_OWN');
-				$order_by = 'c.song_id DESC';
 				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode);
 			break;
 
 			case 'user':
 				$title_mode = $this->language->lang('BC_OF_USER', $name);
-				$order_by = 'c.song_id DESC';
 				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode, $userid, $name);
 			break;
 
@@ -236,7 +234,7 @@ class breizhcharts
 			$json_response->send([
 				'sort'		=> 0,
 				'id'		=> $song_id,
-				'message'	=> $this->language->lang('NOT_AUTHORISED'),
+				'message'	=> $this->language->lang('BC_AJAX_NO_VOTE'),
 			]);
 			return;
 		}
@@ -383,7 +381,7 @@ class breizhcharts
 	{
 		if (!$this->auth->acl_gets(['u_breizhcharts_add', 'a_breizhcharts_manage']))
 		{
-			throw new http_exception(403, 'NOT_AUTHORISED');
+			throw new http_exception(403, 'BC_SONG_ADD_NO');
 		}
 
 		$error = '';
@@ -447,6 +445,7 @@ class breizhcharts
 		else
 		{
 			// Announce new songs, if enabled, create topic
+			$url = '';
 			if ($this->config['breizhcharts_announce_enable'])
 			{
 				$url = $this->functions_charts->create_topic($data['song_name'], $data['artist'], $data['video']);

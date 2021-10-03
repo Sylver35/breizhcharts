@@ -129,7 +129,7 @@ class functions_charts
 
 		foreach (array_slice($meta['authors'], 0, 1) as $author)
 		{
-			$homepages[$i] = sprintf('<a href="%1$s" title="%2$s">%2$s</a>', $author['homepage'], $author['name']);
+			$homepages[$i] = sprintf('<a href="%1$s" title="%1$s">%2$s</a>', $author['homepage'], $author['name']);
 			$i++;
 		}
 
@@ -210,12 +210,12 @@ class functions_charts
 			include($this->root_path . 'includes/functions_posting.' . $this->php_ext);
 		}
 
-		$options = 0;
-		$poll = $uid = $bitfield = '';
+		$flags = 0;
+		$poll_ary = $uid = $bitfield = '';
 		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
 		$song_title = utf8_encode_ucr($this->language->lang('BC_ANNOUNCE_TITLE', $song, $artist));
 		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song, $artist, $url, $this->get_youtube_img($video, true));
-		generate_text_for_storage($song_msg, $uid, $bitfield, $options, true, true, true);
+		generate_text_for_storage($song_msg, $uid, $bitfield, $flags, true, true, true);
 
 		$data = [
 			'forum_id'			=> (int) $this->config['breizhcharts_song_forum'],
@@ -232,14 +232,14 @@ class functions_charts
 			'topic_title'		=> (string) $song_title,
 			'notify_set'		=> false,
 			'notify'			=> false,
-			'post_time'			=> 0,
-			'poster_id'			=> $this->user->data['user_id'],
+			'post_time'			=> (int) time(),
+			'poster_id'			=> (int) $this->user->data['user_id'],
 			'forum_name'		=> '',
 			'enable_indexing'	=> true,
 		];
-		$url = submit_post('post', $song_title, '', POST_NORMAL, $poll, $data);
+		$post = submit_post('post', $song_title, '', POST_NORMAL, $poll_ary, $data);
 
-		return $url;
+		return $post;
 	}
 
 	public function add_user_points($user_id, $amount)
@@ -365,7 +365,7 @@ class functions_charts
 			$title = 'BC_POSITION_DOWN';
 		}
 
-		return '<img src="' . $this->ext_path . 'images/' . $img . '" alt="" title="' . $this->language->lang($title, $pos) . '" />';
+		return '<img src="' . $this->ext_path . 'images/' . $img . '" alt="' . $img . '" title="' . $this->language->lang($title, $pos) . '" />';
 	}
 
 	public function create_navigation($mode, $title_mode, $song = 0, $userid = 0, $name = '')
@@ -919,27 +919,25 @@ class functions_charts
 		$result = $this->db->sql_query($sql);
 		$total_votes = (int) $this->db->sql_fetchfield('total_votes');
 		$this->db->sql_freeresult($result);
-		if (empty($total_votes))
+		if (!empty($total_votes))
 		{
-			return;
-		}
+			// Reset all notes
+			$this->reset_all_notes();
+			if ($this->points_active())
+			{
+				$this->run_random_winner();
+				$this->points_to_winners();
+			}
 
-		// Reset all notes
-		$this->reset_all_notes();
-		if ($this->points_active())
-		{
-			$this->run_random_winner();
-			$this->points_to_winners();
-		}
+			// Send PM to the winners
+			if ($this->config['breizhcharts_pm_enable'])
+			{
+				$this->send_pm_to_winners();
+			}
 
-		// Send PM to the winners
-		if ($this->config['breizhcharts_pm_enable'])
-		{
-			$this->send_pm_to_winners();
+			// Empty the voters table
+			$this->db->sql_query('TRUNCATE ' . $this->breizhcharts_voters_table);
 		}
-
-		// Empty the voters table
-		$this->db->sql_query('TRUNCATE ' . $this->breizhcharts_voters_table);
 
 		// Reset the checks value
 		$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 0, breizhchart_check_2 = 0 WHERE breizhchart_check_1 <> 0');
