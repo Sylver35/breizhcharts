@@ -27,6 +27,10 @@ class breizhcharts_1_2_0 extends migration
 		return [
 			// Version of extension
 			['config.update', ['breizhcharts_version', '1.2.0']],
+
+			['config.add', ['breizhcharts_li_onclick', ' onclick="breizhcharts.voteMusic(%1$s, %2$s);"']],
+			['config.add', ['breizhcharts_li_rating', '<li id="rating-%1$s" class="current%2$s-rating" style="width: %3$s;"></li>']],
+			['config.add', ['breizhcharts_li_stars', '<li><a%1$s title="%2$s" class="star-%3$s"></a></li>']],
 		];
 	}
 }

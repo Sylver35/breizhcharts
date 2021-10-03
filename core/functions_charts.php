@@ -542,22 +542,14 @@ class functions_charts
 
 	private function stars_vote($song_id, $vote, $user_vote, $song_note)
 	{
-		$current = (!$vote) ? 'current-not-rating' : 'current-rating';
-		$content = '<li id="rating-' . $song_id . '" class="' . $current . '" style="width: ' . number_format($song_note * 10, 2) . '%;"></li>';
+		$class = (!$vote) ? '-not' : '';
+		$content = sprintf($this->config['breizhcharts_li_rating'], $song_id, $class, number_format($song_note * 10, 2) . '%');
 
 		for ($i = 1, $nb = 11; $i < $nb; $i++)
 		{
-			$content .= '<li><a';
-			if (!$vote)
-			{
-				$content .= ' onclick="breizhcharts.voteMusic(' . $song_id . ', ' . $i . ');"';
-				$content .= ' title="' . $this->language->lang('BC_AJAX_STARS', $i) . '"';
-			}
-			else
-			{
-				$content .= ' title="' . strip_tags($user_vote) . '"';
-			}
-			$content .= ' class="star-' . $i . '">' . $i . '</a></li>';
+			$onclick = (!$vote) ? sprintf($this->config['breizhcharts_li_onclick'], $song_id, $i) : '';
+			$title = (!$vote) ? $this->language->lang('BC_AJAX_STARS', $i) : strip_tags($user_vote);
+			$content .= sprintf($this->config['breizhcharts_li_stars'], $onclick, $title, $i);
 		}
 
 		return $content;
