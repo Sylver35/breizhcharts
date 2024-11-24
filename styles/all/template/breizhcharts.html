@@ -6,8 +6,8 @@
 <div class="rules">
 	<div class="inner">
 		{{ MC_TITLE_EXPLAIN }}
-		<br /><br />
-		<img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube" /> {{ lang('GO_TO_YOUTUBE') }}
+		<br><br>
+		<img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube"> {{ lang('GO_TO_YOUTUBE') }}
 	</div>
 </div>
 {% endif %}
@@ -39,7 +39,7 @@
 			<li class="row bg3">
 				<dl class="title_tab">
 					<dd style="width: 7%;">{{ lang('BC_CURR_POS') }}</dd>
-					<dd style="width: 37%;">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br />{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
+					<dd style="width: 37%;">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br>{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
 					<dd style="width: 12%;">{{ lang('BC_SONG_VIDEO') }}</dd>
 					<dd style="width: 13%;">{{ lang('BC_ADDED_BY') }}</dd>
 					<dd style="width: 20%;">{{ lang('BC_RATE') }}</dd>
@@ -51,26 +51,26 @@
 			<li class="row {% if chart.POSITION is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
 				<dl class="content_tab">
 					<dd style="width:7%;">
-						<br />
-							{% if chart.U_DELETE_SONG %}<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_delete.png" alt="{{ lang('BC_DELETE_SONG') }}" title="{{ lang('BC_DELETE_SONG') }}" /></span></a>{% endif %}
-							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}#start" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('BC_EDIT_SONG') }}" title="{{ lang('BC_EDIT_SONG') }}" /></span></a>{% endif %}
-						<br /><br />{{ chart.POSITION }}
+						<br>
+							{% if chart.U_DELETE_SONG %}<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_delete.png" alt="{{ lang('BC_DELETE_SONG') }}" title="{{ lang('BC_DELETE_SONG') }}"></span></a>{% endif %}
+							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}#start" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('BC_EDIT_SONG') }}" title="{{ lang('BC_EDIT_SONG') }}"></span></a>{% endif %}
+						<br><br>{{ chart.POSITION }}
 					</dd>
 					<dd style="width: 37%;">
-						<span class="song-title">{{ chart.TITLE }}</span><br />
+						<span class="song-title">{{ chart.TITLE }}</span><br>
 						{{ chart.ARTIST }}
-						<br />
+						<br>
 						{{ chart.ALBUM }}
 						{% if chart.ALBUM and chart.YEAR %} | {% endif %}
 						{{ chart.YEAR }}
 					</dd>
 					<dd style="width: 12%;">
 						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">
-							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" height="50px" />
+							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" height="50px">
 						</a>
 					</dd>
 					<dd style="width: 13%;">
-						<br />{{ chart.USERNAME }}
+						<br>{{ chart.USERNAME }}
 						<div class="add-time"><i>{{ chart.ADDED_TIME }}</i></div>
 					</dd>
 					<dd id="bzh_vote-{{ chart.SONG_ID }}" style="width: 20%;">
@@ -81,8 +81,8 @@
 								</ul>
 							</div>
 							<div id="bzh_result-{{ chart.SONG_ID }}" class="bzh-box">
-								{{ chart.TOTAL_RATE }}<br />
-								{{ chart.SONG_RATED }}<br />
+								{{ chart.TOTAL_RATE }}<br>
+								{{ chart.SONG_RATED }}<br>
 								<div class="{{ chart.VOTED_IMG }}"></div>{{ chart.USER_VOTE }}
 							</div>
 							<div class="bzh-clr"></div>
@@ -91,8 +91,8 @@
 					<dd style="width: 10%;">
 						{{ chart.TENDENCY_IMG }}
 						<div class="bzh-tendency">
-							{{ chart.ACTUAL }}<br />
-							{{ chart.LAST }}<br />
+							{{ chart.ACTUAL }}<br>
+							{{ chart.LAST }}<br>
 							{{ chart.BEST }}
 						</div>
 					</dd>
@@ -135,7 +135,7 @@
 
 <div id="result-div"></div>
 
-<br style="clear:both" />
+<br style="clear:both">
 
 {% EVENT breizhcharts_footer %}
 

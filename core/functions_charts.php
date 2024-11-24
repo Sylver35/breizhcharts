@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -365,7 +365,7 @@ class functions_charts
 			$title = 'BC_POSITION_DOWN';
 		}
 
-		return '<img src="' . $this->ext_path . 'images/' . $img . '" alt="' . $img . '" title="' . $this->language->lang($title, $pos) . '" />';
+		return '<img src="' . $this->ext_path . 'images/' . $img . '" alt="' . $img . '" title="' . $this->language->lang($title, $pos) . '">';
 	}
 
 	public function create_navigation($mode, $title_mode, $song = 0, $userid = 0, $name = '')
@@ -399,15 +399,21 @@ class functions_charts
 		}
 
 		// Main template variables for the navigation
-		$this->template->assign_block_vars('navlinks', [
-			'FORUM_NAME'	=> $this->language->lang('BC_CHARTS'),
-			'U_VIEW_FORUM'	=> $this->helper->route('sylver35_breizhcharts_page_music'),
+		$this->add_navlinks([
+			$this->language->lang('BC_CHARTS')	=> $this->helper->route('sylver35_breizhcharts_page_music'),
+			$title_mode							=> $this->helper->route($url, $url_array),
 		]);
+	}
 
-		$this->template->assign_block_vars('navlinks', [
-			'FORUM_NAME'	=> $title_mode,
-			'U_VIEW_FORUM'	=> $this->helper->route($url, $url_array),
-		]);
+	private function add_navlinks($links)
+	{
+		foreach ($links as $name => $link)
+		{
+			$this->template->assign_block_vars('navlinks', [
+				'FORUM_NAME'	=> $name,
+				'U_VIEW_FORUM'	=> $link,
+			]);
+		}
 	}
 
 	private function build_tendency()
@@ -652,7 +658,7 @@ class functions_charts
 		else
 		{
 			return [
-				'img'	=> '<img src="' . $this->ext_path . 'images/place_' . $last_pos . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" />',
+				'img'	=> '<img src="' . $this->ext_path . 'images/place_' . $last_pos . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '">',
 				'win'	=> ($points_active) ? $this->language->lang('BC_WON_VALUE', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']) : '',
 			];
 		}
@@ -731,7 +737,7 @@ class functions_charts
 			'S_CHECK_FIRST'		=> true,
 			'BONUS_WINNER'		=> $bonus_winner,
 			'RESULT_PERIOD'		=> ($this->config['breizhcharts_last_result']) ? $this->language->lang('BC_INDEX_WINNER', $this->user->format_date($this->config['breizhcharts_last_result'])) : '',
-			'VOTE'				=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
+			'VOTE'				=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
 		]);
 	}
 
@@ -753,14 +759,8 @@ class functions_charts
 		$result = $this->db->sql_query_limit($sql, 8);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$line = false;
-			if ($i === 4)
-			{
-				$line = true;
-				$i = 0;
-			}
 			$this->template->assign_block_vars('newests', [
-				'LINE'			=> $line,
+				'LINE'			=> ($i === 4) ? true : false,
 				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
@@ -773,7 +773,7 @@ class functions_charts
 
 		$this->template->assign_vars([
 			'S_CHECK_SECOND'	=> true,
-			'REMINDER'			=> $this->language->lang('BC_VOTE_CHECK_SECOND', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br /><br /><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
+			'REMINDER'			=> $this->language->lang('BC_VOTE_CHECK_SECOND', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
 		]);
 	}
 
@@ -817,9 +817,9 @@ class functions_charts
 				$data = [
 					'address_list'		=> ['u' => [$row['user_id'] => 'to']],
 					'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-					'from_username'		=> 'Administration',
-					'icon_id'			=> 0,
+					'from_username'		=> 'Admin',
 					'from_user_ip'		=> '',
+					'icon_id'			=> 0,
 					'enable_bbcode'		=> true,
 					'enable_smilies'	=> true,
 					'enable_urls'		=> true,
@@ -850,12 +850,10 @@ class functions_charts
 		$this->db->sql_freeresult($result);
 	}
 
-	private function send_pm_to_winners()
+	private function send_pm_to_winners($points_active)
 	{
 		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
 
-		$i = 1;
-		$points_active = $this->points_active();
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
 			'FROM'		=> [$this->breizhcharts_table => 'c'],
@@ -874,15 +872,18 @@ class functions_charts
 			$options = 0;
 			$uid = $bitfield = '';
 			$message = $this->language->lang('BC_PM_MESSAGE', $row['username'], $this->language->lang('BC_PLACE_LIST_' . (int) $row['last_pos']), $row['song_name'], $row['artist']);
-			$message .= ($points_active) ? $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . (int) $row['last_pos']], $this->config['points_name']) : '';
+			if ($points_active)
+			{
+				$message .= $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . $row['last_pos']], $this->config['points_name']);
+			}
 			generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
 
 			$data = [
 				'address_list'		=> ['u' => [$row['user_id'] => 'to']],
 				'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-				'from_username'		=> 'Administration',
-				'icon_id'			=> 0,
+				'from_username'		=> 'Admin',
 				'from_user_ip'		=> '',
+				'icon_id'			=> 0,
 				'enable_bbcode'		=> true,
 				'enable_smilies'	=> true,
 				'enable_urls'		=> true,
@@ -891,8 +892,7 @@ class functions_charts
 				'bbcode_bitfield'	=> $bitfield,
 				'bbcode_uid'		=> $uid,
 			];
-			submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . (int) $row['last_pos'])), $data, false);
-			$i++;
+			submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . $row['last_pos'])), $data, false);
 		}
 		$this->db->sql_freeresult($result);
 	}
@@ -915,7 +915,8 @@ class functions_charts
 		{
 			// Reset all notes
 			$this->reset_all_notes();
-			if ($this->points_active())
+			$points_active = $this->points_active();
+			if ($points_active)
 			{
 				$this->run_random_winner();
 				$this->points_to_winners();
@@ -924,14 +925,15 @@ class functions_charts
 			// Send PM to the winners
 			if ($this->config['breizhcharts_pm_enable'])
 			{
-				$this->send_pm_to_winners();
+				$this->send_pm_to_winners($points_active);
 			}
 
-			// Empty the voters table
+			// Truncate the voters table
 			$this->db->sql_query('TRUNCATE ' . $this->breizhcharts_voters_table);
+			$this->cache->destroy('sql', $this->breizhcharts_voters_table);
 		}
 
-		// Reset the checks value
+		// Reset the users checks value
 		$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 0, breizhchart_check_2 = 0 WHERE breizhchart_check_1 <> 0');
 
 		// Add a log entry, when the job is done

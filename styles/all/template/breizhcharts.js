@@ -1,7 +1,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2022 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -31,7 +31,7 @@
 					$('#stars-'+id+' a').each(function(){
 						$(this).attr({'onclick': '', 'title': aTitle}).prop('onclick', null);
 					});
-					$('#bzh_result-'+id).html(result.totalRate+'<br />'+result.songRated+'<br /><div class="rated"></div>'+result.userVote);
+					$('#bzh_result-'+id).html(result.totalRate+'<br>'+result.songRated+'<br><div class="rated"></div>'+result.userVote);
 					$('#result-div').show().html('<span class="succes-div">'+result.message+'</span>');
 				}else{
 					$('#bzh_result-'+id).html($content);
@@ -86,7 +86,7 @@
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){
-					$('#check-video').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35" />');
+					$('#check-video').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35">');
 				}else{
 					$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
 					$('#button').attr({'disabled': true, 'title': bcConfig.error});

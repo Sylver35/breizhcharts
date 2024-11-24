@@ -2,8 +2,8 @@
 /**
 *
 * @package phpBB Extension -  breizhcharts
-* @copyright (c) 2021 Sylver35  https://breizhcode.com
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* @copyright (c) 2021-2024 Sylver35  https://breizhcode.com
+* @license https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 

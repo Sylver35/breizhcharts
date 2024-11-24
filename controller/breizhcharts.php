@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -124,7 +124,7 @@ class breizhcharts
 	{
 		if (!$this->auth->acl_gets(['u_breizhcharts_view', 'a_breizhcharts_manage']))
 		{
-			throw new http_exception(403, 'NOT_AUTHORISED');
+			throw new http_exception(403, 'BC_NOT_AUTHORISED');
 		}
 
 		$mode = (string) $this->request->variable('mode', 'list_newest');
@@ -144,7 +144,7 @@ class breizhcharts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['mode', 'title_mode'];
+		$vars = ['mode', 'title_mode', 'order_by', 'winner', 'name'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_before', compact($vars)));
 
 		// Switch the mode
@@ -180,9 +180,6 @@ class breizhcharts
 		$this->functions_charts->get_voters();
 		$this->functions_charts->create_navigation($mode, $title_mode, $song_id, $userid, $name);
 
-		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
-
 		/**
 		 * You can use this event after all modes listed here
 		 *
@@ -190,8 +187,11 @@ class breizhcharts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['mode', 'title_mode'];
+		$vars = ['mode', 'title_mode', 'body', 'winner', 'name'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_after', compact($vars)));
+
+		// Output the page
+		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
 
 		// Load charts template
 		$this->template->set_filenames([
@@ -239,7 +239,7 @@ class breizhcharts
 			return;
 		}
 
-		// Check if user already voted
+		// Check if user have already voted
 		$sql = 'SELECT COUNT(vote_song_id) AS counter
 			FROM ' . $this->breizhcharts_voters_table . '
 				WHERE vote_song_id = ' . $song_id . '
@@ -331,9 +331,9 @@ class breizhcharts
 		];
 	}
 
-	// Check if new song probably already exist
 	public function check_song()
 	{
+		// Check if new song probably already exist
 		$id = (int) $this->request->variable('id', 0);
 		$song = (string) $this->request->variable('song', '', true);
 		$artist = (string) $this->request->variable('artist', '', true);
@@ -440,7 +440,7 @@ class breizhcharts
 	{
 		if ($error = $this->functions_charts->verify_chart_before_send($data, 0))
 		{
-			return implode('<br />', $error);
+			return implode('<br>', $error);
 		}
 		else
 		{
@@ -472,11 +472,11 @@ class breizhcharts
 			if ($this->functions_charts->points_active() && $this->config['breizhcharts_ups_points'] > 0)
 			{
 				$this->functions_charts->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
-				trigger_error($this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br />' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
+				trigger_error($this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
 			}
 			else
 			{
-				trigger_error($this->language->lang('BC_SONG_ADDED') . '<br />' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
+				trigger_error($this->language->lang('BC_SONG_ADDED') . '<br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
 			}
 		}
 	}
@@ -547,7 +547,7 @@ class breizhcharts
 
 		if ($error = $this->functions_charts->verify_chart_before_send($data, $song_id))
 		{
-			return implode('<br />', $error);
+			return implode('<br>', $error);
 		}
 		else
 		{
@@ -558,7 +558,7 @@ class breizhcharts
 
 			$redirect_url = $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list', 'start' => $start]);
 			meta_refresh(3, $redirect_url);
-			trigger_error($this->language->lang('BC_SONG_EDIT_SUCCESS', $data['song_name']) . '<br /><br />' . $this->language->lang('BC_BACKLINK', '<a href="' . $redirect_url . '">', '</a>'));
+			trigger_error($this->language->lang('BC_SONG_EDIT_SUCCESS', $data['song_name']) . '<br><br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $redirect_url . '">', '</a>'));
 		}
 	}
 
@@ -591,7 +591,7 @@ class breizhcharts
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_DELETED', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $title, $artist)]);
 
 			meta_refresh(3, $this->helper->route('sylver35_breizhcharts_page_music'));
-			trigger_error($this->language->lang('BC_DELETE_SUCCESS', $title) . '<br /><br />' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
+			trigger_error($this->language->lang('BC_DELETE_SUCCESS', $title) . '<br><br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
 		}
 		else
 		{

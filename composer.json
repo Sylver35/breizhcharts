@@ -2,8 +2,8 @@
     "name": "sylver35/breizhcharts",
     "type": "phpbb-extension",
     "description": "vous pouvez proposer à vos utilisateurs un tableau de musique, qu’ils peuvent créer eux-mêmes. les utilisateurs  peuvent ajouter de nouvelles chansons, qui participeront ensuite à l'élection. Vous définissez une période d’élection, où les utilisateurs peuvent ensuite voter une fois pour chaque musique. De cette façon, vous recevrez un tableau dynamique..",
-    "version": "1.2.0",
-    "time": "2021-09-18",
+    "version": "1.3.0",
+    "time": "2024-11-24",
     "keywords": ["phpbb", "extension", "breizh", "music", "song", "charts"],
     "license": "GPL-2.0-only",
     "authors": [
@@ -25,19 +25,21 @@
         }
     ],
     "require": {
-        "php": ">=7.1.3",
+        "php": ">=7.2",
         "ext-json": "*",
-        "phpbb/phpbb": ">=3.3.4"
+		"composer/installers": "~2.0",
+        "phpbb/phpbb": ">=3.3.13"
     },
     "extra": {
         "display-name": "Breizh charts",
         "soft-require": {
-            "phpbb/phpbb": ">=3.3.4"
+            "phpbb/phpbb": ">=3.3.13"
         },
         "version-check": {
-            "host": "version.breizhcode.com",
-            "directory": "/version",
-            "filename": "/breizhcharts_version.json"
+            "host": "breizhversions.com",
+            "directory": "/breizhcharts",
+            "filename": "version_check.json",
+            "ssl": true
         }
     }
 }

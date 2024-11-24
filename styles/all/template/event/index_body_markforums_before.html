@@ -15,15 +15,15 @@
 					<div style="display: table-row;padding: 0;margin: 0;">
 						{% for winner in winners %}
 						<span style="display: table-cell;text-align: center;">
-							{{ winner.RANK }}<br /><br />
-							<b>{{ winner.SONG }}</b><br />
-							{{ lang('BC_FROM') }}<br />
+							{{ winner.RANK }}<br><br>
+							<b>{{ winner.SONG }}</b><br>
+							{{ lang('BC_FROM') }}<br>
 							<b>{{ winner.ARTIST }}</b>
-							<br /><br />
+							<br><br>
 							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,410);return false;">
-								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px" />
+								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px">
 							</a>
-							<br />
+							<br>
 							<div>
 								<div class="song-nforate">
 									<div class="bzh-inline-rating">
@@ -62,8 +62,8 @@
 										</ul>
 									</div>
 									<div class="bzh-box">
-										{{ winner.TOTAL_RATE }}<br />
-										{{ winner.SONG_RATED }}<br />
+										{{ winner.TOTAL_RATE }}<br>
+										{{ winner.SONG_RATED }}<br>
 									</div>
 									<div class="bzh-clr"></div>
 								</div>
@@ -73,9 +73,9 @@
 						{% endfor %}
 					</div>
 				</div>
-				<br />
+				<br>
 				{% if BONUS_WINNER %}
-				<br />
+				<br>
 				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
 					<div style="display: table-row;padding: 0;margin: 0;">
 						<span style="display: table-cell;text-align: center;">
@@ -121,17 +121,17 @@
 					{% for newest in newests %}
 					{% if newest.LINE %}
 					</div>
-					<br />
+					<br>
 					<div style="display: table-row;padding: 0;margin: 0;">
 					{% endif %}
 						<span style="display: table-cell;text-align: center;width: 25%;">
-							<b>{{ newest.SONG }}</b><br />
-							{{ lang('BC_FROM') }}<br />
-							<b>{{ newest.ARTIST }}</b><br /><br />
+							<b>{{ newest.SONG }}</b><br>
+							{{ lang('BC_FROM') }}<br>
+							<b>{{ newest.ARTIST }}</b><br><br>
 							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
-								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px" />
+								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px">
 							</a>
-							<br /><br />
+							<br><br>
 							{{ newest.USER }}
 						</span>
 					{% endfor %}

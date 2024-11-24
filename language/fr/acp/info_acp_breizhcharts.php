@@ -4,8 +4,8 @@
 * info_acp_breizhcharts [French]
 *
 * @package language
-* @copyright (c) 2010 femu - http://die-muellers.org
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* @copyright (c) 2021-2024 Sylver35  https://breizhcode.com
+* @license https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -48,7 +48,7 @@ $lang = array_merge($lang, array(
 	'BC_CHECK_1_ENABLE'				=> 'Informer les membres de la nouvelle période',
 	'BC_CHECK_1_ENABLE_EXPLAIN'		=> 'Déterminer si les membres doivent être informés qu’un nouveau classement a débuté. Ce message ne sera affiché qu’une seule fois pour chaque membre connecté.',
 	'BC_CHECK_2_ENABLE'				=> 'Informer les membres avant la fin de la période',
-	'BC_CHECK_2_ENABLE_EXPLAIN'		=> 'Déterminer si les membres doivent voir le message de rappel, si la période actuelle est trop courte avant la fin. Vous aurez besoin du temps ci-dessous. Ce message sera ne affiché qu’une seule fois pour les utilisateurs.<br /><strong>L’option du dessus doit être activée impérativement.</strong>',
+	'BC_CHECK_2_ENABLE_EXPLAIN'		=> 'Déterminer si les membres doivent voir le message de rappel, si la période actuelle est trop courte avant la fin. Vous aurez besoin du temps ci-dessous. Ce message sera ne affiché qu’une seule fois pour les utilisateurs.<br><strong>L’option du dessus doit être activée impérativement.</strong>',
 	'BC_CHECK_TIME'					=> 'Délai',
 	'BC_CHECK_TIME_EXPLAIN'			=> 'Entrez ici combien de temps avant la fin de la période, les membres seront informés (si l’option ci-dessus est activée).',
 	'BC_CLICK_RETURN'				=> 'Cliquez %sici%s pour revenir à la gestion du Hit Parade',
@@ -113,17 +113,14 @@ $lang = array_merge($lang, array(
 	'BC_SONG_ARTIST_EXPLAIN'		=> 'Entrez le nom de l’artiste ou du groupe',
 	'BC_SONG_TITLE'					=> 'Titre',
 	'BC_SONG_TITLE_EXPLAIN'			=> 'Entrez ici le titre de la musique',
-	'BC_SONG_URL_EXPLAIN'			=> 'Entrez ici le lien complet vers ​​le site de l’artiste.',
 	'BC_SONG_VIDEO'					=> 'Vidéo',
-	'BC_SONG_VIDEO_EXPLAIN'			=> 'Entrez ici l’url de la vidéo Youtube.<br /><br /><strong>Veuillez prendre soin de ne pas violer les droits d’auteur.</strong>',
-	'BC_SONG_VIDEO_ID'				=> 'ID de DM Vidéo',
-	'BC_SONG_VIDEO_ID_EXPLAIN'		=> 'Le Mod DM Video est installé ici. Si la vidéo que vous aimeriez ajouter, existe déjà ici, vous pouvez simplement entrer l’ID de vidéo. Pour obtenir l’ID, s’il vous plaît vérifier le lien pour la vidéo dans votre navigateur. Prenez le nombre après le v=. Si vous utilisez cette option, vous n’aurez pas à entrer dans le code embed.',
+	'BC_SONG_VIDEO_EXPLAIN'			=> 'Entrez ici l’url de la vidéo Youtube.<br><br><strong>Veuillez prendre soin de ne pas violer les droits d’auteur.</strong>',
 	'BC_SONG_YEAR'					=> 'Année',
 	'BC_SONG_YEAR_EXPLAIN'			=> 'Entrez ici l’année, de la musique ou de l’album quand il a été enregistré.',
 	'BC_STARTING_TIME'				=> 'Date de début',
 	'BC_STARTING_TIME_EXPLAIN'		=> 'Entrez ici l’heure de début (basé sur le temps du fuseau horaire de votre serveur), qui sera la base pour le calcul de la fin de cette période. Le calcul sera ensuite utilisé pour cette valeur et la valeur de la période pour calculer l’heure de fin de la période de vote actuel. Une saisie manuelle n’est nécessaire que lorsque vous démarrez les votes. Plus tard, les valeurs seront définies automatiquement!',
 	'BC_PLACE_THIRD'				=> '%1$s pour la troisième place',
-	'BC_TITLE'						=> 'Hit Parade',
+	'BC_TITLE'						=> '🎼 Hit Parade',
 	'BC_UPDATED'					=> 'La chanson a été éditée avec succès',
 	'BC_UPS'						=> '%1$s pour ajouter une nouvelle musique',
 	'BC_UPS_EXPLAIN'				=> 'Ici, vous pouvez définir combien de %1$s le membre recevra, quand il/elle ajoute une nouvelle musique. Mettre à 0 pour désactiver cette fonction.',

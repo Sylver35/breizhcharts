@@ -11,9 +11,9 @@
 var breizhcharts = {
 	checkSong: '{{ U_CHECK_SONG }}',
 	checkUrl: '{{ U_CHECK_VIDEO }}',
-	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="" />',
-	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="" />',
-	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="" />',
+	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="">',
+	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="">',
+	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="">',
 	submit: '{{ lang("SUBMIT")|escape("js") }}',
 	error: '{{ lang("ERROR")|escape("js") }}',
 	ok: '{{ lang("BC_OK")|escape("js") }}',
@@ -58,7 +58,7 @@ var breizhcharts = {
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){
-					$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35" />');
+					$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35">');
 				}else{
 					$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
 					$('#button').attr({'disabled': true, 'title': breizhcharts.error});

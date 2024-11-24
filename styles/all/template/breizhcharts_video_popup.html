@@ -2,21 +2,28 @@
 {% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
 
 <h3 class="video-title">{{ VIDEO_TITLE }}</h3>
-	
+
 <div class="video-frame">
 	<div id="ytplayer"></div>
 </div>
 <script>
-	var tag = document.createElement('script'),player;
+	var tag = document.createElement('script'), player;
 	tag.src = "https://www.youtube.com/player_api";
-	var firstScriptTag = document.getElementsByTagName('script')[0];
-	firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+	var scriptTag = document.getElementsByTagName('script')[0];
+	scriptTag.parentNode.insertBefore(tag, scriptTag);
 	function onYouTubePlayerAPIReady(){
 		player = new YT.Player('ytplayer',{
 			videoId: '{{ YOUTUBE_ID }}',
 			playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
 		});
 	}
+	var phpbb = document.getElementById('phpbb'), wrap = document.getElementById('wrap');
+	phpbb.style.backgroundImage = 'none';
+	phpbb.style.padding = '0';
+	wrap.style.border = 'none';
+	wrap.style.padding = '0';
+	wrap.style.maxWidth = '100%';
+	wrap.style.borderRadius = '0';
 </script>
 
 <div class="close"><a href="#" onclick="self.close();">{{ lang('CLOSE_WINDOW') }}</a></div>

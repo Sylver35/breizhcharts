@@ -4,9 +4,8 @@
 * info_acp_breizhcharts [German]
 *
 * @package language
-* @version $Id: info_acp_breizhcharts.php 154 2011-12-21 14:16:58Z femu $
-* @copyright (c) 2010 femu - http://die-muellers.org
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* @copyright (c) 2021-2024 Sylver35  https://breizhcode.com
+* @license https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -59,12 +58,12 @@ $lang = array_merge($lang, array(
 	'BC_CONFIG_EXPLAIN'				=> 'Hier kannst Du einzelne Vorgaben setzen oder bearbeiten. Lese dir die jeweiligen Erkläreungen zu den einzelnen Feldern aufmerksam durch!',
 	'BC_CONFIG_MAIN_SETTINGS'		=> 'Einstellungen',
 	'BC_CONFIG_OK'					=> 'Die Chart Konfiguration wurde erfolgreich aktualisiert',
-	'BC_CONFIG_TITLE'				=> ' Music Charts Konfiguration',
+	'BC_CONFIG_TITLE'				=> 'Music Charts Konfiguration',
 	'BC_CONFIG_UPDATED'				=> 'Die Konfiguration wurde erfolgreich aktualisiert',
 	'BC_CONF_CLICK_RETURN'			=> 'Klicke %shier%s, um zur Chart Konfiguration zurückzukehren',
 	'BC_DELETE_OK'					=> 'Song wurde erfolgreich gelöscht.',
 	'BC_EDIT'						=> 'Bearbeite Chart Song',
-	'BC_PLACE_FIRST'						=> '%1$s für den 1. Platz',
+	'BC_PLACE_FIRST'				=> '%1$s für den 1. Platz',
 	'BC_FROM_NAME'					=> 'Eingestellt von',
 	'BC_FROM_OF'					=> '%1$s of %2$s',
 	'BC_HOURS'						=> 'Std.',
@@ -113,15 +112,13 @@ $lang = array_merge($lang, array(
 	'BC_SONG_TITLE'					=> 'Titel',
 	'BC_SONG_TITLE_EXPLAIN'			=> 'Gib hier den Titel des Songs ein',
 	'BC_SONG_VIDEO'					=> 'Video',
-	'BC_SONG_VIDEO_EXPLAIN'			=> 'Gib hier den Code zum Einbetten eines Videos ein, den du z.B. von YouTube, MyVideo oder anderen Providern erhälst. Achte darauf, daß die Videogröße von <strong>640x385</strong> nicht überschritten wird (siehst du innerhalb des Codes)!<br /><br /><strong>Bitte stelle auch sicher, daß Du nur auf Videos verlinkst, die keine Urheberrechte verletzen!</strong>',
-	'BC_SONG_VIDEO_ID'				=> ' Video ID',
-	'BC_SONG_VIDEO_ID_EXPLAIN'		=> 'Die  Video Mod ist hier installiert. Wenn das Video, daß du hier einsetzen möchtest, dort bereits existiert, kannst du einfach die ID aus der  Video Mod übernehmen. Du findest die ID, indem du dir im  Video das gewünschte Video anschaust. In der Browserzeile nimmst du die Zahl, die hinter dem v= steht. Diese trägst du dann hier ein. Bei Verwendung der ID brauchst du keinen Code für die Einbettung eingeben.',
+	'BC_SONG_VIDEO_EXPLAIN'			=> 'Gib hier den Code zum Einbetten eines Videos ein, den du z.B. von YouTube, MyVideo oder anderen Providern erhälst. Achte darauf, daß die Videogröße von <strong>640x385</strong> nicht überschritten wird (siehst du innerhalb des Codes)!<br><br><strong>Bitte stelle auch sicher, daß Du nur auf Videos verlinkst, die keine Urheberrechte verletzen!</strong>',
 	'BC_SONG_YEAR'					=> 'Jahr',
 	'BC_SONG_YEAR_EXPLAIN'			=> 'Gib hier das Erscheinungsjahr des Songs oder des Albums ein',
 	'BC_STARTING_TIME'				=> 'Startzeit',
 	'BC_STARTING_TIME_EXPLAIN'		=> 'Gib hier die Startzeit für die Berechnung zum Beenden der aktuellen Periode ein auf Basis deiner Board Zeitzone ein. Wenn deine persönlich unterschiedlich zur Board Zeitzone ist, dann siehst du eine ander Startzeit in Klammern, als du eingeben hast! <strong>Verwende das UNIX Zeitformat!</strong> Die entsprechende Umwandlung kannst du bei <a href="http://unixtime.de" onclick="window.open(this.href); return false">Unixtime.de</a> vornehmen. Die Kalkulation erfolgt auf Basis dieser Startzeit und der eingebenen Periode. Eine manuelle Eingabe ist nur beim ersten Mal erforderlich. Danach wird diese Zeit automatisch aktualisiert!',
 	'BC_PLACE_THIRD'				=> '%1$s für den 3. Platz',
-	'BC_TITLE'						=> ' Music Charts',
+	'BC_TITLE'						=> '🎼 Music Charts',
 	'BC_UPDATED'					=> 'Song wurde erfolgreich aktualisiert',
 	'BC_UPS'						=> '%1$s für das Einstellen eines neuen Songs',
 	'BC_UPS_EXPLAIN'				=> 'Da du den Ultimate Points  installiert hast, kannst du hier festlegen, ob und wieviele %1$s die Benutzer für das Einstellen eines neuen Songs bekommen sollen. Setze 0, wenn sie keine %1$s bekommen sollen',

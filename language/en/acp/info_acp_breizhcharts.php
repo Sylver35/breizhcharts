@@ -4,9 +4,8 @@
 * info_acp_breizhcharts [English]
 *
 * @package language
-* @version $Id: info_acp_breizhcharts.php 154 2011-12-21 14:16:58Z femu $
-* @copyright (c) 2010 femu - http://die-muellers.org
-* @license http://opensource.org/licenses/gpl-license.php GNU Public License
+* @copyright (c) 2021-2024 Sylver35  https://breizhcode.com
+* @license https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
 
@@ -112,15 +111,13 @@ $lang = array_merge($lang, array(
 	'BC_SONG_TITLE'					=> 'Title',
 	'BC_SONG_TITLE_EXPLAIN'			=> 'Enter here the title of the song',
 	'BC_SONG_VIDEO'					=> 'Video',
-	'BC_SONG_VIDEO_EXPLAIN'			=> 'Enter here the embedded code, which can receive ie. with YouTube. Take care, that the dimesion of the video don\'t exceed <strong>640x505</strong> (you can see the dimension inside the embedded code)!<br /><br /><strong>Please take care, that you don\'t violate any copyrights!</strong>',
-	'BC_SONG_VIDEO_ID'				=> 'DM Video ID',
-	'BC_SONG_VIDEO_ID_EXPLAIN'		=> 'The DM Video Mod is installed over here. If the video you might like to add, already exists over here, you can simply enter the video ID over here. To get the ID, please check the link for the video in your browser. Take the number after the v=. If you use this option, you don\'t have to enter the embedded code.',
+	'BC_SONG_VIDEO_EXPLAIN'			=> 'Enter here the embedded code, which can receive ie. with YouTube. Take care, that the dimesion of the video don’t exceed <strong>640x505</strong> (you can see the dimension inside the embedded code)!<br><br><strong>Please take care, that you don’t violate any copyrights!</strong>',
 	'BC_SONG_YEAR'					=> 'Year',
 	'BC_SONG_YEAR_EXPLAIN'			=> 'Enter here the year, where the song or the album was recorded.',
 	'BC_STARTING_TIME'				=> 'Start Time',
 	'BC_STARTING_TIME_EXPLAIN'		=> 'Enter here the start time (based on the time of your board timezone), which will be the basis for the end period calculation. If your personal timezone differs, you will see another time in the brackets than you entered! <strong>Please use the UNIX time format!</strong> To find out the correct value, go to <a href="http://unixtime.de" onclick="window.open(this.href); return false">Unixtime.de</a>. Here you can convert the time vice versa. The calculation will then use this value and the period value to calculate the ending time for the current voting period. A manual entry is only needed when you start the charts. Later on, the values are set automatically!',
 	'BC_PLACE_THIRD'				=> '%1$s for the 3rd place',
-	'BC_TITLE'						=> 'Music Charts',
+	'BC_TITLE'						=> '🎼 Music Charts',
 	'BC_UPDATED'					=> 'The song was successfully edited',
 	'BC_UPS'						=> '%1$s for adding a new song',
 	'BC_UPS_EXPLAIN'				=> 'Since the Ultimate Points  is installed, you may set how much %1$s the user will receive, when he/she add a new song. Set 0 to disable this feature.',
