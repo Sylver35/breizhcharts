@@ -27,7 +27,7 @@
     "require": {
         "php": "^7.2 || ^8.0.0",
         "ext-json": "*",
-        "composer/installers": "^2.2.0"
+        "composer/installers": "^2.2.0",
         "phpbb/phpbb": ">=3.3.13"
     },
     "require-dev": {
