@@ -453,7 +453,7 @@ class breizhcharts
 			}
 
 			$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_table . $this->db->sql_build_array('INSERT', $data));
-			$id = (int) $this->db->sql_nextid();
+			$id = (int) $this->db->sql_last_inserted_id()();
 			$this->config->increment('breizhcharts_songs_nb', 1, true);
 			$this->config->set('breizhcharts_last_song', time(), true);
 
