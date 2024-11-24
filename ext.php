@@ -23,7 +23,7 @@ class ext extends \phpbb\extension\base
 	 * The current phpBB version should meet or exceed
 	 * the minimum version required by this extension:
 	 *
-	 * Requires phpBB 3.3.13 and PHP 7.2
+	 * Requires phpBB 3.3.13 and PHP 8.0.0
 	 *
 	 * @return bool
 	 * @access public
@@ -32,6 +32,6 @@ class ext extends \phpbb\extension\base
 	{
 		$config = $this->container->get('config');
 
-		return phpbb_version_compare($config['version'], '3.3.13', '>=') && version_compare(PHP_VERSION, '7.2', '>=');
+		return phpbb_version_compare($config['version'], '3.3.13', '>=') && version_compare(PHP_VERSION, '8.0.0', '>=');
 	}
 }
