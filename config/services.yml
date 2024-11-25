@@ -6,6 +6,7 @@ services:
         class: sylver35\breizhcharts\event\main_listener
         arguments:
             - '@sylver35.breizhcharts.core.functions.charts'
+            - '@sylver35.breizhcharts.core.check'
             - '@template'
             - '@language'
             - '@user'
@@ -22,6 +23,9 @@ services:
         class: sylver35\breizhcharts\controller\breizhcharts
         arguments:
             - '@sylver35.breizhcharts.core.functions.charts'
+            - '@sylver35.breizhcharts.core.work'
+            - '@sylver35.breizhcharts.core.verify'
+            - '@sylver35.breizhcharts.core.points'
             - '@template'
             - '@language'
             - '@user'
@@ -65,6 +69,7 @@ services:
     sylver35.breizhcharts.admin.config:
         class: sylver35\breizhcharts\controller\admin_config
         arguments:
+            - '@sylver35.breizhcharts.core.points'
             - '@template'
             - '@language'
             - '@user'
@@ -86,6 +91,9 @@ services:
     sylver35.breizhcharts.core.functions.charts:
         class: sylver35\breizhcharts\core\functions_charts
         arguments:
+            - '@sylver35.breizhcharts.core.work'
+            - '@sylver35.breizhcharts.core.check'
+            - '@sylver35.breizhcharts.core.points'
             - '@template'
             - '@language'
             - '@user'
@@ -106,6 +114,64 @@ services:
             - '%sylver35.breizhcharts.table.breizhcharts%'
             - '%sylver35.breizhcharts.table.breizhcharts_result%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    sylver35.breizhcharts.core.work:
+        class: sylver35\breizhcharts\core\work
+        arguments:
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@pagination'
+            - '@log'
+            - '@cache'
+            - '@request'
+            - '@config'
+            - '@ext.manager'
+            - '@path_helper'
+            - '@service_container'
+            - '@dispatcher'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_result%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
+    sylver35.breizhcharts.core.check:
+        class: sylver35\breizhcharts\core\check
+        arguments:
+            - '@sylver35.breizhcharts.core.work'
+            - '@sylver35.breizhcharts.core.points'
+            - '@template'
+            - '@language'
+            - '@user'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@config'
+            - '@ext.manager'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+
+    sylver35.breizhcharts.core.verify:
+        class: sylver35\breizhcharts\core\verify
+        arguments:
+            - '@sylver35.breizhcharts.core.work'
+            - '@language'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@config'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+
+    sylver35.breizhcharts.core.points:
+        class: sylver35\breizhcharts\core\points
+        arguments:
+            - '@language'
+            - '@template'
+            - '@dbal.conn'
+            - '@config'
+            - '@service_container'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
 
     _defaults:
         public: true

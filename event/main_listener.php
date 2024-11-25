@@ -10,6 +10,7 @@ namespace sylver35\breizhcharts\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\breizhcharts\core\functions_charts;
+use sylver35\breizhcharts\core\check;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -22,6 +23,9 @@ class main_listener implements EventSubscriberInterface
 {
 	/** @var \sylver35\breizhcharts\core\functions_charts */
 	protected $functions_charts;
+
+	/** @var \sylver35\breizhcharts\core\check */
+	protected $check;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -54,9 +58,10 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $breizhcharts_table)
+	public function __construct(functions_charts $functions_charts, check $check, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $breizhcharts_table)
 	{
 		$this->functions_charts = $functions_charts;
+		$this->check = $check;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -139,14 +144,14 @@ class main_listener implements EventSubscriberInterface
 
 	public function page_footer()
 	{
-		$this->functions_charts->get_version();
+		$this->check->get_version();
 	}
 
 	public function index_modify_page_title()
 	{
 		if ($this->auth->acl_gets(['u_breizhcharts_view', 'u_breizhcharts_vote']) && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			$this->functions_charts->check_charts_voted();
+			$this->check->check_charts_voted();
 		}
 	}
 

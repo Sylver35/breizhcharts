@@ -8,6 +8,7 @@
 
 namespace sylver35\breizhcharts\controller;
 
+use sylver35\breizhcharts\core\points;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -24,6 +25,9 @@ use phpbb\path_helper;
 
 class admin_config
 {
+	/** @var \sylver35\breizhcharts\core\points */
+	protected $points;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -88,17 +92,18 @@ class admin_config
 	/**
 	 * Constructor
 	 */
-	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
+		$this->points = $points;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
-		$this->auth = $auth;
-		$this->helper = $helper;
+		//$this->auth = $auth;
+		//$this->helper = $helper;
 		$this->db = $db;
 		$this->pagination = $pagination;
 		$this->log = $log;
-		$this->cache = $cache;
+		//$this->cache = $cache;
 		$this->request = $request;
 		$this->config = $config;
 		$this->ext_manager = $ext_manager;
@@ -159,78 +164,51 @@ class admin_config
 		else
 		{
 			// Check if UPS is installed and active
-			if (isset($this->config['points_enable']) && $this->config['points_enable'])
+			if ($this->points->points_active())
 			{
-				$this->template->assign_vars([
-					'S_UPS_INSTALLED'				=> true,
-					'CHART_UPS_POINTS'				=> $this->config['breizhcharts_ups_points'],
-					'POINTS_NAME'					=> $this->config['points_name'],
-					'UPS'							=> $this->language->lang('BC_UPS', $this->config['points_name']),
-					'UPS_EXPLAIN'					=> $this->language->lang('BC_UPS_EXPLAIN', $this->config['points_name']),
-					'POINTS'						=> $this->language->lang('BC_RANKING', $this->config['points_name']),
-					'POINTS_EXPLAIN'				=> $this->language->lang('BC_RANKING_EXPLAIN', $this->config['points_name']),
-					'FIRST'							=> $this->language->lang('BC_PLACE_FIRST', $this->config['points_name']),
-					'SECOND'						=> $this->language->lang('BC_PLACE_SECOND', $this->config['points_name']),
-					'THIRD'							=> $this->language->lang('BC_PLACE_THIRD', $this->config['points_name']),
-					'POINTS_PER_VOTE_DESC'			=> $this->language->lang('BC_POINTS_PER_VOTE', $this->config['points_name']),
-					'POINTS_PER_VOTE_DESC_EXPLAIN'	=> $this->language->lang('BC_POINTS_PER_VOTE_EXPLAIN', $this->config['points_name']),
-					'POINTS_VOTERS_BONUS'			=> $this->language->lang('BC_VOTERS_POINTS', $this->config['points_name']),
-					'POINTS_VOTERS_BONUS_EXPLAIN'	=> $this->language->lang('BC_VOTERS_POINTS_EXPLAIN', $this->config['points_name']),
-				]);
+				$this->points->points_config();
 			}
 
-			// Check last bonus winner
-			$bonus_winner = $this->language->lang('BC_NO_BONUS_WINNER');
-			if ($this->config['breizhcharts_winner_id'] > 0)
-			{
-				$sql = 'SELECT user_id, username, user_colour
-					FROM ' . USERS_TABLE . '
-						WHERE user_id = ' . $this->config['breizhcharts_winner_id'];
-				$result = $this->db->sql_query_limit($sql, 1);
-				if ($row = $this->db->sql_fetchrow($result))
-				{
-					$bonus_winner = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
-				}
-				$this->db->sql_freeresult($result);
-			}
-
-			$lang_period = ((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK';
 			// Send all values to the template
-			$this->template->assign_vars([
-				'BONUS_WINNER_NAME'				=> $bonus_winner,
-				'SELECT_PERIOD'					=> $this->language->lang($lang_period, $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
-				'CHART_MAX_ENTRIES'				=> $this->config['breizhcharts_max_entries'],
-				'BC_CHARTS_VERSION'				=> $this->config['breizhcharts_version'],
-				'CHART_ACP_PAGE'				=> $this->config['breizhcharts_acp_page'],
-				'CHART_USER_PAGE'				=> $this->config['breizhcharts_user_page'],
-				'CHART_START_TIME'				=> $this->config['breizhcharts_start_time'],
-				'CHART_START_TIME_READABLE'		=> $this->user->format_date($this->config['breizhcharts_start_time'], $this->language->lang('BC_DATE')),
-				'FORMAT_START_TIME'				=> $this->config['breizhcharts_start_time_bis'],
-				'CHART_PERIOD'					=> $this->period_select($this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
-				'CHART_PERIOD_VAL'				=> $this->config['breizhcharts_period_val'],
-				'CHART_NEXT_RESET'				=> $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE')),
-				'CHART_CHECK_TIME'				=> $this->days_select($this->config['breizhcharts_check_time']),
-				'CHART_CHECK_1'					=> $this->config['breizhcharts_check_1'],
-				'CHART_CHECK_2'					=> $this->config['breizhcharts_check_2'],
-				'CHART_1ST_PLACE'				=> $this->config['breizhcharts_place_1'],
-				'CHART_2ND_PLACE'				=> $this->config['breizhcharts_place_2'],
-				'CHART_3RD_PLACE'				=> $this->config['breizhcharts_place_3'],
-				'REQUIRED_1'					=> $this->config['breizhcharts_required_1'],
-				'REQUIRED_2'					=> $this->config['breizhcharts_required_2'],
-				'PM_USER'						=> $this->config['breizhcharts_pm_user'],
-				'PM_ENABLE'						=> $this->config['breizhcharts_pm_enable'],
-				'PM_USER_NAME'					=> ($this->config['breizhcharts_pm_user']) ? $this->get_pm_user() : '',
-				'ANNOUNCE_FORUM_LIST'			=> make_forum_select((int) $this->config['breizhcharts_song_forum'], false, true, true),
-				'ANNOUNCE_ENABLE'				=> $this->config['breizhcharts_announce_enable'],
-				'POINTS_PER_VOTE'				=> $this->config['breizhcharts_points_per_vote'],
-				'VOTERS_POINTS'					=> $this->config['breizhcharts_voters_points'],
-				'LAST_VOTERS_WINNER_ID'			=> $this->config['breizhcharts_winner_id'],
-				'WINNERS_PER_PAGE'				=> $this->config['breizhcharts_winners_per_page'],
-				'USER_LANG'						=> $this->user->lang_name,
-				'U_ACTION'						=> $this->u_action,
-				'S_BREIZHCHARTS_CONFIG'			=> true,
-			]);
+			$this->all_values();
 		}
+	}
+
+	private function all_values()
+	{
+		$this->template->assign_vars([
+			'SELECT_PERIOD'					=> $this->language->lang(((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK', $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
+			'CHART_MAX_ENTRIES'				=> $this->config['breizhcharts_max_entries'],
+			'BC_CHARTS_VERSION'				=> $this->config['breizhcharts_version'],
+			'CHART_ACP_PAGE'				=> $this->config['breizhcharts_acp_page'],
+			'CHART_USER_PAGE'				=> $this->config['breizhcharts_user_page'],
+			'CHART_START_TIME'				=> $this->config['breizhcharts_start_time'],
+			'CHART_START_TIME_READABLE'		=> $this->user->format_date($this->config['breizhcharts_start_time'], $this->language->lang('BC_DATE')),
+			'FORMAT_START_TIME'				=> $this->config['breizhcharts_start_time_bis'],
+			'CHART_PERIOD'					=> $this->period_select($this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
+			'CHART_PERIOD_VAL'				=> $this->config['breizhcharts_period_val'],
+			'CHART_NEXT_RESET'				=> $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE')),
+			'CHART_CHECK_TIME'				=> $this->days_select($this->config['breizhcharts_check_time']),
+			'CHART_CHECK_1'					=> $this->config['breizhcharts_check_1'],
+			'CHART_CHECK_2'					=> $this->config['breizhcharts_check_2'],
+			'CHART_1ST_PLACE'				=> $this->config['breizhcharts_place_1'],
+			'CHART_2ND_PLACE'				=> $this->config['breizhcharts_place_2'],
+			'CHART_3RD_PLACE'				=> $this->config['breizhcharts_place_3'],
+			'REQUIRED_1'					=> $this->config['breizhcharts_required_1'],
+			'REQUIRED_2'					=> $this->config['breizhcharts_required_2'],
+			'PM_USER'						=> $this->config['breizhcharts_pm_user'],
+			'PM_ENABLE'						=> $this->config['breizhcharts_pm_enable'],
+			'PM_USER_NAME'					=> ($this->config['breizhcharts_pm_user']) ? $this->get_pm_user() : '',
+			'ANNOUNCE_FORUM_LIST'			=> make_forum_select((int) $this->config['breizhcharts_song_forum'], false, true, true),
+			'ANNOUNCE_ENABLE'				=> $this->config['breizhcharts_announce_enable'],
+			'POINTS_PER_VOTE'				=> $this->config['breizhcharts_points_per_vote'],
+			'VOTERS_POINTS'					=> $this->config['breizhcharts_voters_points'],
+			'LAST_VOTERS_WINNER_ID'			=> $this->config['breizhcharts_winner_id'],
+			'WINNERS_PER_PAGE'				=> $this->config['breizhcharts_winners_per_page'],
+			'USER_LANG'						=> $this->user->lang_name,
+			'U_ACTION'						=> $this->u_action,
+			'S_BREIZHCHARTS_CONFIG'			=> true,
+		]);
 	}
 
 	private function update_config($data)

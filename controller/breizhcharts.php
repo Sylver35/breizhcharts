@@ -11,6 +11,9 @@ namespace sylver35\breizhcharts\controller;
 use phpbb\json_response;
 use phpbb\exception\http_exception;
 use sylver35\breizhcharts\core\functions_charts;
+use sylver35\breizhcharts\core\work;
+use sylver35\breizhcharts\core\verify;
+use sylver35\breizhcharts\core\points;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -30,6 +33,15 @@ class breizhcharts
 {
 	/** @var \sylver35\breizhcharts\core\functions_charts */
 	protected $functions_charts;
+
+	/** @var \sylver35\breizhcharts\core\work */
+	protected $work;
+
+	/** @var \sylver35\breizhcharts\core\verify */
+	protected $verify;
+
+	/** @var \sylver35\breizhcharts\core\points */
+	protected $points;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -95,9 +107,12 @@ class breizhcharts
 	/**
 	 * Constructor
 	 */
-	public function __construct(functions_charts $functions_charts, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(functions_charts $functions_charts, work $work, verify $verify, points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
 		$this->functions_charts = $functions_charts;
+		$this->work = $work;
+		$this->verify = $verify;
+		$this->points = $points;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -127,15 +142,17 @@ class breizhcharts
 			throw new http_exception(403, 'BC_NOT_AUTHORISED');
 		}
 
-		$mode = (string) $this->request->variable('mode', 'list_newest');
-		$start = (int) $this->request->variable('start', 0);
-		$song_id = (int) $this->request->variable('id', 0);
-		$userid = (int) $this->request->variable('user', 0);
-		$winner = (int) $this->request->variable('winner', 0);
-		$name = (string) $this->request->variable('name', '', true);
-		$title_mode = $this->language->lang('BC_NEWEST');
-		$order_by = 'c.song_id DESC';
-		$body = 'breizhcharts.html';
+		$data = [
+			'mode'		=> (string) $this->request->variable('mode', 'list_newest'),
+			'start'		=> (int) $this->request->variable('start', 0),
+			'song_id'	=> (int) $this->request->variable('id', 0),
+			'userid'	=> (int) $this->request->variable('user', 0),
+			'winner'	=> (int) $this->request->variable('winner', 0),
+			'name'		=> (string) $this->request->variable('name', '', true),
+			'title_mode'=> $this->language->lang('BC_NEWEST'),
+			'order_by'	=> 'c.song_id DESC',
+			'body'		=> 'breizhcharts.html',
+		];
 
 		/**
 		 * You can use this event before all modes listed here
@@ -144,41 +161,41 @@ class breizhcharts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['mode', 'title_mode', 'order_by', 'winner', 'name'];
+		$vars = ['data'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_before', compact($vars)));
 
 		// Switch the mode
-		switch ($mode)
+		switch ($data['mode'])
 		{
 			case 'list_newest':
-				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode);
+				$this->functions_charts->get_list_mode_charts($data);
 			break;
 
 			case 'list':
-				$title_mode = $this->language->lang('BC_BEST_RATED');
-				$order_by = 'c.song_note DESC, c.nb_note DESC, c.last_pos ASC, c.best_pos ASC';
-				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode);
+				$data['title_mode'] = $this->language->lang('BC_BEST_RATED');
+				$data['order_by'] = 'c.song_note DESC, c.nb_note DESC, c.last_pos ASC, c.best_pos ASC';
+				$this->functions_charts->get_list_mode_charts($data);
 			break;
 
 			case 'own':
-				$title_mode = $this->language->lang('BC_OWN');
-				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode);
+				$data['title_mode'] = $this->language->lang('BC_OWN');
+				$this->functions_charts->get_list_mode_charts($data);
 			break;
 
 			case 'user':
-				$title_mode = $this->language->lang('BC_OF_USER', $name);
-				$this->functions_charts->get_list_mode_charts($mode, $order_by, $start, $title_mode, $userid, $name);
+				$data['title_mode'] = $this->language->lang('BC_OF_USER', $data['name']);
+				$this->functions_charts->get_list_mode_charts($data);
 			break;
 
 			case 'winners':
-				$body = 'breizhcharts_winners.html';
-				$title_mode = $this->language->lang('BC_LAST_WINNERS');
-				$this->functions_charts->get_winners_charts($winner);
+				$data['body'] = 'breizhcharts_winners.html';
+				$data['title_mode'] = $this->language->lang('BC_LAST_WINNERS');
+				$this->functions_charts->get_winners_charts($data['winner']);
 			break;
 		}
 
 		$this->functions_charts->get_voters();
-		$this->functions_charts->create_navigation($mode, $title_mode, $song_id, $userid, $name);
+		$this->functions_charts->create_navigation($data);
 
 		/**
 		 * You can use this event after all modes listed here
@@ -187,15 +204,15 @@ class breizhcharts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['mode', 'title_mode', 'body', 'winner', 'name'];
+		$vars = ['data'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_after', compact($vars)));
 
 		// Output the page
-		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);
+		page_header($this->language->lang('BC_CHARTS') . ' - ' . $data['title_mode']);
 
 		// Load charts template
 		$this->template->set_filenames([
-			'body' => $body,
+			'body' => $data['body'],
 		]);
 
 		page_footer();
@@ -316,10 +333,10 @@ class breizhcharts
 		$this->cache->destroy('sql', $this->breizhcharts_table);
 
 		$message = $this->language->lang('BC_VOTE_SUCCESS', $song, $artist);
-		if ($this->functions_charts->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
+		if ($this->points->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
 		{
 			// Giving points for voting, if UPS is installed and active
-			$this->functions_charts->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
+			$this->points->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
 			$message .= $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
 		}
 
@@ -339,7 +356,7 @@ class breizhcharts
 		$artist = (string) $this->request->variable('artist', '', true);
 		$json_response = new json_response;
 
-		if ($this->functions_charts->verify_song_name($id, $song, $artist) !== false)
+		if ($this->verify->verify_song_name($id, $song, $artist) !== false)
 		{
 			$json_response->send([
 				'sort'		=> 2,
@@ -402,7 +419,7 @@ class breizhcharts
 		}
 		else
 		{
-			$this->functions_charts->verify_max_entries();
+			$this->verify->verify_max_entries();
 		}
 
 		$this->functions_charts->get_template_charts(false);
@@ -438,7 +455,7 @@ class breizhcharts
 
 	private function validate_add_song($data)
 	{
-		if ($error = $this->functions_charts->verify_chart_before_send($data, 0))
+		if ($error = $this->verify->verify_chart_before_send($data, 0))
 		{
 			return implode('<br>', $error);
 		}
@@ -469,9 +486,9 @@ class breizhcharts
 
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_ADDED_SONG', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $data['song_name'], $data['artist'])]);
 			meta_refresh(3, $this->helper->route('sylver35_breizhcharts_page_music'));
-			if ($this->functions_charts->points_active() && $this->config['breizhcharts_ups_points'] > 0)
+			if ($this->points->points_active() && $this->config['breizhcharts_ups_points'] > 0)
 			{
-				$this->functions_charts->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
+				$this->points->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
 				trigger_error($this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
 			}
 			else
@@ -545,7 +562,7 @@ class breizhcharts
 			'video'			=> $this->request->variable('video', '', true),
 		];
 
-		if ($error = $this->functions_charts->verify_chart_before_send($data, $song_id))
+		if ($error = $this->verify->verify_chart_before_send($data, $song_id))
 		{
 			return implode('<br>', $error);
 		}
