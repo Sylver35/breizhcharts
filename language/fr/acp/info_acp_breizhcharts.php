@@ -126,6 +126,8 @@ $lang = array_merge($lang, array(
 	'BC_UPS_EXPLAIN'				=> 'Ici, vous pouvez définir combien de %1$s le membre recevra, quand il/elle ajoute une nouvelle musique. Mettre à 0 pour désactiver cette fonction.',
 	'BC_UPS_TITLE'					=> 'Ultimate Points',
 	'BC_UPS_TITLE_EXPLAIN'			=> 'Puisque vous avez l’extension ultimate points et les points activés, vous pouvez configurer certains paramètres supplémentaires.',
+	'BC_VOTES_PERIOD'				=> 'Activation des périodes de votes',
+	'BC_VOTES_PERIOD_EXPLAIN'		=> 'Activez ici le système des périodes de votes ou non',
 	'BC_VOTERS_POINTS'				=> '%s pour le gagnant des votes',
 	'BC_VOTERS_POINTS_EXPLAIN'		=> 'Ici vous pouvez définir un bonus de %s que recevra un membre alléatoire gagnant des votes (0 = désactive la function)',
 	'BC_WEEK'						=> [

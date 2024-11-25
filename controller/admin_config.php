@@ -65,6 +65,8 @@ class admin_config
 	public function acp_breizhcharts_config()
 	{
 		add_form_key('acp_breizhcharts');
+		// Check if UPS is installed and active
+		$points_activ = $this->points->points_active();
 
 		if ($this->request->is_set_post('submit'))
 		{
@@ -73,34 +75,43 @@ class admin_config
 				trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 			}
 
-			$date = $this->request->variable('breizhcharts_start_time_bis', '');
-			$period = $this->request->variable('breizhcharts_period', 1) * $this->request->variable('breizhcharts_period_val', 604800);
 			$data = [
-				'breizhcharts_start_time'			=> strtotime($date),
-				'breizhcharts_start_time_bis'		=> $date,
-				'breizhcharts_period'				=> $period,
-				'breizhcharts_period_val'			=> $this->request->variable('breizhcharts_period_val', 604800),
-				'breizhcharts_max_entries'			=> $this->request->variable('breizhcharts_max_entries', 100),
 				'breizhcharts_acp_page'				=> $this->request->variable('breizhcharts_acp_page', 10),
 				'breizhcharts_user_page'			=> $this->request->variable('breizhcharts_user_page', 10),
-				'breizhcharts_ups_points'			=> $this->request->variable('breizhcharts_ups_points', 0),
-				'breizhcharts_check_1'				=> $this->request->variable('breizhcharts_check_1', 0),
-				'breizhcharts_check_2'				=> $this->request->variable('breizhcharts_check_2', 0),
-				'breizhcharts_check_time'			=> $this->request->variable('breizhcharts_check_time', 1),
-				'breizhcharts_place_1'				=> $this->request->variable('breizhcharts_place_1', 0),
-				'breizhcharts_place_2'				=> $this->request->variable('breizhcharts_place_2', 0),
-				'breizhcharts_place_3'				=> $this->request->variable('breizhcharts_place_3', 0),
-				'breizhcharts_required_1'			=> $this->request->variable('breizhcharts_required_1', 0),
-				'breizhcharts_required_2'			=> $this->request->variable('breizhcharts_required_2', 0),
-				'breizhcharts_pm_user'				=> $this->request->variable('breizhcharts_pm_user', 0),
-				'breizhcharts_pm_enable'			=> $this->request->variable('breizhcharts_pm_enable', 0),
+				'breizhcharts_max_entries'			=> $this->request->variable('breizhcharts_max_entries', 100),
+				'breizhcharts_winners_per_page'		=> $this->request->variable('breizhcharts_winners_per_page', 10),
 				'breizhcharts_announce_enable'		=> $this->request->variable('breizhcharts_announce_enable', 0),
 				'breizhcharts_song_forum'			=> $this->request->variable('breizhcharts_song_forum', 0),
-				'breizhcharts_points_per_vote'		=> $this->request->variable('breizhcharts_points_per_vote', 0),
-				'breizhcharts_voters_points'		=> $this->request->variable('breizhcharts_voters_points', 0),
-				'breizhcharts_winners_per_page'		=> $this->request->variable('breizhcharts_winners_per_page', 10),
-				'breizhcharts_winner_id'			=> $this->request->variable('breizhcharts_winner_id', 0),
+				'breizhcharts_period_activ'			=> $this->request->variable('breizhcharts_period_activ', 0),
 			];
+			if ($this->request->variable('breizhcharts_period_activ', 0))
+			{
+				$data = array_merge($data, [
+					'breizhcharts_start_time'			=> strtotime($this->request->variable('breizhcharts_start_time_bis', '')),
+					'breizhcharts_start_time_bis'		=> $this->request->variable('breizhcharts_start_time_bis', ''),
+					'breizhcharts_period'				=> $this->request->variable('breizhcharts_period', 1) * $this->request->variable('breizhcharts_period_val', 604800),
+					'breizhcharts_period_val'			=> $this->request->variable('breizhcharts_period_val', 604800),
+					'breizhcharts_check_1'				=> $this->request->variable('breizhcharts_check_1', 0),
+					'breizhcharts_check_2'				=> $this->request->variable('breizhcharts_check_2', 0),
+					'breizhcharts_check_time'			=> $this->request->variable('breizhcharts_check_time', 1),
+					'breizhcharts_required_1'			=> $this->request->variable('breizhcharts_required_1', 0),
+					'breizhcharts_required_2'			=> $this->request->variable('breizhcharts_required_2', 0),
+					'breizhcharts_pm_user'				=> $this->request->variable('breizhcharts_pm_user', 0),
+					'breizhcharts_pm_enable'			=> $this->request->variable('breizhcharts_pm_enable', 0),
+				]);
+			}
+			if ($points_activ)
+			{
+				$data = array_merge($data, [
+					'breizhcharts_ups_points'			=> $this->request->variable('breizhcharts_ups_points', 0),
+					'breizhcharts_place_1'				=> $this->request->variable('breizhcharts_place_1', 0),
+					'breizhcharts_place_2'				=> $this->request->variable('breizhcharts_place_2', 0),
+					'breizhcharts_place_3'				=> $this->request->variable('breizhcharts_place_3', 0),
+					'breizhcharts_points_per_vote'		=> $this->request->variable('breizhcharts_points_per_vote', 0),
+					'breizhcharts_voters_points'		=> $this->request->variable('breizhcharts_voters_points', 0),
+					'breizhcharts_winner_id'			=> $this->request->variable('breizhcharts_winner_id', 0),
+				]);
+			}
 
 			$this->update_config($data);
 
@@ -109,8 +120,7 @@ class admin_config
 		}
 		else
 		{
-			// Check if UPS is installed and active
-			if ($this->points->points_active())
+			if ($points_activ)
 			{
 				$this->points->points_config();
 			}
@@ -123,6 +133,8 @@ class admin_config
 	private function all_values()
 	{
 		$this->template->assign_vars([
+			'CHART_PERIOD_ACTIV'			=> $this->config['breizhcharts_period_activ'],
+			'CHART_PERIOD_CSS'				=> $this->config['breizhcharts_period_activ'] ? 'block' : 'none',
 			'SELECT_PERIOD'					=> $this->language->lang(((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK', $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
 			'CHART_MAX_ENTRIES'				=> $this->config['breizhcharts_max_entries'],
 			'BC_CHARTS_VERSION'				=> $this->config['breizhcharts_version'],
