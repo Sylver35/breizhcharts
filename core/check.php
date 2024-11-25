@@ -47,6 +47,9 @@ class check
 	/** @var \phpbb\extension\manager */
 	protected $ext_manager;
 
+	/** @var string ext_path */
+	protected $ext_path;
+
 	/**
 	 * The database tables
 	 * @var string

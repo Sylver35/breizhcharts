@@ -8,6 +8,7 @@
 
 namespace sylver35\breizhcharts\core;
 
+use sylver35\breizhcharts\core\points;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -26,6 +27,9 @@ use phpbb\event\dispatcher_interface as phpbb_dispatcher;
 
 class work
 {
+	/** @var \sylver35\breizhcharts\core\points */
+	protected $points;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -94,8 +98,9 @@ class work
 	/**
 	 * Constructor
 	 */
-	public function __construct(template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_result_table, $breizhcharts_voters_table)
+	public function __construct(points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_result_table, $breizhcharts_voters_table)
 	{
+		$this->points = $points;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
