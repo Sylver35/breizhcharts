@@ -527,7 +527,10 @@ class functions_charts
 			];
 
 			// create insert of 10 bests
-			$sql_insert[] = $this->create_insert($row, $time, $i);
+			if (($i < 11) && ($row['nb_note'] > 0))
+			{
+				$sql_insert[] = $this->create_insert($row, $time, $new_result, $i);
+			}
 			// create insert of winner
 			$winner = $this->create_winner($row, $i);
 
@@ -549,26 +552,21 @@ class functions_charts
 		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
 	}
 
-	private function create_insert($row, $time, $i)
+	private function create_insert($row, $time, $new_result, $i)
 	{
-		if (($i < 11) && ($row['nb_note'] > 0))
-		{
-			$sql_insert[] = [
-				'result_song_id'		=> $row['song_id'],
-				'result_nb'				=> $new_result,
-				'result_time'			=> $time,
-				'result_pos'			=> $i,
-				'result_song_name'		=> $row['song_name'],
-				'result_artist'			=> $row['artist'],
-				'result_video'			=> $row['video'],
-				'result_poster_id'		=> $row['poster_id'],
-				'result_song_note'		=> $row['song_note'],
-				'result_nb_note'		=> $row['nb_note'],
-				'result_add_time'		=> $row['add_time'],
-			];
-
-			return $sql_insert;
-		}
+		return [
+			'result_song_id'		=> $row['song_id'],
+			'result_nb'				=> $new_result,
+			'result_time'			=> $time,
+			'result_pos'			=> $i,
+			'result_song_name'		=> $row['song_name'],
+			'result_artist'			=> $row['artist'],
+			'result_video'			=> $row['video'],
+			'result_poster_id'		=> $row['poster_id'],
+			'result_song_note'		=> $row['song_note'],
+			'result_nb_note'		=> $row['nb_note'],
+			'result_add_time'		=> $row['add_time'],
+		];
 	}
 
 	private function create_winner($row, $i)

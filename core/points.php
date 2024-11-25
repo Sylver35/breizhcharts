@@ -114,7 +114,7 @@ class points
 
 	public function Last_bonus_winner()
 	{
-		if ($this->points->points_active() && $this->config['breizhcharts_winner_id'] > 0)
+		if ($this->points_active() && $this->config['breizhcharts_winner_id'] > 0)
 		{
 			$sql = 'SELECT user_id, username, user_colour
 				FROM ' . USERS_TABLE . '
