@@ -112,6 +112,24 @@ class points
 		]);
 	}
 
+	public function Last_bonus_winner()
+	{
+		if ($this->points->points_active() && $this->config['breizhcharts_winner_id'] > 0)
+		{
+			$sql = 'SELECT user_id, username, user_colour
+				FROM ' . USERS_TABLE . '
+					WHERE user_id = ' . $this->config['breizhcharts_winner_id'];
+			$result = $this->db->sql_query($sql, 6800);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			$this->template->assign_vars([
+				'S_BONUS_WINNER'	=> true,
+				'BONUS_WINNER'		=> $this->language->lang('BC_BONUS_WINNER', get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']),
+			]);
+		}
+	}
+
 	private function bonus_winner()
 	{
 		// Check last bonus winner

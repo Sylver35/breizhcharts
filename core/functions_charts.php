@@ -386,6 +386,7 @@ class functions_charts
 			$nb_win = (int) $row['result_nb'];
 			$date_result = $row['result_time'];
 			$data = $this->check->get_win_charts((int) $row['result_pos'], $points_active);
+
 			$this->template->assign_block_vars('winners', [
 				'NB'			=> $i,
 				'RANK'			=> $data['img'],
@@ -517,6 +518,7 @@ class functions_charts
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
+			// reset the note and update the position
 			$sql_ary = [
 				'song_note'	=> 0,
 				'nb_note'	=> 0,
@@ -524,33 +526,10 @@ class functions_charts
 				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : (int) $row['best_pos'],
 			];
 
-			if (($i < 11) && ($row['nb_note'] > 0))
-			{
-				$sql_insert[] = [
-					'result_song_id'		=> $row['song_id'],
-					'result_nb'				=> $new_result,
-					'result_time'			=> $time,
-					'result_pos'			=> $i,
-					'result_song_name'		=> $row['song_name'],
-					'result_artist'			=> $row['artist'],
-					'result_video'			=> $row['video'],
-					'result_poster_id'		=> $row['poster_id'],
-					'result_song_note'		=> $row['song_note'],
-					'result_nb_note'		=> $row['nb_note'],
-					'result_add_time'		=> $row['add_time'],
-				];
-			}
-			if ($i === 1)
-			{
-				$winner = [
-					'song_id'		=> $row['song_id'],
-					'song_name'		=> $row['song_name'],
-					'artist'		=> $row['artist'],
-					'video'			=> $row['video'],
-					'poster_id'		=> $row['poster_id'],
-					'song_note'		=> $row['song_note'],
-				];
-			}
+			// create insert of 10 bests
+			$sql_insert[] = $this->create_insert($row, $time, $i);
+			// create insert of winner
+			$winner = $this->create_winner($row, $i);
 
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . (int) $row['song_id']);
 			$i++;
@@ -564,9 +543,46 @@ class functions_charts
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['sql_insert', 'winner'];
+		$vars = ['sql_ary', 'sql_insert', 'winner'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
 
 		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
+	}
+
+	private function create_insert($row, $time, $i)
+	{
+		if (($i < 11) && ($row['nb_note'] > 0))
+		{
+			$sql_insert[] = [
+				'result_song_id'		=> $row['song_id'],
+				'result_nb'				=> $new_result,
+				'result_time'			=> $time,
+				'result_pos'			=> $i,
+				'result_song_name'		=> $row['song_name'],
+				'result_artist'			=> $row['artist'],
+				'result_video'			=> $row['video'],
+				'result_poster_id'		=> $row['poster_id'],
+				'result_song_note'		=> $row['song_note'],
+				'result_nb_note'		=> $row['nb_note'],
+				'result_add_time'		=> $row['add_time'],
+			];
+
+			return $sql_insert;
+		}
+	}
+
+	private function create_winner($row, $i)
+	{
+		if ($i === 1)
+		{
+			return [
+				'song_id'		=> $row['song_id'],
+				'song_name'		=> $row['song_name'],
+				'artist'		=> $row['artist'],
+				'video'			=> $row['video'],
+				'poster_id'		=> $row['poster_id'],
+				'song_note'		=> $row['song_note'],
+			];
+		}
 	}
 }

@@ -229,7 +229,7 @@ class check
 		]);
 	}
 
-	private function get_win_charts($last_pos, $points_active)
+	public function get_win_charts($last_pos, $points_active)
 	{
 		if ($last_pos > 3)
 		{

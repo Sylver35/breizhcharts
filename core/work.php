@@ -323,9 +323,9 @@ class work
 		{
 			$data = array_merge($data, [
 				'rules'		=> false,
-				'where'		=> 'c.poster_id = ' . $data['user'],
-				'select'	=> ' WHERE poster_id = ' . $data['user'],
-				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode'], 'user' => $data['user'], 'name' => $data['name']]),
+				'where'		=> 'c.poster_id = ' . $data['userid'],
+				'select'	=> ' WHERE poster_id = ' . $data['userid'],
+				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode'], 'user' => $data['userid'], 'name' => $data['name']]),
 			]);
 		}
 		else

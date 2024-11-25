@@ -108,6 +108,7 @@ services:
     sylver35.breizhcharts.core.work:
         class: sylver35\breizhcharts\core\work
         arguments:
+            - '@sylver35.breizhcharts.core.points'
             - '@template'
             - '@language'
             - '@user'
