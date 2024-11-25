@@ -12,16 +12,10 @@ use sylver35\breizhcharts\core\points;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
-use phpbb\auth\auth;
-use phpbb\controller\helper;
 use phpbb\db\driver\driver_interface as db;
-use phpbb\pagination;
 use phpbb\log\log;
-use phpbb\cache\service as cache;
 use phpbb\request\request;
 use phpbb\config\config;
-use phpbb\extension\manager as ext_manager;
-use phpbb\path_helper;
 
 class admin_config
 {
@@ -35,25 +29,13 @@ class admin_config
 	protected $language;
 
 	/** @var \phpbb\user */
-	protected $user;
-
-	/** @var \phpbb\auth\auth */
-	protected $auth;
-
-	/** @var \phpbb\controller\helper */
-	protected $helper;	
+	protected $user;	
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
-	/** @var \phpbb\pagination */
-	protected $pagination;
-
 	/** @var \phpbb\log\log */
 	protected $log;
-
-	/** @var \phpbb\cache\service */
-	protected $cache;
 
 	/** @var \phpbb\request\request */
 	protected $request;
@@ -61,59 +43,23 @@ class admin_config
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/** @var \phpbb\extension\manager */
-	protected $ext_manager;
-
-	/** @var \phpbb\path_helper */
-	protected $path_helper;
-
-	/** @var string phpBB root path */
-	protected $root_path;
-
-	/** @var string php_ext */
-	protected $php_ext;
-
-	/** @var string ext_path */
-	protected $ext_path;
-
-	/** @var string ext_path_web */
-	protected $ext_path_web;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
-	/**
-	 * The database tables
-	 * @var string
-	 */
-	protected $breizhcharts_table;
-	protected $breizhcharts_voters_table;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(points $points, template $template, language $language, user $user, db $db, log $log, request $request, config $config)
 	{
 		$this->points = $points;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
-		//$this->auth = $auth;
-		//$this->helper = $helper;
 		$this->db = $db;
-		$this->pagination = $pagination;
 		$this->log = $log;
-		//$this->cache = $cache;
 		$this->request = $request;
 		$this->config = $config;
-		$this->ext_manager = $ext_manager;
-		$this->path_helper = $path_helper;
-		$this->root_path = $root_path;
-		$this->php_ext = $php_ext;	
-		$this->breizhcharts_table = $breizhcharts_table;
-		$this->breizhcharts_voters_table = $breizhcharts_voters_table;	
-		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
-		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function acp_breizhcharts_config()

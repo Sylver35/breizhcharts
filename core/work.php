@@ -279,7 +279,7 @@ class work
 		}
 	}
 
-	private function build_tendency()
+	public function build_tendency()
 	{
 		$i = 1;
 		$tendency = [];
@@ -303,7 +303,7 @@ class work
 		return $tendency;
 	}
 
-	private function build_data_in_mode($data)
+	public function build_data_in_mode($data)
 	{
 		if ($data['mode'] === 'own')
 		{
@@ -336,7 +336,7 @@ class work
 		return $data;
 	}
 
-	private function stars_vote($song_id, $vote, $user_vote, $song_note)
+	public function stars_vote($song_id, $vote, $user_vote, $song_note)
 	{
 		$class = (!$vote) ? '-not' : '';
 		$content = sprintf($this->config['breizhcharts_li_rating'], $song_id, $class, number_format($song_note * 10, 2) . '%');
@@ -351,7 +351,7 @@ class work
 		return $content;
 	}
 
-	private function get_all_wins($nb_win)
+	public function get_all_wins($nb_win)
 	{
 		$options = '';
 		$sql = 'SELECT result_nb, result_time
@@ -415,7 +415,7 @@ class work
 		if ($row = $this->db->sql_fetchrow($result))
 		{
 			// Add the points
-			$this->add_user_points((int) $row['user_id'], (int) $this->config['breizhcharts_voters_points']);
+			$this->points->add_user_points((int) $row['user_id'], (int) $this->config['breizhcharts_voters_points']);
 
 			// Update last winner id
 			$this->config->set('breizhcharts_winner_id', $row['user_id']);
@@ -492,80 +492,5 @@ class work
 			submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . $row['last_pos'])), $data, false);
 		}
 		$this->db->sql_freeresult($result);
-	}
-
-	private function reset_all_notes()
-	{
-		$i = 1;
-		$time = time();
-		$sql_insert = $winner = [];
-
-		$sql = 'SELECT MAX(result_nb) AS old_result
-			FROM ' . $this->breizhcharts_result_table;
-		$result = $this->db->sql_query($sql);
-		$old_result = (int) $this->db->sql_fetchfield('old_result');
-		$this->db->sql_freeresult($result);
-		$new_result = $old_result + 1;
-
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> '*',
-			'FROM'		=> [$this->breizhcharts_table => ''],
-			'WHERE'		=> 'nb_note > 0',
-			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
-		]);
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$sql_ary = [
-				'song_note'	=> 0,
-				'nb_note'	=> 0,
-				'last_pos'	=> $i,
-				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : (int) $row['best_pos'],
-			];
-
-			if (($i < 11) && ($row['nb_note'] > 0))
-			{
-				$sql_insert[] = [
-					'result_song_id'		=> $row['song_id'],
-					'result_nb'				=> $new_result,
-					'result_time'			=> $time,
-					'result_pos'			=> $i,
-					'result_song_name'		=> $row['song_name'],
-					'result_artist'			=> $row['artist'],
-					'result_video'			=> $row['video'],
-					'result_poster_id'		=> $row['poster_id'],
-					'result_song_note'		=> $row['song_note'],
-					'result_nb_note'		=> $row['nb_note'],
-					'result_add_time'		=> $row['add_time'],
-				];
-			}
-			if ($i === 1)
-			{
-				$winner = [
-					'song_id'		=> $row['song_id'],
-					'song_name'		=> $row['song_name'],
-					'artist'		=> $row['artist'],
-					'video'			=> $row['video'],
-					'poster_id'		=> $row['poster_id'],
-					'song_note'		=> $row['song_note'],
-				];
-			}
-
-			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . (int) $row['song_id']);
-			$i++;
-		}
-		$this->db->sql_freeresult($result);
-
-		/**
-		 * You can use this event when the period has come to an end
-		 *
-		 * @event breizhcharts.reset_all_notes
-		 * @var	array
-		 * @since 1.1.0
-		 */
-		$vars = ['sql_insert', 'winner'];
-		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
-
-		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
 	}
 }

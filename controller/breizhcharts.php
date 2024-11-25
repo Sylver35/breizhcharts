@@ -233,7 +233,7 @@ class breizhcharts
 		$this->template->assign_vars([
 			'S_IN_VIDEO'	=> true,
 			'VIDEO_TITLE' 	=> $title,
-			'YOUTUBE_ID'	=> $this->functions_charts->get_youtube_id($row['video']),
+			'YOUTUBE_ID'	=> $this->work->get_youtube_id($row['video']),
 		]);
 
 		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $title);
@@ -377,12 +377,12 @@ class breizhcharts
 		$url = (string) $this->request->variable('url', '', true);
 		$json_response = new json_response;
 
-		if ($youtube_id = $this->functions_charts->get_youtube_id($url))
+		if ($youtube_id = $this->work->get_youtube_id($url))
 		{
 			$json_response->send([
 				'sort'		=> 1,
 				'message'	=> $this->language->lang('BC_AJAX_VIDEO'),
-				'content'	=> $this->functions_charts->get_youtube_img($youtube_id),
+				'content'	=> $this->work->get_youtube_img($youtube_id),
 			]);
 		}
 		else
@@ -423,7 +423,7 @@ class breizhcharts
 		}
 
 		$this->functions_charts->get_template_charts(false);
-		$this->functions_charts->create_navigation('add', $this->language->lang('BC_ADD_SONG'));
+		$this->functions_charts->create_navigation(['mode' => 'add', 'title_mode' => $this->language->lang('BC_ADD_SONG'), 'song_id' => 0, 'name' => '', 'userid' => 0]);
 
 		$this->template->assign_vars([
 			'NAV_ID'			=> 'add',
@@ -539,7 +539,7 @@ class breizhcharts
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video'),
 		]);
 
-		$this->functions_charts->create_navigation('edit', $title_mode, $song_id);
+		$this->functions_charts->create_navigation(['mode' => 'edit', 'title_mode' => $title_mode, 'song_id' => $song_id, 'name' => '', 'userid' => 0]);
 
 		// Output the page
 		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);

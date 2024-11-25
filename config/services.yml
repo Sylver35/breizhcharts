@@ -73,20 +73,10 @@ services:
             - '@template'
             - '@language'
             - '@user'
-            - '@auth'
-            - '@controller.helper'
             - '@dbal.conn'
-            - '@pagination'
             - '@log'
-            - '@cache'
             - '@request'
             - '@config'
-            - '@ext.manager'
-            - '@path_helper'
-            - '%core.root_path%'
-            - '%core.php_ext%'
-            - '%sylver35.breizhcharts.table.breizhcharts%'
-            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
 
     sylver35.breizhcharts.core.functions.charts:
         class: sylver35\breizhcharts\core\functions_charts
@@ -152,6 +142,7 @@ services:
             - '@config'
             - '@ext.manager'
             - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_result%'
 
     sylver35.breizhcharts.core.verify:
         class: sylver35\breizhcharts\core\verify

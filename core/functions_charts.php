@@ -289,69 +289,12 @@ class functions_charts
 		}
 	}
 
-	private function build_tendency()
-	{
-		$i = 1;
-		$tendency = [];
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'song_id, last_pos, best_pos, song_note, nb_note',
-			'FROM'		=> [$this->breizhcharts_table => ''],
-			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
-		]);
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$tendency[$row['song_id']] = [
-				'position'	=> $this->language->lang('BC_ACTUAL', $i),
-				'image'		=> $this->work->get_tendency_image($i, (int) $row['last_pos']),
-				'last'		=> ((int) $row['last_pos'] === 0) ? $this->language->lang('BC_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
-			];
-			$i++;
-		}
-		$this->db->sql_freeresult($result);
-
-		return $tendency;
-	}
-
-	private function build_data_in_mode($data)
-	{
-		if ($data['mode'] === 'own')
-		{
-			$data = array_merge($data, [
-				'rules'		=> false,
-				'where'		=> 'c.poster_id = ' . (int) $this->user->data['user_id'],
-				'select'	=> ' WHERE poster_id = ' . (int) $this->user->data['user_id'],
-				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode']]),
-			]);
-		}
-		else if ($data['mode'] === 'user')
-		{
-			$data = array_merge($data, [
-				'rules'		=> false,
-				'where'		=> 'c.poster_id = ' . $data['user'],
-				'select'	=> ' WHERE poster_id = ' . $data['user'],
-				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode'], 'user' => $data['user'], 'name' => $data['name']]),
-			]);
-		}
-		else
-		{
-			$data = array_merge($data, [
-				'rules'		=> true,
-				'where'		=> '',
-				'select'	=> '',
-				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode']]),
-			]);
-		}
-
-		return $data;
-	}
-
 	public function get_list_mode_charts($data)
 	{
 		$i = 1;
 		$this->check->update_breizhcharts_check();
-		$data = $this->build_data_in_mode($data);
-		$tendency = $this->build_tendency();
+		$data = $this->work->build_data_in_mode($data);
+		$tendency = $this->work->build_tendency();
 		$total_charts = $this->get_total_charts($data['select']);
 		$number = (int) $this->config['breizhcharts_user_page'];
 		$this->get_template_charts($data['rules']);
@@ -389,7 +332,7 @@ class functions_charts
 				'YEAR'			=> $row['year'],
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
 				'THUMBNAIL'		=> $this->work->get_youtube_img($row['video'], true),
-				'STARS_VOTE'	=> $this->stars_vote($row['song_id'], $row['user_vote'], $this->language->lang('BC_AJAX_NOTE', $row['user_vote']), $row['song_note']),
+				'STARS_VOTE'	=> $this->work->stars_vote($row['song_id'], $row['user_vote'], $this->language->lang('BC_AJAX_NOTE', $row['user_vote']), $row['song_note']),
 				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
 				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
 				'USER_VOTE'		=> $this->language->lang('BC_AJAX_NOTE', $row['user_vote']),
@@ -482,42 +425,9 @@ class functions_charts
 		$this->template->assign_vars([
 			'S_LAST_WINNERS'	=> true,
 			'NAV_ID'			=> 'winners',
-			'SELECT_WINS'		=> $this->get_all_wins($nb_win),
+			'SELECT_WINS'		=> $this->work->get_all_wins($nb_win),
 			'TITLE_PAGE'		=> $this->language->lang('BC_LAST_WINNERS_DATE', $this->user->format_date($date_result, $this->language->lang('BC_LAST_WINNERS_FORMAT'))),
 		]);
-	}
-
-	private function stars_vote($song_id, $vote, $user_vote, $song_note)
-	{
-		$class = (!$vote) ? '-not' : '';
-		$content = sprintf($this->config['breizhcharts_li_rating'], $song_id, $class, number_format($song_note * 10, 2) . '%');
-
-		for ($i = 1, $nb = 11; $i < $nb; $i++)
-		{
-			$onclick = (!$vote) ? sprintf($this->config['breizhcharts_li_onclick'], $song_id, $i) : '';
-			$title = (!$vote) ? $this->language->lang('BC_AJAX_STARS', $i) : strip_tags($user_vote);
-			$content .= sprintf($this->config['breizhcharts_li_stars'], $onclick, $title, $i);
-		}
-
-		return $content;
-	}
-
-	private function get_all_wins($nb_win)
-	{
-		$options = '';
-		$sql = 'SELECT result_nb, result_time
-			FROM ' . $this->breizhcharts_result_table . '
-				GROUP BY result_nb
-				ORDER BY result_nb DESC';
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$select = ($nb_win === (int) $row['result_nb']) ? ' selected="selected"' : '';
-			$options .= '<option value="' . $row['result_nb'] . '"' . $select . '>' . $this->user->format_date($row['result_time'], $this->language->lang('BC_LAST_WINNERS_FORMAT')) . '</option>';
-		}
-		$this->db->sql_freeresult($result);
-
-		return $options;
 	}
 
 	public function get_template_charts($rules)
@@ -564,7 +474,7 @@ class functions_charts
 			if ($points_active)
 			{
 				$this->work->run_random_winner();
-				$this->work->points_to_winners();
+				$this->points->points_to_winners();
 			}
 
 			// Send PM to the winners

@@ -52,11 +52,12 @@ class check
 	 * @var string
 	 */
 	protected $breizhcharts_table;
+	protected $breizhcharts_result_table;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, points $points, template $template, language $language, user $user, helper $helper, db $db, config $config, ext_manager $ext_manager, $breizhcharts_table)
+	public function __construct(work $work, points $points, template $template, language $language, user $user, helper $helper, db $db, config $config, ext_manager $ext_manager, $breizhcharts_table, $breizhcharts_result_table)
 	{
 		$this->work = $work;
 		$this->points = $points;
@@ -68,6 +69,8 @@ class check
 		$this->config = $config;
 		$this->ext_manager = $ext_manager;
 		$this->breizhcharts_table = $breizhcharts_table;
+		$this->breizhcharts_result_table = $breizhcharts_result_table;
+		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
 	}
 
 	public function get_version()
@@ -154,11 +157,11 @@ class check
 			$this->template->assign_block_vars('winners', [
 				'RANK' 			=> $data['img'],
 				'WIN'			=> $data['win'],
-				'USER'			=> $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
+				'USER'			=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'SONG'			=> $row['result_song_name'],
 				'ARTIST'		=> $row['result_artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['result_song_id']]),
-				'IMG'			=> $this->get_youtube_img($row['result_video'], true),
+				'IMG'			=> $this->work->get_youtube_img($row['result_video'], true),
 				'RESULT'		=> number_format($row['result_song_note'] * 10, 2),
 				'TITLE_RATE'	=> strip_tags($this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2))),
 				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2)),
@@ -176,7 +179,7 @@ class check
 			$result = $this->db->sql_query($sql);
 			$row = $this->db->sql_fetchrow($result);
 			$this->db->sql_freeresult($result);
-			$bonus_winner = $this->language->lang('BC_BONUS_WINNER', $this->get_username_song($row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']);
+			$bonus_winner = $this->language->lang('BC_BONUS_WINNER', $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']);
 		}
 
 		$this->template->assign_vars([
@@ -207,7 +210,7 @@ class check
 		{
 			$this->template->assign_block_vars('newests', [
 				'LINE'			=> ($i === 4) ? true : false,
-				'USER'			=>$this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
+				'USER'			=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'SONG'			=> $row['song_name'],
 				'ARTIST'		=> $row['artist'],
 				'VIDEO'			=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
