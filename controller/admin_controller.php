@@ -187,10 +187,10 @@ class admin_controller
 			$this->db->sql_freeresult($result);
 
 			$this->template->assign_vars([
-				'S_ON_PAGE'		=> ($total_charts > $this->config['breizhcharts_acp_page']) ? true : false,
-				'PAGE_NUMBER'	=> $this->pagination->validate_start($total_charts, $this->config['breizhcharts_acp_page'], $start),
+				'S_ON_PAGE'		=> ($total_charts > (int) $this->config['breizhcharts_acp_page']) ? true : false,
+				'PAGE_NUMBER'	=> $this->pagination->validate_start($total_charts, (int) $this->config['breizhcharts_acp_page'], $start),
 			]);
-			$this->pagination->generate_template_pagination($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir, 'pagination', 'start', $total_charts, $this->config['breizhcharts_acp_page'], $start);
+			$this->pagination->generate_template_pagination($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir, 'pagination', 'start', $total_charts, (int) $this->config['breizhcharts_acp_page'], $start);
 		}
 
 		$this->template->assign_vars([

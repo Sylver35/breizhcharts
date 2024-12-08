@@ -287,6 +287,7 @@ class work
 	public function build_tendency()
 	{
 		$i = 1;
+		$tendency = [];
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'song_id, last_pos, best_pos, song_note, nb_note',
 			'FROM'		=> [$this->breizhcharts_table => ''],
