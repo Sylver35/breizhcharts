@@ -287,7 +287,6 @@ class work
 	public function build_tendency()
 	{
 		$i = 1;
-		$tendency = [];
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'song_id, last_pos, best_pos, song_note, nb_note',
 			'FROM'		=> [$this->breizhcharts_table => ''],
@@ -296,12 +295,20 @@ class work
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$tendency[$row['song_id']] = [
-				'position'	=> $this->language->lang('BC_ACTUAL', $i),
-				'image'		=> $this->get_tendency_image($i, (int) $row['last_pos']),
-				'last'		=> ((int) $row['last_pos'] === 0) ? $this->language->lang('BC_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
-			];
-			$i++;
+			if (!$this->config['breizhcharts_period_activ'])
+			{
+				$tendency[$row['song_id']] = ['image' => '', 'actual' => '', 'last' => '', 'best_pos' => ''];
+			}
+			else
+			{
+				$tendency[$row['song_id']] = [
+					'image'		=> $this->get_tendency_image($i, (int) $row['last_pos']),
+					'actual'	=> $this->language->lang('BC_ACTUAL', $i),
+					'last'		=> ((int) $row['last_pos'] === 0) ? $this->language->lang('BC_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
+					'best_pos'	=> $this->language->lang('BC_BEST_POS', $row['best_pos']),
+				];
+				$i++;
+			}
 		}
 		$this->db->sql_freeresult($result);
 
@@ -313,7 +320,6 @@ class work
 		if ($data['mode'] === 'own')
 		{
 			$data = array_merge($data, [
-				'rules'		=> false,
 				'where'		=> 'c.poster_id = ' . (int) $this->user->data['user_id'],
 				'select'	=> ' WHERE poster_id = ' . (int) $this->user->data['user_id'],
 				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode']]),
@@ -322,7 +328,6 @@ class work
 		else if ($data['mode'] === 'user')
 		{
 			$data = array_merge($data, [
-				'rules'		=> false,
 				'where'		=> 'c.poster_id = ' . $data['userid'],
 				'select'	=> ' WHERE poster_id = ' . $data['userid'],
 				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode'], 'user' => $data['userid'], 'name' => $data['name']]),
@@ -331,7 +336,6 @@ class work
 		else
 		{
 			$data = array_merge($data, [
-				'rules'		=> true,
 				'where'		=> '',
 				'select'	=> '',
 				'pagin'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => $data['mode']]),
@@ -361,7 +365,7 @@ class work
 		$options = '';
 		$sql = 'SELECT result_nb, result_time
 			FROM ' . $this->breizhcharts_result_table . '
-				GROUP BY result_nb
+				GROUP BY result_nb, result_time
 				ORDER BY result_nb DESC';
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
@@ -372,28 +376,6 @@ class work
 		$this->db->sql_freeresult($result);
 
 		return $options;
-	}
-
-	public function get_template_charts($rules)
-	{
-		$lang_period = ((int) $this->config['breizhcharts_period_val'] === 86400) ? 'BC_DAY' : 'BC_WEEK';
-		$period = $this->language->lang($lang_period, $this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']);
-		$date_finish = $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE'));
-
-		$this->template->assign_vars([
-			'S_LIST_NAV'		=> true,
-			'S_RULES'			=> $rules,
-			'U_EXT_PATH'		=> $this->ext_path_web,
-			'MC_TITLE_EXPLAIN'	=> $this->language->lang('BC_HEADER_EXPLAIN', $period, $date_finish),
-			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
-			'U_ADD_SONG'		=> $this->auth->acl_get('u_breizhcharts_add') ? $this->helper->route('sylver35_breizhcharts_add_music') . '#start' : '',
-			'U_LIST_TOP'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list']) . '#start',
-			'U_LIST_NEWEST'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . '#start',
-			'U_LIST_OWN'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own']) . '#start',
-			'U_LAST_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']) . '#start',
-			'U_SELECT_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']),
-			'U_VOTE_MUSIC'		=> $this->helper->route('sylver35_breizhcharts_vote'),
-		]);
 	}
 
 	public function run_random_winner()

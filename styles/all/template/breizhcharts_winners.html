@@ -14,16 +14,16 @@
 			</li>
 		</ul>
 
-		<ul class="topiclist forums" style="font-size:1.1em;">
+		<ul class="topiclist forums medium allmax">
 			<li class="row bg3">
-				<dl style="text-align:center;font-weight: bold;">
-					<dd style="text-align: center; width: 7%;">{{ lang('BC_RANK') }}</dd>
-					<dd style="text-align: center; width: 50%;">{{ lang('BC_SONG_TITLE') }}</dd>
-					<dd style="text-align: center; width: 10%;">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd style="text-align: center; width: 10%;">{{ lang('BC_USER') }}</dd>
-					<dd style="text-align: center; width: 15%;">{{ lang('BC_LAST_POS') }}</dd>
+				<dl class="centered" style="font-weight: bold;">
+					<dd class="centered width-7">{{ lang('BC_RANK') }}</dd>
+					<dd class="centered width-50">{{ lang('BC_SONG_TITLE') }}</dd>
+					<dd class="centered width-10">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd class="centered width-10">{{ lang('BC_USER') }}</dd>
+					<dd class="centered width-15">{{ lang('BC_LAST_POS') }}</dd>
 					{% if S_UPS %}
-					<dd style="text-align: center; width: 7%;">{{ lang('BC_WON') }}</dd>
+					<dd class="centered width-7">{{ lang('BC_WON') }}</dd>
 					{% endif %}
 				</dl>
 			</li>
@@ -31,59 +31,39 @@
 			{% for winner in winners %}
 			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
 				<dl>
-					<dd style="width: 7%;text-align:center;">
-						<div style="margin: 10px 1px 1px 8px;">
+					<dd class="centered width-7">
+						<div class="video-div">
 							{{ winner.RANK }}
 						</div>
 					</dd>
-					<dd style="width: 50%;">
-						<div style="margin: 10px 1px 1px 8px;">
+					<dd class="width-50">
+						<div class="video-div">
 							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
 						</div>
 					</dd>
-					<dd style="width: 10%;text-align:center;">
+					<dd class="centered width-10">
 						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">
 							<img src="{{ winner.THUMBNAIL }}" alt="{{ winner.SONG }}" height="45px">
 						</a>
 					</dd>
-					<dd style="width: 10%;">
+					<dd class="centered width-10">
 						<div style="margin: 10px 1px 1px 8px;text-align:center;">{{ winner.USER }}</div>
 					</dd>
-					<dd style="width: 15%;">
+					<dd class="centered width-15">
 						<div class="song-nforate">
 							<div class="bzh-inline-rating">
 								<ul class="bzh-star-rating">
 									<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="one-star">1</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="two-star">2</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="three-star">3</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="four-star">4</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="five-star">5</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="six-star">6</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a>
-									</li>
-									<li>
-										<a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a>
-									</li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="one-star">1</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="two-star">2</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="three-star">3</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="four-star">4</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="five-star">5</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="six-star">6</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a></li>
+									<li><a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a></li>
 								</ul>
 							</div>
 							<div class="bzh-box">
@@ -94,8 +74,8 @@
 						</div>
 					</dd>
 					{% if S_UPS %}
-					<dd style="width: 7%;">
-						<div style="margin: 10px 1px 1px 8px;text-align:center;">
+					<dd class="centered width-7">
+						<div class="winnners">
 							{{ winner.WIN }}
 						</div>
 					</dd>
@@ -106,7 +86,7 @@
 			{% else %}
 			<li class="row">
 				<dl class="dl-default">
-					<dd style="width:100%;">
+					<dd class="allmax">
 						{{ lang('BC_NO_VOTES') }}
 					</dd>
 				</dl>
@@ -121,8 +101,7 @@
 </div>
 
 {% if S_BONUS_WINNER %}
-<br style="clear:both">
-
+<br>
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -132,10 +111,10 @@
 				</dl>
 			</li>
 		</ul>
-		<ul class="topiclist forums" style="font-size:1.1em;">
+		<ul class="topiclist forums medium allmax">
 			<li class="row">
-				<dl style="text-align:center;font-size:1.2em;">
-					<dd style="width:100%;">
+				<dl class="maxi centered">
+					<dd class="allmax">
 						{{ BONUS_WINNER }}
 					</dd>
 				</dl>
@@ -144,8 +123,7 @@
 	</div>
 </div>
 {% endif %}
-
-<br style="clear:both">
+<br>
 
 {% EVENT breizhcharts_footer %}
 

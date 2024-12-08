@@ -84,7 +84,7 @@ class admin_config
 				'breizhcharts_song_forum'			=> $this->request->variable('breizhcharts_song_forum', 0),
 				'breizhcharts_period_activ'			=> $this->request->variable('breizhcharts_period_activ', 0),
 			];
-			if ($this->request->variable('breizhcharts_period_activ', 0))
+			if ($data['breizhcharts_period_activ'])
 			{
 				$data = array_merge($data, [
 					'breizhcharts_start_time'			=> strtotime($this->request->variable('breizhcharts_start_time_bis', '')),
@@ -156,7 +156,7 @@ class admin_config
 			'REQUIRED_2'					=> $this->config['breizhcharts_required_2'],
 			'PM_USER'						=> $this->config['breizhcharts_pm_user'],
 			'PM_ENABLE'						=> $this->config['breizhcharts_pm_enable'],
-			'PM_USER_NAME'					=> ($this->config['breizhcharts_pm_user']) ? $this->get_pm_user() : '',
+			'PM_USER_NAME'					=> !$this->config['breizhcharts_pm_user'] ?: $this->get_pm_user(),
 			'ANNOUNCE_FORUM_LIST'			=> make_forum_select((int) $this->config['breizhcharts_song_forum'], false, true, true),
 			'ANNOUNCE_ENABLE'				=> $this->config['breizhcharts_announce_enable'],
 			'POINTS_PER_VOTE'				=> $this->config['breizhcharts_points_per_vote'],

@@ -5,7 +5,7 @@ services:
     sylver35.breizhcharts.main.listener:
         class: sylver35\breizhcharts\event\main_listener
         arguments:
-            - '@sylver35.breizhcharts.core.functions.charts'
+            - '@sylver35.breizhcharts.core.charts'
             - '@sylver35.breizhcharts.core.check'
             - '@template'
             - '@language'
@@ -22,7 +22,7 @@ services:
     sylver35.breizhcharts.controller.charts:
         class: sylver35\breizhcharts\controller\breizhcharts
         arguments:
-            - '@sylver35.breizhcharts.core.functions.charts'
+            - '@sylver35.breizhcharts.core.charts'
             - '@sylver35.breizhcharts.core.work'
             - '@sylver35.breizhcharts.core.verify'
             - '@sylver35.breizhcharts.core.points'
@@ -78,8 +78,8 @@ services:
             - '@request'
             - '@config'
 
-    sylver35.breizhcharts.core.functions.charts:
-        class: sylver35\breizhcharts\core\functions_charts
+    sylver35.breizhcharts.core.charts:
+        class: sylver35\breizhcharts\core\charts
         arguments:
             - '@sylver35.breizhcharts.core.work'
             - '@sylver35.breizhcharts.core.check'

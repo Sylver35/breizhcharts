@@ -95,7 +95,10 @@ $lang = array_merge($lang, [
 	'BC_FROM_OF'					=> '%1$s from %2$s',
 	'BC_GO_CHARTS'					=> 'here',
 	'BC_HEADER'						=> 'Music Charts - Your Charts over here',
-	'BC_HEADER_EXPLAIN'				=> 'Here you can create your own charts and rate them. Every registered user can add songs and every registered user can vote for them. Within the running voting period you only can vote once per song. As soon as the current period ends, you may vote again for your favourite songs.<br><br>the voting period of <strong>%1$s</strong> ends on: <strong>%2$s</strong>',
+	'BC_HEADER_EXPLAIN'				=> 'Here you can create your own charts and rate them. Every registered user can add songs and every registered user can vote for them.',
+	'BC_HEADER_BIS_EXPLAIN'			=> '<br>Within the running voting period you only can vote once per song.<br>As soon as the current period ends, you may vote again for your favourite songs.',
+	'BC_HEADER_TER_EXPLAIN'			=> '<br><br>the voting period of <strong>%1$s</strong> ends on: <strong>%2$s</strong>',
+	'BC_HEADER_QUATER_EXPLAIN'		=> '<br><br><strong>! Tip:</strong> Click on a member’s nickname to see their song list'.
 	'BC_INDEX_WINNER'				=> 'The last Music-Charts winners from %s',
 	'BC_LAST_POS'					=> 'Ranking',
 	'BC_LAST_WINNERS'				=> 'Results of the last vote',
@@ -116,6 +119,7 @@ $lang = array_merge($lang, [
 	'BC_NO_VOTES'					=> 'Nobody voted during the last period. Therefore we have no lucky winners.',
 	'BC_NO_VOTERS'					=> '<strong>Currently no user voted in our Charts.</strong>',
 	'BC_NO_WINNER'					=> 'No winners yet',
+	'BC_NOT_AUTHORISED'				=> 'You are not authorized to access the Hit Parade module.',
 	'BC_OK'							=> 'Compliant',
 	'BC_OF_USER'					=> 'Songs from %s',
 	'BC_OF_USER_TITLE'				=> '🎶 See all Songs from %s',
@@ -195,5 +199,5 @@ $lang = array_merge($lang, [
 	'ACL_U_BC_VOTE'					=> 'Can rate in Music Charts',
 	'ACL_U_BC_ADD'					=> 'Can add songs to Music Charts', 
 	'ACL_U_BC_EDIT'					=> 'Can edit own songs in Music Charts',
-	'GO_TO_YOUTUBE'					=> '<a href="https://www.youtube.com" onclick="window.open(this.href);return false;" title="Go to YouTube">YouTube Site</a>',
+	'GO_TO_YOUTUBE'					=> '<a href="https://www.youtube.com" onclick="window.open(this.href);return false;" title="Go to YouTube">Visit the YouTube site</a>',
 ]);

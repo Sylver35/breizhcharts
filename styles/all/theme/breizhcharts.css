@@ -105,7 +105,7 @@ ul.topiclist li.bg3 dl.title_tab dd {
 	font-weight: bold;
 }
 
-ul.topiclist li.row dl.content_tab dd {
+ul.topiclist li.row dl.content_tab dd, .centered {
 	text-align: center;
 }
 
@@ -159,6 +159,99 @@ img.youtube-img {
 
 h3.video-title {
 	margin-top: 8px;
+}
+
+dt.label {
+	width: 40%;
+}
+
+.mini {
+	font-size: 0.8em;
+}
+
+.medium {
+	font-size: 1.1em;
+}
+
+.maxi {
+	font-size: 1.2em;
+}
+
+.width-7 {
+	width: 7%;
+}
+
+.width-8 {
+	width: 8%;
+}
+
+.width-10 {
+	width: 10%;
+}
+
+.width-12 {
+	width: 12%;
+}
+
+.width-13 {
+	width: 13%;
+}
+
+.width-14 {
+	width: 14%;
+}
+
+.width-10 {
+	width: 10%;
+}
+
+.width-15 {
+	width: 15%;
+}
+
+.width-17 {
+	width: 17%;
+}
+
+.width-20 {
+	width: 20%;
+}
+
+.width-22 {
+	width: 22%;
+}
+
+.width-23 {
+	width: 23%;
+}
+
+.width-37 {
+	width: 37%;
+}
+
+.width-40 {
+	width: 40%;
+}
+
+.width-50 {
+	width: 50%;
+}
+
+dd.allmax, ul.allmax {
+	width: 100%;
+}
+
+div.winnners {
+	margin: 10px 1px 1px 8px;
+	text-align: center;
+}
+
+div.video-div {
+	margin: 10px 1px 1px 8px;
+}
+
+.undisplay {
+	display: none;
 }
 
 .video-frame {

@@ -7,32 +7,32 @@
 	<div class="panel" id="postingbox">
 		<div class="inner">
 			<h3>{{ TITLE_PAGE }}</h3>
-			{% if ERROR %}
-			<p class="error">{{ ERROR }}</p>
+			{% if BC_ERROR %}
+			<p class="error">{{ BC_ERROR }}</p>
 			{% endif %}
 			<fieldset>
 				<dl>
-					<dt style="width: 40%; font-size: 9px">{{ lang('BC_NEEDED') }} <img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube" height="12"><br><br></dt>
+					<dt class="label mini">{{ lang('BC_NEEDED') }} <img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube" height="12"><br><br></dt>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
-					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="song_name" tabindex="1" name="song_name"  size="65" class="inputbox autowidth" value="{{ CHART_SONG_NAME }}"></dd>
+					<dt class="label"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="song_name" tabindex="1" name="song_name" size="65" class="inputbox autowidth" value="{{ CHART_SONG_NAME }}"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
-					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="artist" tabindex="2" name="artist"  size="65" class="inputbox autowidth" value="{{ CHART_ARTIST }}"></dd>
+					<dt class="label"><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="artist" tabindex="2" name="artist" size="65" class="inputbox autowidth" value="{{ CHART_ARTIST }}"></dd>
 					<dd id="check-song"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="album">{% if S_REQ_1 %}[*] {% endif %}{{ lang('BC_SONG_ALBUM') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</dt>
+					<dt class="label"><label for="album">{% if S_REQ_1 %}[*] {% endif %}{{ lang('BC_SONG_ALBUM') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</dt>
 					<dd><input type="text" id="album" tabindex="3" name="album"{% if S_REQ_1 %} required aria-required="true"{% endif %} size="65" class="inputbox autowidth" value="{{ CHART_ALBUM }}"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="year">{% if S_REQ_2 %}[*] {% endif %}{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
+					<dt class="label"><label for="year">{% if S_REQ_2 %}[*] {% endif %}{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_YEAR_EXPLAIN') }}</dt>
 					<dd><input type="text" id="year" name="year"{% if S_REQ_2 %} required aria-required="true"{% endif %} tabindex="5" size="4" class="inputbox autowidth" value="{{ CHART_YEAR }}"></dd>
 				</dl>
 				<dl>
-					<dt style="width: 40%;"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
+					<dt class="label"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}"></dd>
 					<dd id="check-video"></dd>
 				</dl>
@@ -43,16 +43,18 @@
 	<div class="panel bg2">
 		<div class="inner">
 			<fieldset class="submit-buttons">
-				<span id="result-span" style="display: none;"></span>
+				<span id="result-span" class="undisplay"></span>
 				{{ S_HIDDEN_FIELDS }}
 				{{ S_FORM_TOKEN }}
-				<input type="submit" accesskey="s" tabindex="8" id="button" name="post" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" class="button1">
-				<input type="Button" tabindex="9" onclick="window.history.go(-1); return false;" value="{{ lang('CANCEL') }}" title="{{ lang('CANCEL') }}" class="button1">
+				{% if not BC_ERROR %}
+				<input type="submit" tabindex="8" accesskey="s" id="button" name="post" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" class="button1">
+				{% endif %}
+				<input type="Button" tabindex="9" accesskey="c" onclick="window.history.go(-1); return false;" value="{{ lang('CANCEL') }}" title="{{ lang('CANCEL') }}" class="button1">
 			</fieldset>
 		</div>
 	</div>
 </form>
 
-<br style="clear:both">
+<br>
 
 {% INCLUDE 'overall_footer.html' %}

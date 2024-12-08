@@ -2,15 +2,7 @@
 
 {% EVENT breizhcharts_header %}
 
-{% if S_RULES %}
-<div class="rules">
-	<div class="inner">
-		{{ MC_TITLE_EXPLAIN }}
-		<br><br>
-		<img src="{{ U_EXT_PATH }}images/youtube.png" class="youtube-img" alt="youtube"> {{ lang('GO_TO_YOUTUBE') }}
-	</div>
-</div>
-{% endif %}
+{% INCLUDE '@sylver35_breizhcharts/rules.html' %}
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
@@ -38,25 +30,27 @@
 		<ul class="topiclist forums">
 			<li class="row bg3">
 				<dl class="title_tab">
-					<dd style="width: 7%;">{{ lang('BC_CURR_POS') }}</dd>
-					<dd style="width: 37%;">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br>{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
-					<dd style="width: 12%;">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd style="width: 13%;">{{ lang('BC_ADDED_BY') }}</dd>
-					<dd style="width: 20%;">{{ lang('BC_RATE') }}</dd>
-					<dd style="width: 10%;">{{ lang('BC_LAST_POS') }}</dd>
+					<dd class="width-{% if S_ACTIV_PERIOD %}7{% else %}8{% endif %}">{{ lang('BC_CURR_POS') }}</dd>
+					<dd class="width-{% if S_ACTIV_PERIOD %}37{% else %}40{% endif %}">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br>{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
+					<dd class="width-{% if S_ACTIV_PERIOD %}12{% else %}14{% endif %}">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd class="width-{% if S_ACTIV_PERIOD %}13{% else %}15{% endif %}">{{ lang('BC_ADDED_BY') }}</dd>
+					<dd class="width-{% if S_ACTIV_PERIOD %}20{% else %}23{% endif %}">{{ lang('BC_RATE') }}</dd>
+					{% if S_ACTIV_PERIOD %}
+					<dd class="width-10">{{ lang('BC_LAST_POS') }}</dd>
+					{% endif %}
 				</dl>
 			</li>
 			{% if charts|length %}
 			{% for chart in charts %}
 			<li class="row {% if chart.POSITION is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
 				<dl class="content_tab">
-					<dd style="width:7%;">
+					<dd class="width-{% if S_ACTIV_PERIOD %}7{% else %}8{% endif %}">
 						<br>
 							{% if chart.U_DELETE_SONG %}<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_delete.png" alt="{{ lang('BC_DELETE_SONG') }}" title="{{ lang('BC_DELETE_SONG') }}"></span></a>{% endif %}
 							{% if chart.U_EDIT_SONG %}<a href="{{ chart.U_EDIT_SONG }}#start" title="{{ lang('BC_EDIT_SONG') }}"><span><img src="{{ U_EXT_PATH }}images/icon_edit.png" alt="{{ lang('BC_EDIT_SONG') }}" title="{{ lang('BC_EDIT_SONG') }}"></span></a>{% endif %}
 						<br><br>{{ chart.POSITION }}
 					</dd>
-					<dd style="width: 37%;">
+					<dd class="width-{% if S_ACTIV_PERIOD %}37{% else %}40{% endif %}">
 						<span class="song-title">{{ chart.TITLE }}</span><br>
 						{{ chart.ARTIST }}
 						<br>
@@ -64,16 +58,16 @@
 						{% if chart.ALBUM and chart.YEAR %} | {% endif %}
 						{{ chart.YEAR }}
 					</dd>
-					<dd style="width: 12%;">
+					<dd class="width-{% if S_ACTIV_PERIOD %}12{% else %}14{% endif %}">
 						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">
 							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" height="50px">
 						</a>
 					</dd>
-					<dd style="width: 13%;">
+					<dd class="width-{% if S_ACTIV_PERIOD %}13{% else %}15{% endif %}">
 						<br>{{ chart.USERNAME }}
 						<div class="add-time"><i>{{ chart.ADDED_TIME }}</i></div>
 					</dd>
-					<dd id="bzh_vote-{{ chart.SONG_ID }}" style="width: 20%;">
+					<dd id="bzh_vote-{{ chart.SONG_ID }}" class="width-{% if S_ACTIV_PERIOD %}20{% else %}23{% endif %}">
 						<div class="song-nforate">
 							<div class="bzh-inline-rating">
 								<ul class="bzh-star-rating" id="stars-{{ chart.SONG_ID }}">
@@ -88,7 +82,8 @@
 							<div class="bzh-clr"></div>
 						</div>
 					</dd>
-					<dd style="width: 10%;">
+					{% if S_ACTIV_PERIOD %}
+					<dd class="width-10">
 						{{ chart.TENDENCY_IMG }}
 						<div class="bzh-tendency">
 							{{ chart.ACTUAL }}<br>
@@ -96,13 +91,14 @@
 							{{ chart.BEST }}
 						</div>
 					</dd>
+					{% endif %}
 				</dl>
 			</li>
 			{% endfor %}
 			{% else %}
 			<li class="row">
 				<dl class="dl-default">
-					<dd style="width:100%;">
+					<dd  class="allmax">
 						{{ lang('BC_NO_SONGS') }}
 					</dd>
 				</dl>
@@ -135,7 +131,7 @@
 
 <div id="result-div"></div>
 
-<br style="clear:both">
+<br>
 
 {% EVENT breizhcharts_footer %}
 

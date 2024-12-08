@@ -1,3 +1,4 @@
+
 {% if S_BREIZHCHARTS_CONFIG %}
 <script>
 	var calendarLanguage = '{{ USER_LANG }}';
@@ -11,17 +12,18 @@
 var breizhcharts = {
 	checkSong: '{{ U_CHECK_SONG }}',
 	checkUrl: '{{ U_CHECK_VIDEO }}',
-	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="">',
-	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="">',
-	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="">',
+	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="loader">',
+	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="true">',
+	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="false">',
 	submit: '{{ lang("SUBMIT")|escape("js") }}',
 	error: '{{ lang("ERROR")|escape("js") }}',
 	ok: '{{ lang("BC_OK")|escape("js") }}',
-	errorVideo: '{{ lang("BC_EMBED_FORMAT_ERROR")|escape("js") }}',
+	errorVideo: '{{ lang("BC_AJAX_VIDEO_NO")|escape("js") }}',
 	id: {{ ID }},
 };
 (function($){  // Avoid conflicts with other libraries
 	'use strict';
+
 	breizhcharts.checkSongArtist = function(){
 		var songName = $('#song_name').val(), artist = $('#artist').val();
 		if(songName === '' || artist === ''){

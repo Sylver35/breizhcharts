@@ -12,6 +12,9 @@
 
 {% if not S_BREIZHCHARTS_EDIT %}
 <form id="breizhchart_manage" method="post" action="{{ U_ACTION }}">
+	<div class="pagination" style="float:left">
+		{{ lang('SORT_BY') }} : {{ S_SELECT_SORT_KEY }} {{ S_SELECT_SORT_DIR }}&nbsp;<input class="btnlite" type="submit" name="sort" value="{{ lang('GO') }}">
+	</div>
 	<div class="pagination top-pagination">
 	{% if pagination|length %}
 		{% INCLUDE 'pagination.html' %}
@@ -39,9 +42,7 @@
 				<td>{{ chart.ARTIST }}</td>
 				<td>{{ chart.ALBUM }}</td>
 				<td>{{ chart.USERNAME }}<br><span style="font-size: 0.8em;"><i>{{ chart.ADDED_TIME }}</i></span></td>
-				<td style="text-align: center;">
-					<img src="{{ chart.PICTURE }}" height="35px" alt="" title="{{ chart.TITLE_PIC }}">
-				</td>
+				<td style="text-align: center;"><img src="{{ chart.PICTURE }}" height="35px" alt="{{ chart.TITLE_PIC }}" title="{{ chart.TITLE_PIC }}"></td>
 				<td style="text-align: center;">{{ chart.LAST_RANK }}</td>
 				<td style="text-align: center;"><a href="{{ chart.U_EDIT }}">{{ ICON_EDIT }}</a>&nbsp;&nbsp;<a href="{{ chart.U_DEL }}">{{ ICON_DELETE }}</a></td>
 			</tr>
@@ -60,16 +61,6 @@
 		&bull; {{ PAGE_NUMBER }}
 	{% endif %}
 	</div>
-
-	<table cellspacing="1" >
-		<tr>
-			<td align="left">
-				<form method="post" action="{{ S_LINKX_ACTION }}">
-					{{ lang('SORT_BY') }} {{ S_SELECT_SORT_KEY }} {{ S_SELECT_SORT_DIR }}&nbsp;<input class="btnlite" type="submit" name="sort" value="{{ lang('GO') }}">
-				</form>
-			</td>
-		</tr>
-	</table>
 </form>
 
 {% else %}

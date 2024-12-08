@@ -177,7 +177,7 @@ class admin_controller
 					'USERNAME'		=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 					'PICTURE'		=> $this->get_youtube_img($row['video']),
 					'TITLE_PIC'		=> $this->language->lang('BC_PICTURE_TITLE', $row['artist']),
-					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
+					'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'], $this->language->lang('BC_DATE_ADDED'))),
 					'LAST_RANK'		=> $row['last_pos'],
 					'VIDEO'			=> $row['video'],
 					'U_EDIT'		=> $this->u_action . '&amp;action=edit&amp;id=' . $row['song_id'] . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir,
@@ -187,10 +187,10 @@ class admin_controller
 			$this->db->sql_freeresult($result);
 
 			$this->template->assign_vars([
-				'S_ON_PAGE'		=> $total_charts > (int) $this->config['breizhcharts_acp_page'],
-				'PAGE_NUMBER'	=> $this->pagination->validate_start($total_charts, (int) $this->config['breizhcharts_acp_page'], $start),
+				'S_ON_PAGE'		=> ($total_charts > $this->config['breizhcharts_acp_page']) ? true : false,
+				'PAGE_NUMBER'	=> $this->pagination->validate_start($total_charts, $this->config['breizhcharts_acp_page'], $start),
 			]);
-			$this->pagination->generate_template_pagination($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir, 'pagination', 'start', $total_charts, (int) $this->config['breizhcharts_acp_page'], $start);
+			$this->pagination->generate_template_pagination($this->u_action . '&amp;sk=' . $sort_key . '&amp;sd=' . $sort_dir, 'pagination', 'start', $total_charts, $this->config['breizhcharts_acp_page'], $start);
 		}
 
 		$this->template->assign_vars([

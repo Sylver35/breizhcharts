@@ -9,7 +9,7 @@
 namespace sylver35\breizhcharts\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use sylver35\breizhcharts\core\functions_charts;
+use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\check;
 use phpbb\template\template;
 use phpbb\language\language;
@@ -21,8 +21,8 @@ use phpbb\config\config;
 
 class main_listener implements EventSubscriberInterface
 {
-	/** @var \sylver35\breizhcharts\core\functions_charts */
-	protected $functions_charts;
+	/** @var \sylver35\breizhcharts\core\charts */
+	protected $charts;
 
 	/** @var \sylver35\breizhcharts\core\check */
 	protected $check;
@@ -58,9 +58,9 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(functions_charts $functions_charts, check $check, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $breizhcharts_table)
+	public function __construct(charts $charts, check $check, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $breizhcharts_table)
 	{
-		$this->functions_charts = $functions_charts;
+		$this->charts = $charts;
 		$this->check = $check;
 		$this->template = $template;
 		$this->language = $language;
@@ -133,11 +133,11 @@ class main_listener implements EventSubscriberInterface
 			]);
 		}
 
-		if ($this->config['breizhcharts_start_time'] && $this->config['breizhcharts_period'])
+		if ($this->config['breizhcharts_period_activ'] && $this->config['breizhcharts_start_time'])
 		{
 			if (time() - $this->config['breizhcharts_start_time'] > $this->config['breizhcharts_period'])
 			{
-				$this->functions_charts->run_vote_charts_period();
+				$this->charts->run_vote_charts_period();
 			}
 		}
 	}
@@ -149,9 +149,12 @@ class main_listener implements EventSubscriberInterface
 
 	public function index_modify_page_title()
 	{
-		if ($this->auth->acl_gets(['u_breizhcharts_view', 'u_breizhcharts_vote']) && $this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			$this->check->check_charts_voted();
+			if ($this->config['breizhcharts_period_activ'] && $this->auth->acl_gets(['u_breizhcharts_view', 'u_breizhcharts_vote']))
+			{
+				$this->check->check_charts_voted();
+			}
 		}
 	}
 

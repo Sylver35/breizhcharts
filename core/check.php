@@ -96,44 +96,50 @@ class check
 
 	public function check_charts_voted()
 	{
-		if ($this->user->data['breizhchart_check_2'])
+		if ($this->config['breizhcharts_period_activ'])
 		{
-			return;
-		}
-		else if ($this->config['breizhcharts_check_1'] && !$this->user->data['breizhchart_check_1'])
-		{
-			$this->first_check_charts();
-		}
-		else if ($this->config['breizhcharts_check_1'] && $this->config['breizhcharts_check_2'] && $this->user->data['breizhchart_check_1'] && !$this->user->data['breizhchart_check_2'])
-		{
-			if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
+			if ($this->user->data['breizhchart_check_2'])
 			{
-				$this->second_check_charts();
+				return;
+			}
+			else if ($this->config['breizhcharts_check_1'] && !$this->user->data['breizhchart_check_1'])
+			{
+				$this->first_check_charts();
+			}
+			else if ($this->config['breizhcharts_check_1'] && $this->config['breizhcharts_check_2'] && $this->user->data['breizhchart_check_1'] && !$this->user->data['breizhchart_check_2'])
+			{
+				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
+				{
+					$this->second_check_charts();
+				}
 			}
 		}
 	}
 
 	public function update_breizhcharts_check()
 	{
-		$modified = false;
-		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
+		if ($this->config['breizhcharts_period_activ'])
 		{
-			if ($this->user->data['breizhchart_check_1'] == false)
+			$modified = false;
+			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 			{
-				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
-				$modified = true;
-			}
-			else if ($this->user->data['breizhchart_check_2'] == false)
-			{
-				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
+				if ($this->user->data['breizhchart_check_1'] == false)
 				{
-					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 					$modified = true;
 				}
-			}
-			if (!$modified)
-			{
-				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+				else if ($this->user->data['breizhchart_check_2'] == false)
+				{
+					if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
+					{
+						$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+						$modified = true;
+					}
+				}
+				if (!$modified)
+				{
+					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+				}
 			}
 		}
 	}

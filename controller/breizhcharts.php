@@ -10,7 +10,7 @@ namespace sylver35\breizhcharts\controller;
 
 use phpbb\json_response;
 use phpbb\exception\http_exception;
-use sylver35\breizhcharts\core\functions_charts;
+use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\work;
 use sylver35\breizhcharts\core\verify;
 use sylver35\breizhcharts\core\points;
@@ -31,8 +31,8 @@ use phpbb\event\dispatcher_interface as phpbb_dispatcher;
 
 class breizhcharts
 {
-	/** @var \sylver35\breizhcharts\core\functions_charts */
-	protected $functions_charts;
+	/** @var \sylver35\breizhcharts\core\charts */
+	protected $charts;
 
 	/** @var \sylver35\breizhcharts\core\work */
 	protected $work;
@@ -107,9 +107,9 @@ class breizhcharts
 	/**
 	 * Constructor
 	 */
-	public function __construct(functions_charts $functions_charts, work $work, verify $verify, points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
+	public function __construct(charts $charts, work $work, verify $verify, points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_voters_table)
 	{
-		$this->functions_charts = $functions_charts;
+		$this->charts = $charts;
 		$this->work = $work;
 		$this->verify = $verify;
 		$this->points = $points;
@@ -143,15 +143,15 @@ class breizhcharts
 		}
 
 		$data = [
-			'mode'		=> (string) $this->request->variable('mode', 'list_newest'),
-			'start'		=> (int) $this->request->variable('start', 0),
-			'song_id'	=> (int) $this->request->variable('id', 0),
-			'userid'	=> (int) $this->request->variable('user', 0),
-			'winner'	=> (int) $this->request->variable('winner', 0),
-			'name'		=> (string) $this->request->variable('name', '', true),
-			'title_mode'=> $this->language->lang('BC_NEWEST'),
-			'order_by'	=> 'c.song_id DESC',
-			'body'		=> 'breizhcharts.html',
+			'mode'			=> (string) $this->request->variable('mode', 'list_newest'),
+			'start'			=> (int) $this->request->variable('start', 0),
+			'song_id'		=> (int) $this->request->variable('id', 0),
+			'userid'		=> (int) $this->request->variable('user', 0),
+			'winner'		=> (int) $this->request->variable('winner', 0),
+			'name'			=> (string) $this->request->variable('name', '', true),
+			'title_mode'	=> $this->language->lang('BC_NEWEST'),
+			'order_by'		=> 'c.song_id DESC',
+			'body'			=> 'breizhcharts.html',
 		];
 
 		/**
@@ -168,34 +168,50 @@ class breizhcharts
 		switch ($data['mode'])
 		{
 			case 'list_newest':
-				$this->functions_charts->get_list_mode_charts($data);
+				$data = array_merge($data, [
+					'rules'			=> true,
+					'title_mode'	=> $this->language->lang('BC_NEWEST'),
+				]);
+				$this->charts->get_list_mode_charts($data);
 			break;
 
 			case 'list':
-				$data['title_mode'] = $this->language->lang('BC_BEST_RATED');
-				$data['order_by'] = 'c.song_note DESC, c.nb_note DESC, c.last_pos ASC, c.best_pos ASC';
-				$this->functions_charts->get_list_mode_charts($data);
+				$data = array_merge($data, [
+					'rules'			=> true,
+					'title_mode'	=> $this->language->lang('BC_BEST_RATED'),
+					'order_by'		=> 'c.song_note DESC, c.nb_note DESC, c.last_pos ASC, c.best_pos ASC',
+				]);
+				$this->charts->get_list_mode_charts($data);
 			break;
 
 			case 'own':
-				$data['title_mode'] = $this->language->lang('BC_OWN');
-				$this->functions_charts->get_list_mode_charts($data);
+				$data = array_merge($data, [
+					'rules'			=> true,
+					'title_mode'	=> $this->language->lang('BC_OWN'),
+				]);
+				$this->charts->get_list_mode_charts($data);
 			break;
 
 			case 'user':
-				$data['title_mode'] = $this->language->lang('BC_OF_USER', $data['name']);
-				$this->functions_charts->get_list_mode_charts($data);
+				$data = array_merge($data, [
+					'rules'			=> true,
+					'title_mode'	=> $this->language->lang('BC_OF_USER', $data['name']),
+				]);
+				$this->charts->get_list_mode_charts($data);
 			break;
 
 			case 'winners':
-				$data['body'] = 'breizhcharts_winners.html';
-				$data['title_mode'] = $this->language->lang('BC_LAST_WINNERS');
-				$this->functions_charts->get_winners_charts($data['winner']);
+				$data = array_merge($data, [
+					'rules'			=> false,
+					'body'			=> 'breizhcharts_winners.html',
+					'title_mode'	=> $this->language->lang('BC_LAST_WINNERS'),
+				]);
+				$this->charts->get_winners_charts($data['winner']);
 			break;
 		}
 
-		$this->functions_charts->get_voters();
-		$this->functions_charts->create_navigation($data);
+		$this->charts->get_voters();
+		$this->charts->create_navigation($data);
 
 		/**
 		 * You can use this event after all modes listed here
@@ -229,21 +245,20 @@ class breizhcharts
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$title = $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']);
 		$this->template->assign_vars([
 			'S_IN_VIDEO'	=> true,
-			'VIDEO_TITLE' 	=> $title,
+			'VIDEO_TITLE' 	=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
 			'YOUTUBE_ID'	=> $this->work->get_youtube_id($row['video']),
 		]);
 
-		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $title);
+		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']));
 	}
 
 	public function handle_vote()
 	{
+		$json_response = new json_response;
 		$song_id = (int) $this->request->variable('id', 0);
 		$rate = (int) $this->request->variable('rate', 0);
-		$json_response = new json_response;
 
 		if (!$this->auth->acl_gets(['u_breizhcharts_vote', 'a_breizhcharts_manage']))
 		{
@@ -304,14 +319,11 @@ class breizhcharts
 					'ON'	=> 'v.vote_song_id = c.song_id',
 				],
 			],
-			'WHERE'		=> 'song_id = ' . $song_id,
+			'GROUP_BY'	=> 'c.song_name, c.artist, c.song_note, c.nb_note',
+			'WHERE'		=> 'song_id = ' . (int) $song_id,
 		]);
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
-		$song = $row['song_name'];
-		$artist = $row['artist'];
-		$nb_note = (int) $row['nb_note'];
-		$total = (isset($row['total'])) ? (int) $row['total'] : 0;
 		$this->db->sql_freeresult($result);
 
 		// Create array for the voting
@@ -323,16 +335,17 @@ class breizhcharts
 		$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_voters_table . $this->db->sql_build_array('INSERT', $sql_ary));
 
 		// Update the breizhcharts table
-		$new_nb = $nb_note + 1;
+		$total = (isset($row['total'])) ? (int) $row['total'] : 0;
+		$new_nb = (int) $row['nb_note'] + 1;
 		$new_note = ($total + $rate) / $new_nb;
 		$data = [
 			'song_note'	=> (float) $new_note,
-			'nb_note'	=> (int) $new_nb,
+			'nb_note'	=> $new_nb,
 		];
-		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . $song_id);
+		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . (int) $song_id);
 		$this->cache->destroy('sql', $this->breizhcharts_table);
 
-		$message = $this->language->lang('BC_VOTE_SUCCESS', $song, $artist);
+		$message = $this->language->lang('BC_VOTE_SUCCESS', $row['song_name'], $row['artist']);
 		if ($this->points->points_active() && $this->config['breizhcharts_points_per_vote'] > 0)
 		{
 			// Giving points for voting, if UPS is installed and active
@@ -374,8 +387,8 @@ class breizhcharts
 
 	public function check_youtube_video()
 	{
-		$url = (string) $this->request->variable('url', '', true);
 		$json_response = new json_response;
+		$url = (string) $this->request->variable('url', '', true);
 
 		if ($youtube_id = $this->work->get_youtube_id($url))
 		{
@@ -401,7 +414,7 @@ class breizhcharts
 			throw new http_exception(403, 'BC_SONG_ADD_NO');
 		}
 
-		$error = '';
+		$error = [];
 		$data = [
 			'song_name'		=> $this->request->variable('song_name', '', true),
 			'artist'		=> $this->request->variable('artist', '', true),
@@ -419,16 +432,16 @@ class breizhcharts
 		}
 		else
 		{
-			$this->verify->verify_max_entries();
+			$error = $this->verify->verify_max_entries();
 		}
 
-		$this->functions_charts->get_template_charts(false);
-		$this->functions_charts->create_navigation(['mode' => 'add', 'title_mode' => $this->language->lang('BC_ADD_SONG'), 'song_id' => 0, 'name' => '', 'userid' => 0]);
+		$this->charts->get_template_charts(false);
+		$this->charts->create_navigation(['mode' => 'add', 'title_mode' => $this->language->lang('BC_ADD_SONG'), 'song_id' => 0, 'name' => '', 'userid' => 0]);
 
 		$this->template->assign_vars([
 			'NAV_ID'			=> 'add',
 			'S_ADD_SONG'		=> true,
-			'ERROR'				=> $error,
+			'BC_ERROR'			=> $error,
 			'TITLE_PAGE'		=> $this->language->lang('BC_ADD_SONG'),
 			'CHART_SONG_NAME'	=> $data['song_name'],
 			'CHART_ARTIST'		=> $data['artist'],
@@ -465,12 +478,12 @@ class breizhcharts
 			$url = '';
 			if ($this->config['breizhcharts_announce_enable'])
 			{
-				$url = $this->functions_charts->create_topic($data['song_name'], $data['artist'], $data['video']);
-				$data['topic_id'] = (int) $this->functions_charts->find_string($url . '#', 't=', '#');
+				$url = $this->charts->create_topic($data['song_name'], $data['artist'], $data['video']);
+				$data['topic_id'] = (int) $this->charts->find_string($url . '#', 't=', '#');
 			}
 
 			$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_table . $this->db->sql_build_array('INSERT', $data));
-			$id = (int) $this->db->sql_last_inserted_id()();
+			$id = $this->db->sql_last_inserted_id();
 			$this->config->increment('breizhcharts_songs_nb', 1, true);
 			$this->config->set('breizhcharts_last_song', time(), true);
 
@@ -512,7 +525,7 @@ class breizhcharts
 		{
 			$error = $this->validate_edit_song($song_id, $start);
 		}
-		$this->functions_charts->get_template_charts(false);
+		$this->charts->get_template_charts(false);
 
 		$sql = 'SELECT *
 			FROM ' . $this->breizhcharts_table . '
@@ -539,7 +552,7 @@ class breizhcharts
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video'),
 		]);
 
-		$this->functions_charts->create_navigation(['mode' => 'edit', 'title_mode' => $title_mode, 'song_id' => $song_id, 'name' => '', 'userid' => 0]);
+		$this->charts->create_navigation(['mode' => 'edit', 'title_mode' => $title_mode, 'song_id' => $song_id, 'name' => '', 'userid' => 0]);
 
 		// Output the page
 		page_header($this->language->lang('BC_CHARTS') . ' - ' . $title_mode);

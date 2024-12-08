@@ -43,6 +43,7 @@ $lang = array_merge($lang, array(
 	'BC_ANNOUNCE_SETTINGS'			=> 'Paramètres des annonces',
 	'BC_CALENDAR'					=> 'Calendrier',
 	'BC_DATE'						=> 'l j F Y à H:i',
+	'BC_DATE_ADDED'					=> 'l j F Y',
 	'BC_CHOICE_WEEKS'				=> 'Semaines',
 	'BC_CHOICE_DAYS'				=> 'Jours',
 	'BC_CHECK_1_ENABLE'				=> 'Informer les membres de la nouvelle période',

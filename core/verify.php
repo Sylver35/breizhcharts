@@ -103,12 +103,15 @@ class verify
 
 	public function verify_max_entries()
 	{
+		$error = '';
 		if ($this->config['breizhcharts_max_entries'] > 0)
 		{
 			if ($this->config['breizhcharts_songs_nb'] > $this->config['breizhcharts_max_entries'])
 			{
-				trigger_error($this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']) . $this->language->lang('BC_BACKLINK', '<br/><br/><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'));
+				$error = $this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']);
 			}
 		}
+
+		return $error;
 	}
 }
