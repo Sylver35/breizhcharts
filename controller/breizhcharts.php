@@ -438,11 +438,11 @@ class breizhcharts
 
 		if ($this->request->is_set_post('post'))
 		{
-			$error = $this->validate_add_song($data);
+			$error[] = $this->validate_add_song($data);
 		}
 		else
 		{
-			$error = $this->verify->verify_max_entries();
+			$error[] = $this->verify->verify_max_entries();
 		}
 
 		$list = ['mode' => 'add', 'title_mode' => $this->language->lang('BC_ADD_SONG'), 'song_id' => 0, 'name' => '', 'userid' => 0];
@@ -490,7 +490,7 @@ class breizhcharts
 			// Announce new songs, if enabled, create topic
 			if ($this->config['breizhcharts_announce_enable'])
 			{
-				$comment = isset($data['comment']) ? $data['comment'] : '';;
+				$comment = isset($data['comment']) ? $data['comment'] : '';
 				unset($data['comment']);
 				$url = $this->charts->create_topic($data['song_name'], $data['artist'], $data['video'], $comment);
 				$data['topic_id'] = (int) $this->charts->find_string($url . '#', 't=', '#');
