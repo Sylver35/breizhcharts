@@ -149,7 +149,7 @@ class charts
 		return $value;
 	}
 
-	public function create_topic($song, $artist, $video)
+	public function create_topic($song, $artist, $video, $comment)
 	{
 		if (!function_exists('submit_post'))
 		{
@@ -158,9 +158,11 @@ class charts
 
 		$flags = 0;
 		$poll_ary = $uid = $bitfield = '';
-		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest']) . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
+		$video_id = $this->check->get_last_chart();
+		$url = '[url=' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'video', 'id' => $video_id + 1]) . '#start' . ']' . $this->language->lang('BC_GO_CHARTS') . '[/url]';
 		$song_title = utf8_encode_ucr($this->language->lang('BC_ANNOUNCE_TITLE', $song, $artist));
-		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song, $artist, $url, $this->work->get_youtube_img($video, true));
+		$comment = $comment ? $this->language->lang('BC_ANNOUNCE_USER', $comment) : '';
+		$song_msg = $this->language->lang('BC_ANNOUNCE_MSG', $song, $artist, $url, $this->work->get_youtube_img($video, true), $comment);
 		generate_text_for_storage($song_msg, $uid, $bitfield, $flags, true, true, true);
 
 		$data = [
@@ -190,34 +192,24 @@ class charts
 
 	public function get_voters()
 	{
-		$i = 0;
-		$usernames = [];
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'u.user_id, u.username, u.user_colour',
-			'FROM'		=> [$this->breizhcharts_voters_table => 'v'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = v.vote_user_id',
-				],
-			],
-			'GROUP_BY'	=> 'v.vote_user_id, u.user_id, u.username, u.user_colour',
-		]);
-		$result = $this->db->sql_query($sql, 800);
-		while ($row = $this->db->sql_fetchrow($result))
+		$list = $ids = [];
+		$voters = $this->get_voters_cache();
+		$total = $voters['total'];
+		unset($voters['total']);
+		if ($total)
 		{
-			$usernames[$i] = $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']);
-			$i++;
-		}
-		$this->db->sql_freeresult($result);
+			for ($i = 0, $nb = sizeof($voters); $i < $nb; $i++)
+			{
+				$ids[] = $voters[$i]['user_id'];
+				$list[] = $this->work->get_username_song($voters[$i]['user_id'], $voters[$i]['username'], $voters[$i]['user_colour']);
+			}
 
-		if ($i > 0)
-		{
 			$this->template->assign_vars([
 				'S_USERS_VOTED'		=> true,
-				'VOTED_USERS'		=> $this->language->lang('BC_VOTED_USERS', $i),
-				'LIST_USER_VOTED'	=> implode(', ', $usernames),
-			]);  
+				'VOTED_USERS'		=> $this->language->lang('BC_VOTED_USERS', $total),
+				'LIST_USER_VOTED'	=> implode(', ', $list),
+				'LIST_IDS'			=> implode(', ', $ids),
+			]);
 		}
 	}
 
@@ -342,7 +334,9 @@ class charts
 				'USER_VOTE'		=> $this->language->lang('BC_AJAX_NOTE', $row['user_vote']),
 				'VOTED_IMG'		=> (!$row['user_vote']) ? 'not-rated' : 'rated',
 				'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
-				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
+				'U_TOPIC_VIDEO'	=> $row['topic_id'] ? append_sid("{$this->root_path}viewtopic.{$this->php_ext}", 't=' . $row['topic_id']) : '',
+				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'video', 'id' => (int) $row['song_id']]) . '#start',
+				'U_SHOW_POPUP'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
 				'U_DELETE_SONG'	=> $this->auth->acl_get('a_breizhcharts_manage') ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
 				'U_EDIT_SONG'	=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_music', ['id' => $row['song_id'], 'start' => $data['start']]) : '',
 			]);
@@ -398,9 +392,9 @@ class charts
 				'THUMBNAIL'		=> $this->work->get_youtube_img($row['result_video'], true),
 				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['result_song_id']]),
 				'RESULT'		=> number_format($row['result_song_note'] * 10, 2),
-				'TITLE_RATE'	=> strip_tags($this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2))),
-				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['result_song_note'], 2)),
-				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', $row['result_nb_note']),
+				'TITLE_RATE'	=> strip_tags($this->language->lang('BC_AJAX_NOTE_TOTAL', number_format((int) $row['result_song_note'], 2))),
+				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format((int) $row['result_song_note'], 2)),
+				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['result_nb_note']),
 			]);
 			$i++;
 		}
@@ -457,6 +451,25 @@ class charts
 			'U_SELECT_WINNERS'	=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'winners']),
 			'U_VOTE_MUSIC'		=> $this->helper->route('sylver35_breizhcharts_vote'),
 		]);
+	}
+
+	public function display_video($video_id)
+	{
+		$this->get_template_charts(false);
+		$sql = 'SELECT song_id, song_name, artist, video
+			FROM ' . $this->breizhcharts_table . '
+				WHERE song_id = ' . $video_id;
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			'S_IN_VIDEO'	=> true,
+			'TITLE_PAGE' 	=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
+			'YOUTUBE_ID'	=> $this->work->get_youtube_id($row['video']),
+		]);
+
+		return $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']);
 	}
 
 	public function run_vote_charts_period()
@@ -556,6 +569,43 @@ class charts
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
 
 		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
+	}
+
+	private function get_voters_cache()
+	{
+		if (($voters = $this->cache->get('_breizhcharts_voters')) === false)
+		{
+			$i = 0;
+			$voters = [];
+			$sql = $this->db->sql_build_query('SELECT', [
+				'SELECT'	=> 'u.user_id, u.username, u.user_colour',
+				'FROM'		=> [$this->breizhcharts_voters_table => 'v'],
+				'LEFT_JOIN'	=> [
+					[
+						'FROM'	=> [USERS_TABLE => 'u'],
+						'ON'	=> 'u.user_id = v.vote_user_id',
+					],
+				],
+				'GROUP_BY'	=> 'v.vote_user_id, u.user_id, u.username, u.user_colour',
+			]);
+			$result = $this->db->sql_query($sql);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$voters[$i] = [
+					'user_id'		=> $row['user_id'],
+					'username'		=> $row['username'],
+					'user_colour'	=> $row['user_colour'],
+				];
+				$i++;
+			}
+			$this->db->sql_freeresult($result);
+			$voters['total'] = $i;
+
+			// cache for 7 days
+			$this->cache->put('_breizhcharts_voters', $voters, 604800);
+		}
+
+		return $voters;
 	}
 
 	private function create_insert($row, $time, $new_result, $i)

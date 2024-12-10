@@ -10,8 +10,10 @@ namespace sylver35\breizhcharts\core;
 
 use phpbb\language\language;
 use phpbb\template\template;
+use phpbb\user;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
+use phpbb\controller\helper;
 use Symfony\Component\DependencyInjection\Container as phpbb_container;
 
 class points
@@ -22,11 +24,17 @@ class points
 	/** @var \phpbb\template\template */
 	protected $template;
 
+	/** @var \phpbb\user */
+	protected $user;
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var \phpbb\controller\helper */
+	protected $helper;
 
 	/** @var \Symfony\Component\DependencyInjection\Container */
 	protected $phpbb_container;
@@ -40,12 +48,14 @@ class points
 	/**
 	 * Constructor
 	 */
-	public function __construct(language $language, template $template, db $db, config $config, phpbb_container $phpbb_container, $breizhcharts_table)
+	public function __construct(language $language, template $template, user $user, db $db, config $config, helper $helper, phpbb_container $phpbb_container, $breizhcharts_table)
 	{
 		$this->language = $language;
 		$this->template = $template;
+		$this->user = $user;
 		$this->db = $db;
 		$this->config = $config;
+		$this->helper = $helper;
 		$this->phpbb_container = $phpbb_container;
 		$this->breizhcharts_table = $breizhcharts_table;
 	}
@@ -128,6 +138,33 @@ class points
 				'BONUS_WINNER'		=> $this->language->lang('BC_BONUS_WINNER', get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']),
 			]);
 		}
+	}
+
+	public function points_in_vote()
+	{
+		$message = '';
+		if ($this->points_active() && $this->config['breizhcharts_points_per_vote'])
+		{
+			// Giving points for voting, if UPS is installed and active
+			$this->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
+			$message = $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
+		}
+
+		return $message;
+	}
+
+	public function get_message_return($id)
+	{
+		$message = $this->language->lang('BC_SONG_ADDED') . '<br>';
+		if ($this->points_active() && $this->config['breizhcharts_ups_points'])
+		{
+			$this->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
+			$message = $this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br>';
+		}
+		$message .= $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>') . '<br>';
+		$message .= $this->language->lang('BC_BACKLINK_VIDEO', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'video', 'id' => $id]) . '#start">', '</a>');
+
+		 return $message;
 	}
 
 	private function bonus_winner()

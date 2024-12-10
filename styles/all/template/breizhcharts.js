@@ -16,13 +16,13 @@
 		$(this).prop('href', $(this).attr('href')+'#start');
 	});
 	breizhcharts.voteMusic = function(id, rate){
-		var $content = $('#bzh_result-'+id).html();
+		var $content = $('#bzh_result-'+id).html(),$ids = $('#list_ids').val();
 		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');
 		$.ajax({
 			type: 'POST',
 			dataType: 'json',
 			url: bcConfig.voteUrl,
-			data: 'id='+id+'&rate='+rate,
+			data: 'id='+id+'&rate='+rate+'&ids='+$ids,
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){

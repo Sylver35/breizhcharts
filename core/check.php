@@ -252,4 +252,15 @@ class check
 			];
 		}
 	}
+
+	public function get_last_chart()
+	{
+		$sql = 'SELECT  MAX(song_id) as id_max
+			FROM ' . $this->breizhcharts_table;
+		$result = $this->db->sql_query($sql);
+		$id_max = (int) $this->db->sql_fetchfield('id_max');
+		$this->db->sql_freeresult($result);
+
+		return $id_max;
+	}
 }

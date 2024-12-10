@@ -1,0 +1,28 @@
+{% INCLUDE 'overall_header.html' %}
+
+{% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
+
+<div class="panel">
+	<div class="inner">
+		<div class="video-frame">
+			<div id="ytplayer"></div>
+		</div>
+	</div>
+</div>
+
+<script>
+	var tag = document.createElement('script'), player;
+	tag.src = "https://www.youtube.com/player_api";
+	var scriptTag = document.getElementsByTagName('script')[0];
+	scriptTag.parentNode.insertBefore(tag, scriptTag);
+	function onYouTubePlayerAPIReady(){
+		player = new YT.Player('ytplayer',{
+			videoId: '{{ YOUTUBE_ID }}',
+			width: '900',
+			height: '600',
+			playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
+		});
+	}
+</script>
+
+{% INCLUDE 'overall_footer.html' %}

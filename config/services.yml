@@ -160,8 +160,10 @@ services:
         arguments:
             - '@language'
             - '@template'
+            - '@user'
             - '@dbal.conn'
             - '@config'
+            - '@controller.helper'
             - '@service_container'
             - '%sylver35.breizhcharts.table.breizhcharts%'
 

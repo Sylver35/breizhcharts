@@ -57,10 +57,17 @@
 						{{ chart.ALBUM }}
 						{% if chart.ALBUM and chart.YEAR %} | {% endif %}
 						{{ chart.YEAR }}
+						{% if chart.U_TOPIC_VIDEO %}
+						<br>
+						<a href="{{ chart.U_TOPIC_VIDEO }}" title="{{ lang('BC_SEE_TOPIC') }}">{{ lang('BC_SEE_TOPIC') }}</a>
+						{% endif %}
+						<br>
+						<a href="{{ chart.U_SHOW_POPUP }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">{{ lang('BC_SHOW_VIDEO_POPUP') }}</a>
 					</dd>
 					<dd class="width-{% if S_ACTIV_PERIOD %}12{% else %}14{% endif %}">
-						<a href="{{ chart.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">
-							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" height="50px">
+						
+						<a href="{{ chart.U_SHOW_VIDEO }}" title="{{ chart.VIDEO }}">
+							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" class="thumbnail">
 						</a>
 					</dd>
 					<dd class="width-{% if S_ACTIV_PERIOD %}13{% else %}15{% endif %}">
@@ -122,6 +129,7 @@
 <div class="rules">
 	<div class="inner">
 		{% if S_USERS_VOTED %}
+			<input id="list_ids" type="hidden" value="{{ LIST_IDS }}">
 			{{ VOTED_USERS }} {{ LIST_USER_VOTED }}
 		{% else %}
 			{{ lang('BC_NO_VOTERS') }}

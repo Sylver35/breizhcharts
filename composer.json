@@ -1,9 +1,9 @@
 {
     "name": "sylver35/breizhcharts",
     "type": "phpbb-extension",
-    "description": "vous pouvez proposer à vos utilisateurs un tableau de musique, qu’ils peuvent créer eux-mêmes. les utilisateurs  peuvent ajouter de nouvelles chansons, qui participeront ensuite à l'élection. Vous définissez une période d’élection, où les utilisateurs peuvent ensuite voter une fois pour chaque musique. De cette façon, vous recevrez un tableau dynamique..",
+    "description": "vous pouvez proposer à vos utilisateurs un hit parade de musique, qu’ils peuvent créer eux-mêmes. les utilisateurs  peuvent ajouter de nouvelles chansons, qui participeront ensuite à l'élection. Vous pouvez définir une période d’élection ou non, où les utilisateurs peuvent ensuite voter une fois pour chaque musique. De cette façon, vous recevrez un tableau dynamique..",
     "version": "1.3.0",
-    "time": "2024-12-08",
+    "time": "2024-12-10",
     "keywords": ["phpbb", "extension", "breizh", "music", "song", "charts"],
     "license": "GPL-2.0-only",
     "authors": [

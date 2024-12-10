@@ -80,8 +80,12 @@ div.not-rated {
     to {color: red;}
 }
 
+img.thumbnail {
+	max-height: 58px;
+}
+
 .new-song {
-	color: blue;
+	color: red;
 	animation: blink-song 2s steps(2, start) infinite;
 	-webkit-animation: blink-song 2s steps(2, start) infinite;
 }

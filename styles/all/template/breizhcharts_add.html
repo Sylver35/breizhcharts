@@ -36,6 +36,12 @@
 					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}"></dd>
 					<dd id="check-video"></dd>
 				</dl>
+				{% if S_COMMENT %}
+				<dl>
+					<dt class="label"><label for="comment">{{ lang('BC_COMMENT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_COMMENT_EXPLAIN') }}</dt>
+					<dd><textarea type="text" id="video" tabindex="8" name="comment" size="65" class="inputbox" spellcheck="true" value="{{ CHART_COMMENT }}"></textarea></dd>
+				</dl>
+				{% endif %}
 			</fieldset>
 		</div>
 	</div>
