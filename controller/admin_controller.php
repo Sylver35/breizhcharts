@@ -9,6 +9,7 @@
 namespace sylver35\breizhcharts\controller;
 
 use sylver35\breizhcharts\core\work;
+use sylver35\breizhcharts\core\verify;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -26,6 +27,9 @@ class admin_controller
 {
 	/** @var \sylver35\breizhcharts\core\work */
 	protected $work;
+
+	/** @var \sylver35\breizhcharts\core\verify */
+	protected $verify;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -82,9 +86,10 @@ class admin_controller
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, template $template, language $language, user $user, cache $cache, helper $helper, db $db, pagination $pagination, log $log, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $breizhcharts_table, $breizhcharts_cats_table)
+	public function __construct(work $work, verify $verify, template $template, language $language, user $user, cache $cache, helper $helper, db $db, pagination $pagination, log $log, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, $breizhcharts_table, $breizhcharts_cats_table)
 	{
 		$this->work = $work;
+		$this->verify = $verify;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -122,10 +127,6 @@ class admin_controller
 
 				case 'delete':
 					$this->action_delete($data['id'], $data['sort_days'], $data['sort_key'], $data['sort_dir']);
-				break;
-				
-				case 'view_report':
-					$this->view_report($data['id'], $data['sort_days'], $data['sort_key'], $data['sort_dir']);
 				break;
 			}
 		}
@@ -219,8 +220,8 @@ class admin_controller
 			'video'			=> $this->request->variable('video', '', true),
 		];
 
-		$ex_cat		= $this->request->variable('ex_cat', 0);
-		$ex_cat_nb	= $this->request->variable('ex_cat_nb', 0);
+		$ex_cat = $this->request->variable('ex_cat', 0);
+		$ex_cat_nb = $this->request->variable('ex_cat_nb', 0);
 
 		if (!$data['song_name'])
 		{
@@ -316,11 +317,6 @@ class admin_controller
 		}
 
 		return $content;
-	}
-
-	private function view_report($data)
-	{
-		
 	}
 
 	private function display_row_songs($data)

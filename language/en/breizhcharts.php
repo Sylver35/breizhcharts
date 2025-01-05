@@ -76,7 +76,7 @@ $lang = array_merge($lang, [
 	'BC_DATE'						=> 'l j F Y, H:i',
 	'BC_COMMENT'					=> 'Comment',
 	'BC_COMMENT_EXPLAIN'			=> 'A topic will be automatically created in the forum.<br>You can add a comment here.',
-	'BC_ANNOUNCE_MSG'				=> 'Hello everybody,' . "\n\n" . 'There was a new song added to the Music Charts!' . "\n" . ' [img]%1$s[/img] ' . "\n\n" . '🎶 Title: [b]%2$s[/b] ' . "\n" . '🎸 Artist: [b]%3$s[/b] ' . "\n" . '🎵 Musical genre: [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Have fun watching and listening the new song and don’t forget to vote!',
+	'BC_ANNOUNCE_MSG'				=> 'Hello everybody,' . "\n\n" . 'There was a new song added to the Music Charts!' . "\n" . '[img]%1$s[/img]' . "\n\n" . '🎶 Title: [b]%2$s[/b] ' . "\n" . '🎸 Artist: [b]%3$s[/b] ' . "\n" . '🎵 Musical genre: [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Have fun watching and listening the new song and don’t forget to vote!',
 	'BC_ANNOUNCE_TITLE'				=> '🎼 %1$s of %2$s',
 	'BC_ANNOUNCE_USER'				=> '👉 Author’s Note: [quote]%1$s[/quote]' . "\n",
 	'BC_ANNOUNCE_SEPARATE'			=> "\n\n" . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------------------' . "\n",// Separation in topic when needed

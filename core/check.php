@@ -54,6 +54,9 @@ class check
 	/** @var string ext_path */
 	protected $ext_path;
 
+	/** @var string ext_path_web */
+	protected $ext_path_web;
+
 	/**
 	 * The database tables
 	 * @var string

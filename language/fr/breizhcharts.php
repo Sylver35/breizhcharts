@@ -76,7 +76,7 @@ $lang = array_merge($lang, [
 	'BC_DATE'						=> 'l j F Y, H:i',
 	'BC_COMMENT'					=> 'Commentaire',
 	'BC_COMMENT_EXPLAIN'			=> 'Un sujet sera automatiquement créé dans le forum.<br>Vous pouvez ajouter ici un commentaire.',
-	'BC_ANNOUNCE_MSG'				=> 'Bonjour à tous, ' . "\n\n" . 'Il y a une nouvelle chanson dans le Hit Parade ! ' . "\n" . ' [img]%1$s[/img] ' . "\n\n" . '🎶 Titre :  [b]%2$s[/b] ' . "\n" . '🎸 Artiste : [b]%3$s[/b] ' . "\n" . '🎵 Genre musical : [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Bonne écoute des nouveautés et n’oubliez pas de voter !',
+	'BC_ANNOUNCE_MSG'				=> 'Bonjour à tous, ' . "\n\n" . 'Il y a une nouvelle chanson dans le Hit Parade ! ' . "\n" . '[img]%1$s[/img]' . "\n\n" . '🎶 Titre : [b]%2$s[/b] ' . "\n" . '🎸 Artiste : [b]%3$s[/b] ' . "\n" . '🎵 Genre musical : [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Bonne écoute des nouveautés et n’oubliez pas de voter !',
 	'BC_ANNOUNCE_TITLE'				=> '🎼 %1$s de %2$s',
 	'BC_ANNOUNCE_USER'				=>  '👉 Note de l’auteur : [quote]%1$s[/quote]' . "\n",
 	'BC_ANNOUNCE_SEPARATE'			=> "\n\n" . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------------------' . "\n",// Separation in topic when needed

@@ -8,6 +8,7 @@
 
 namespace sylver35\breizhcharts\event;
 
+use sylver35\breizhcharts\core\work;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\check;
@@ -24,6 +25,9 @@ class main_listener implements EventSubscriberInterface
 {
 	/** @var \sylver35\breizhcharts\core\charts */
 	protected $charts;
+
+	/** @var \sylver35\breizhcharts\core\work */
+	protected $work;
 
 	/** @var \sylver35\breizhcharts\core\check */
 	protected $check;
@@ -65,9 +69,10 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, check $check, verify $verify, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $php_ext, $breizhcharts_table)
+	public function __construct(charts $charts, work $work, check $check, verify $verify, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $php_ext, $breizhcharts_table)
 	{
 		$this->charts = $charts;
+		$this->work = $work;
 		$this->check = $check;
 		$this->verify = $verify;
 		$this->template = $template;
@@ -186,7 +191,7 @@ class main_listener implements EventSubscriberInterface
 	{
 		if (strrpos($event['row']['session_page'], 'app.' . $this->php_ext . '/breizhcharts') === 0)
 		{
-			$event['location'] = $this->user->lang('BC_VIEWONLINE');
+			$event['location'] = $this->language->lang('BC_VIEWONLINE');
 			$event['location_url'] = $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0]);
 		}
 	}

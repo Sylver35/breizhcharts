@@ -186,6 +186,7 @@ class charts
 
 		// Switch language to user lang if needed
 		$switch_lang = $this->work->language_switch($this->config['default_lang'], $switch_lang);
+		unset($switch_lang);
 
 		// Second, add the second part of message in user language if different...
 		if ((string) $this->user->data['user_lang'] !== (string) $this->config['default_lang'])
@@ -315,7 +316,7 @@ class charts
 		}
 		$this->db->sql_freeresult($result);
 
-		$data['title_mode']	= ($data['userid'] ? $this->language->lang('BC_OF_USER', $data['name']) : $data['title_mode']) . $title_cat;
+		$data['title_mode'] = ($data['userid'] ? $this->language->lang('BC_OF_USER', $data['name']) : $data['title_mode']) . $title_cat;
 		$this->template->assign_vars([
 			'S_LIST'			=> true,
 			'NAV_ID'			=> $data['mode'],
@@ -334,9 +335,8 @@ class charts
 
 	public function get_winners_charts($data)
 	{
-		$i = $nb_win = $result_time = 0;
+		$i = $result_time = 0;
 		$points_active = $this->points->points_active();
-		$last_result = $this->config['breizhcharts_last_result'];
 		$result_id = !$data['result_id'] ? $this->config['breizhcharts_last_nb'] : $data['result_id'];
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'r.*, u.user_id, u.username, u.user_colour',
@@ -377,7 +377,7 @@ class charts
 
 		$this->get_template_charts(false);
 		$this->points->return_last_winner();
-		$title_mode	= $this->language->lang('BC_LAST_WINNERS') . ' - ' . $this->language->lang('BC_LAST_WINNERS_DATE', $this->user->format_date($result_time, $this->language->lang('BC_LAST_WINNERS_FORMAT')));
+		$title_mode = $this->language->lang('BC_LAST_WINNERS') . ' - ' . $this->language->lang('BC_LAST_WINNERS_DATE', $this->user->format_date($result_time, $this->language->lang('BC_LAST_WINNERS_FORMAT')));
 
 		$this->template->assign_vars([
 			'S_LAST_WINNERS'	=> true,

@@ -262,7 +262,6 @@ class admin_categories
 			if ($cat_order !== $this->get_max_order())
 			{
 				$i = 0;
-				$list = [];
 				$sql = 'SELECT cat_id, cat_order
 					FROM ' . $this->breizhcharts_cats_table . '
 						WHERE cat_order > ' . (int) $cat_order;
@@ -395,18 +394,6 @@ class admin_categories
 		$this->db->sql_freeresult($result);
 
 		return $max;
-	}
-
-	private function get_max_id()
-	{
-		// Get max id...
-		$sql = 'SELECT MAX(cat_id) AS id_max
-			FROM ' . $this->breizhcharts_cats_table;
-		$result = $this->db->sql_query($sql);
-		$id_max = (int) $this->db->sql_fetchfield('id_max');
-		$this->db->sql_freeresult($result);
-
-		return $id_max;
 	}
 
 	/**

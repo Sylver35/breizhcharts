@@ -121,14 +121,13 @@ class verify
 		return $song_exist;
 	}
 
-	public function verify_max_entries()
+	public function verify_max_entries($error)
 	{
-		$error = '';
 		if ($this->config['breizhcharts_max_entries'] > 0)
 		{
 			if ($this->config['breizhcharts_songs_nb'] > $this->config['breizhcharts_max_entries'])
 			{
-				$error = $this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']);
+				$error[] = $this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']);
 			}
 		}
 
@@ -367,7 +366,7 @@ class verify
 			}
 			else
 			{
-				$this->template->assign_var('RANDOM_CHART', true);
+				$this->template->assign_var('RANDOM_CHART', 'true');
 			}
 		}
 

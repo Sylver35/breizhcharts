@@ -516,13 +516,14 @@ class breizhcharts
 
 		if ($this->request->is_set_post('post'))
 		{
-			if (!$error = $this->verify->verify_chart_before_send($data_video, 0))
+			$error[] = $this->verify->verify_chart_before_send($data_video, 0);
+			if (!$error)
 			{
 				$this->validate_add_video($data_video);
 			}
 		}
 
-		$error = $this->verify->verify_max_entries();
+		$error[] = $this->verify->verify_max_entries($error);
 		$this->charts->get_template_charts(false);
 
 		$this->template->assign_vars([
@@ -636,7 +637,7 @@ class breizhcharts
 			$title_mode = $this->language->lang('BC_EDIT_SONG') . ' : ' . $data_video['song_name'];
 			$this->template->assign_vars([
 				'S_EDIT_SONG'		=> true,
-				'ERROR'				=> $error,
+				'ERROR'				=> implode('<br>', $error),
 				'TITLE_PAGE'		=> $title_mode,
 				'CHART_ID'			=> $data_video['song_id'],
 				'CHART_SONG_NAME'	=> $data_video['song_name'],

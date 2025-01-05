@@ -305,7 +305,7 @@ class work
 				submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_VOTERS_SUBJECT')), $data, false);
 
 				// Switch language if needed
-				$switch_lang = $this->language_switch($row['user_lang'], $switch_lang);
+				$this->language_switch($row['user_lang'], $switch_lang);
 			}
 		}
 		$this->db->sql_freeresult($result);
@@ -473,7 +473,8 @@ class work
 		$value = $url ? $this->helper->route($url, array_merge($url_array, ['cat' => 0])) . '#nav' : '';
 		$select = (!$cat) ? ' selected="selected"' : '';
 		$options = '<option id="cat-0"' . $select . ' value="' . $value . '">' . ($url ? $this->language->lang('BC_SONG_CAT_ALL') : $this->language->lang('BC_SONG_CAT_CHOICE')) . '</option>';
-		for ($i = 0; $i < count($cats); $i++)
+		$count = count($cats);
+		for ($i = 0; $i < $count; $i++)
 		{
 			$value = $url ? $this->helper->route($url, array_merge($url_array, ['cat' => $cats[$i]['cat_id']])) . '#nav' : $cats[$i]['cat_id'];
 			$select = ((int) $cats[$i]['cat_id'] === (int) $cat) ? ' selected="selected"' : '';
@@ -548,7 +549,8 @@ class work
 		if ($cat)
 		{
 			$cats = $this->get_cats();
-			for ($i = 0; $i < count($cats); $i++)
+			$count = count($cats);
+			for ($i = 0; $i < $count; $i++)
 			{
 				if ((int) $cats[$i]['cat_id'] === (int) $cat)
 				{

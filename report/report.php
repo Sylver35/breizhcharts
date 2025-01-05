@@ -341,7 +341,7 @@ class report
 		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
 
 		// Switch language if needed
-		$switch_lang = $this->work->language_switch($row['user_lang'], $switch_lang);
+		$this->work->language_switch($row['user_lang'], $switch_lang);
 
 		$data = [
 			'address_list'		=> ['u' => [$row['user_id'] => 'to']],
@@ -384,8 +384,6 @@ class report
 		$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_REPORT_CLOSE', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $song, $artist)]);
 		$this->cache->destroy('_breizhcharts_reported');
 
-		// Send pm to song poster
-		$switch_lang = false;
 		$sql = 'SELECT *
 			FROM ' . USERS_TABLE . '
 			WHERE user_id = ' . (int) $poster_id;
@@ -393,12 +391,6 @@ class report
 		$poster = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		if ((int) $poster_id !== (int) $this->user->data['user_id'])
-		{
-			$this->send_pm_close('poster', $id, $poster['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
-		}
-
-		// Send pm to song reporter
 		$sql = 'SELECT *
 			FROM ' . USERS_TABLE . '
 			WHERE user_id = ' . (int) $report_id;
@@ -406,7 +398,14 @@ class report
 		$report = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$this->send_pm_close('reporter', $id, $report['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
+		// Send pm to song poster
+		if ((int) $poster_id !== (int) $this->user->data['user_id'])
+		{
+			$this->send_pm_close('poster', $poster['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
+		}
+
+		// Send pm to song reporter
+		$this->send_pm_close('reporter', $report['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
 		
 		// Redirect now
 		$redirect_url = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? $this->helper->route('sylver35_breizhcharts_list_report') : $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own', 'cat' => 0]) . '#nav';
@@ -415,7 +414,7 @@ class report
 		trigger_error($this->language->lang('BC_REPORT_CLOSE_FINISH_TO', get_username_string('full', $poster['user_id'], $poster['username'], $poster['user_colour']), get_username_string('full', $report['user_id'], $report['username'], $report['user_colour'])) . '<br><br>' . $this->language->lang($return_msg, '<a href="' . $redirect_url . '">', '</a>'));
 	}
 
-	private function send_pm_close($action, $id, $lang, $song, $artist, $reason, $poster_id, $poster_name, $poster_colour, $report_id, $report_name, $report_colour)
+	private function send_pm_close($action, $lang, $song, $artist, $reason, $poster_id, $poster_name, $poster_colour, $report_id, $report_name, $report_colour)
 	{
 		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
 
@@ -457,7 +456,7 @@ class report
 		submit_pm('post', utf8_encode_ucr($subject), $data, false);
 
 		// Switch language if needed
-		$switch_lang = $this->work->language_switch($lang, $switch_lang);
+		$this->work->language_switch($lang, $switch_lang);
 	}
 
 	private function validate_report_song($id)

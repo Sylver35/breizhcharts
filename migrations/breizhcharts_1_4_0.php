@@ -48,10 +48,10 @@ class breizhcharts_1_4_0 extends migration
 			['permission.add', ['u_breizhcharts_report', true]],
 
 			// Set permissions administration
-			['permission.permission_set', ['ADMINISTRATORS', ['m_breizhcharts_manage','u_breizhcharts_delete', 'u_breizhcharts_report'], 'group']],
+			['permission.permission_set', ['ADMINISTRATORS', ['m_breizhcharts_manage', 'u_breizhcharts_delete', 'u_breizhcharts_report'], 'group']],
 
 			// Set permissions moderation
-			['permission.permission_set', ['GLOBAL_MODERATORS', ['m_breizhcharts_manage','u_breizhcharts_delete', 'u_breizhcharts_report'], 'group']],
+			['permission.permission_set', ['GLOBAL_MODERATORS', ['m_breizhcharts_manage', 'u_breizhcharts_delete', 'u_breizhcharts_report'], 'group']],
 
 			['if', [
 				['permission.role_exists', ['ROLE_MOD_FULL']],
