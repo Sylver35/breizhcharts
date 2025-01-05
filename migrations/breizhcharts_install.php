@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -19,7 +19,7 @@ class breizhcharts_install extends migration
 
 	static public function depends_on()
 	{
-		return ['\phpbb\db\migration\data\v33x\v331'];
+		return ['\phpbb\db\migration\data\v33x\v338'];
 	}
 
 	public function update_data()
@@ -32,7 +32,7 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_check_time', 72]],
 			['config.add', ['breizhcharts_last_song', 0, true]],
 			['config.add', ['breizhcharts_max_entries', 150]],
-			['config.add', ['breizhcharts_period', 1209600]],
+			['config.add', ['breizhcharts_period', 3628800]],
 			['config.add', ['breizhcharts_period_val', 604800]],
 			['config.add', ['breizhcharts_place_1', 200]],
 			['config.add', ['breizhcharts_place_2', 150]],
@@ -59,14 +59,32 @@ class breizhcharts_install extends migration
 			['permission.add', ['u_breizhcharts_add', true]],
 			['permission.add', ['u_breizhcharts_edit', true]],
 
-			['permission.permission_set', ['ROLE_ADMIN_FULL', ['a_breizhcharts_manage'], 'role']],
-			['permission.permission_set', ['ROLE_ADMIN_STANDARD', ['a_breizhcharts_manage'], 'role']],
+			['if', [
+				['permission.role_exists', ['ROLE_ADMIN_FULL']],
+				['permission.permission_set', ['ROLE_ADMIN_FULL', 'a_breizhcharts_manage', 'role']],
+			]],
+			['if', [
+				['permission.role_exists', ['ROLE_ADMIN_STANDARD']],
+				['permission.permission_set', ['ROLE_ADMIN_STANDARD', ['a_breizhcharts_manage'], 'role']],
+			]],
 			['permission.permission_set', ['ADMINISTRATORS', ['a_breizhcharts_manage', 'u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'group']],
-			['permission.permission_set', ['ROLE_USER_FULL', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'role']],
-			['permission.permission_set', ['ROLE_USER_STANDARD', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'role']],
+			['if', [
+				['permission.role_exists', ['ROLE_USER_FULL']],
+				['permission.permission_set', ['ROLE_USER_FULL', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'role']],
+			]],
+			['if', [
+				['permission.role_exists', ['ROLE_USER_STANDARD']],
+				['permission.permission_set', ['ROLE_USER_STANDARD', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'role']],
+			]],
 			['permission.permission_set', ['REGISTERED', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add', 'u_breizhcharts_edit'], 'group']],
-			['permission.permission_set', ['ROLE_USER_LIMITED', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
-			['permission.permission_set', ['ROLE_USER_NEW_MEMBER', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
+			['if', [
+				['permission.role_exists', ['ROLE_USER_LIMITED']],
+				['permission.permission_set', ['ROLE_USER_LIMITED', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
+			]],
+			['if', [
+				['permission.role_exists', ['ROLE_USER_NEW_MEMBER']],
+				['permission.permission_set', ['ROLE_USER_NEW_MEMBER', ['u_breizhcharts_view', 'u_breizhcharts_vote', 'u_breizhcharts_add'], 'role']],
+			]],
 			['permission.permission_set', ['GUESTS', ['u_breizhcharts_view'], 'group']],
 
 			['module.add', [
@@ -75,17 +93,18 @@ class breizhcharts_install extends migration
 				'BC_TITLE',
 			]],
 
-			['module.add', [
-				'acp',
-				'BC_TITLE',
-				[
-					'module_basename'	=> '\sylver35\breizhcharts\acp\acp_breizhcharts_module',
-					'modes'			=> [
-						'config',
-						'manage_charts',
-					],
-				],
-			]],
+			['module.add', ['acp', 'BC_TITLE', [
+				'module_basename'	=> '\sylver35\breizhcharts\acp\acp_breizhcharts_module',
+				'module_langname'	=> 'BC_CONFIG',
+				'module_mode'		=> 'config',
+				'module_auth'		=> 'ext_sylver35/breizhcharts && acl_a_breizhcharts_manage',
+			]]],
+			['module.add', ['acp', 'BC_TITLE', [
+				'module_basename'	=> '\sylver35\breizhcharts\acp\acp_breizhcharts_module',
+				'module_langname'	=> 'BC_MANAGE',
+				'module_mode'		=> 'manage_charts',
+				'module_auth'		=> 'ext_sylver35/breizhcharts && acl_a_breizhcharts_manage',
+			]]],
 		];
 	}
 
@@ -106,7 +125,7 @@ class breizhcharts_install extends migration
 						'nb_note'			=> ['UINT:4', 0],
 						'last_pos'			=> ['UINT:4', 0],
 						'best_pos'			=> ['UINT:4', 0],
-						'add_time'			=> ['INT:11', 0],
+						'add_time'			=> ['INT:10', 0],
 						'topic_id'			=> ['UINT:8', 0],
 					],
 					'PRIMARY_KEY'	=> 'song_id',

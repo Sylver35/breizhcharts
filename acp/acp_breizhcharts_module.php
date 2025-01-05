@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension -  breizhcharts
-* @copyright (c) 2021-2024 Sylver35  https://breizhcode.com
+* @copyright (c) 2021-2025 Sylver35  https://breizhcode.com
 * @license https://opensource.org/licenses/gpl-license.php GNU Public License
 *
 */
@@ -40,10 +40,14 @@ class acp_breizhcharts_module
 		$admin_controller = $phpbb_container->get('sylver35.breizhcharts.admin.controller');
 		// Get an instance of the admin config
 		$admin_config = $phpbb_container->get('sylver35.breizhcharts.admin.config');
-
-		// Make the $u_action url available
-		$admin_config->set_page_url($this->u_action);
+		// Get an instance of the admin categories
+		$admin_categories = $phpbb_container->get('sylver35.breizhcharts.admin.categories');
+		// Make the $u_action url available in the admin controller
 		$admin_controller->set_page_url($this->u_action);
+		// Make the $u_action url available in the admin config
+		$admin_config->set_page_url($this->u_action);
+		// Make the $u_action url available in the admin categories
+		$admin_categories->set_page_url($this->u_action);
 
 		switch ($mode)
 		{
@@ -61,8 +65,17 @@ class acp_breizhcharts_module
 				$this->tpl_name = 'breizhchart_manage';
 				// Set the page title for our ACP page
 				$this->page_title = $language->lang('BC_MANAGE');
-				// Load the display lottery in the admin controller
+				// Load the songs management in the admin controller
 				$admin_controller->acp_breizhcharts();
+			break;
+
+			case 'categories':
+				// Load a template from adm/style for our ACP page
+				$this->tpl_name = 'breizhchart_categories';
+				// Set the page title for our ACP page
+				$this->page_title = $language->lang('BC_CATEGORIES');
+				// Load the categories management in the admin controller
+				$admin_categories->acp_categories();
 			break;
 		}
 	}	

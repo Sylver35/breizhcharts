@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -17,6 +17,7 @@ use phpbb\controller\helper;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
 use phpbb\extension\manager as ext_manager;
+use phpbb\path_helper;
 
 class check
 {
@@ -47,6 +48,9 @@ class check
 	/** @var \phpbb\extension\manager */
 	protected $ext_manager;
 
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/** @var string ext_path */
 	protected $ext_path;
 
@@ -60,7 +64,7 @@ class check
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, points $points, template $template, language $language, user $user, helper $helper, db $db, config $config, ext_manager $ext_manager, $breizhcharts_table, $breizhcharts_result_table)
+	public function __construct(work $work, points $points, template $template, language $language, user $user, helper $helper, db $db, config $config, ext_manager $ext_manager, path_helper $path_helper, $breizhcharts_table, $breizhcharts_result_table)
 	{
 		$this->work = $work;
 		$this->points = $points;
@@ -71,9 +75,11 @@ class check
 		$this->db = $db;
 		$this->config = $config;
 		$this->ext_manager = $ext_manager;
+		$this->path_helper = $path_helper;
 		$this->breizhcharts_table = $breizhcharts_table;
 		$this->breizhcharts_result_table = $breizhcharts_result_table;
 		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
+		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function get_version()
@@ -89,9 +95,7 @@ class check
 			$i++;
 		}
 
-		$this->template->assign_vars([
-			'BC_COPYRIGHT'	=> $this->language->lang('BC_COPYRIGHT', $meta['version'], $homepages[0]),
-		]);
+		$this->template->assign_var('BC_COPYRIGHT', $this->language->lang('BC_COPYRIGHT', $meta['version'], $homepages[0]));
 	}
 
 	public function check_charts_voted()
@@ -118,28 +122,25 @@ class check
 
 	public function update_breizhcharts_check()
 	{
-		if ($this->config['breizhcharts_period_activ'])
+		$modified = false;
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
 		{
-			$modified = false;
-			if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
+			if ($this->user->data['breizhchart_check_1'] == false)
 			{
-				if ($this->user->data['breizhchart_check_1'] == false)
+				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+				$modified = true;
+			}
+			else if ($this->user->data['breizhchart_check_2'] == false)
+			{
+				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
 				{
-					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 					$modified = true;
 				}
-				else if ($this->user->data['breizhchart_check_2'] == false)
-				{
-					if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
-					{
-						$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
-						$modified = true;
-					}
-				}
-				if (!$modified)
-				{
-					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
-				}
+			}
+			if (!$modified)
+			{
+				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 			}
 		}
 	}
@@ -195,7 +196,7 @@ class check
 			'S_CHECK_FIRST'		=> true,
 			'BONUS_WINNER'		=> $bonus_winner,
 			'RESULT_PERIOD'		=> ($this->config['breizhcharts_last_result']) ? $this->language->lang('BC_INDEX_WINNER', $this->user->format_date($this->config['breizhcharts_last_result'])) : '',
-			'VOTE'				=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
+			'VOTE'				=> $this->language->lang('BC_VOTE_CHECK_FIRST', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0]) . '">', '</a>'),
 		]);
 	}
 
@@ -231,24 +232,21 @@ class check
 
 		$this->template->assign_vars([
 			'S_CHECK_SECOND'	=> true,
-			'REMINDER'			=> $this->language->lang('BC_VOTE_CHECK_SECOND', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>'),
+			'REMINDER'			=> $this->language->lang('BC_VOTE_CHECK_SECOND', $this->user->data['username']) . $this->language->lang('BC_VOTE_CHECK_LINK', '<br><br><a href="' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0]) . '">', '</a>'),
 		]);
 	}
 
-	public function get_win_charts($last_pos, $points_active)
+	public function get_win_charts($position, $points_active)
 	{
-		if ($last_pos > 3)
+		if ($position > 3)
 		{
-			return [
-				'img'	=> $last_pos,
-				'win'	=> '',
-			];
+			return ['img' => $position, 'win' => ''];
 		}
 		else
 		{
 			return [
-				'img'	=> '<img src="' . $this->ext_path . 'images/place_' . $last_pos . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $last_pos) . '">',
-				'win'	=> ($points_active) ? $this->language->lang('BC_WON_VALUE', $this->config['breizhcharts_place_' . $last_pos], $this->config['points_name']) : '',
+				'img'	=> '<img src="' . $this->ext_path_web . 'images/place_' . $position . '.gif" alt="' . $this->language->lang('BC_PLACE_LIST_' . $position) . '" title="' . $this->language->lang('BC_PLACE_LIST_' . $position) . '">',
+				'win'	=> $points_active ? $this->language->lang('BC_WON_VALUE', $this->config['breizhcharts_place_' . $position], $this->config['points_name']) : '',
 			];
 		}
 	}

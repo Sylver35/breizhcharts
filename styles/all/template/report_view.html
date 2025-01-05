@@ -1,0 +1,188 @@
+{% INCLUDE 'overall_header.html' %}
+
+{% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
+
+{% if S_IN_VIEW_REPORT %}
+<div class="panel">
+	<div class="inner">
+		<div class="content">
+			<h4 class="report">{{ TITLE_REPORT }}</h4>
+			<fieldset>
+			{% if ERROR %}<dl><dd class="error">{{ ERROR }}</dd></dl>{% endif %}
+			<dl class="fields2">
+				<div style="float:right;">
+					<img src="{{ THUMBNAIL }}" style="height:180px" alt="">
+				</div>
+				<div style="float:left;">
+					<p>
+						{{ ADDED_BY }}<br>
+						{{ ON_TIME }}<br>
+						{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} {{ GENRE }}
+					</p>
+					<p>{{ EXPLAIN }}</p>
+					<p>
+						{{ lang('BC_REPORT_REASON') }}{{ lang('COLON') }}<br>
+						» {{ DESCRIPTION }}
+					</p>
+					<p>
+						{{ lang('MORE_INFO') }}{{ lang('COLON') }}<br>
+						<blockquote class="uncited"><div>{{ REPORT_TEXT }}</div></blockquote>
+					</p>
+				</div>
+			</dl>
+			<dl class="fields2">
+				<dt><h4>{{ lang('BC_REPORT_ACTIONS') }}{{ lang('COLON') }}</h4></dt>
+			</dl>
+			</fieldset>
+		</div>
+		<div class="content">
+			<fieldset>
+				<dl class="fields2">
+					<span class="actions-report"><a href="#nav" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.reportEdit()" id="a-icon"><i class="bzh-blue icon fa fa-pencil-square-o" id="i-icon"></i> <span id="span-icon">{{ lang('BC_EDIT_SONG') }}</span></a></span>
+					{% if U_DELETE_SONG %}
+					<span class="actions-report"><a href="{{ U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button button-icon-only song-title report-button"><i class="bzh-blue icon fa fa-trash-o"></i> {{ lang('BC_DELETE_SONG') }}</a></span>
+					{% endif %}
+					{% if not S_IS_POSTER %}
+					<span class="actions-report"><a href="#nav" title="{{ INFORM }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.messageClose()" id="a-message"><i class="bzh-blue icon fa fa-comments" id="i-message"></i> <span id="span-message">{{ INFORM }}</span></a></span>
+					{% endif %}
+					<span class="actions-report"><a href="#nav" title="{{ REPORT_CONTACT }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.reportClose()" id="a-close"><i class="bzh-blue icon fa fa-bell-slash" id="i-close"></i> <span id="span-close">{{ lang('BC_REPORT_CLOSE') }}</span></a></span>
+				</dl>
+			</fieldset>
+		</div>
+	</div>
+</div>
+
+<div id="no-reason" style="display:none">
+	<form method="post" action="{{ S_POST_CLOSE }}" id="close_report">
+	<div class="panel">
+		<div class="inner">
+			<h3>{{ TITLE_PAGE }}</h3>
+			<p class="report">{{ CLOSE_NO_REASON }}</p>
+		</div>
+	</div>
+	<div class="panel">
+		<div class="inner">
+			<div class="content">
+				<fieldset class="submit-buttons">
+					<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}">&nbsp;
+					<input name="cancel" class="button2" onclick="history.back()" value="{{ lang('CANCEL') }}">
+				</fieldset>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+{% if not S_IS_POSTER %}
+<div id="messagebox" style="display:none">
+	<form method="post" action="{{ S_POST_MESSAGE }}" name="postform">
+	<div class="panel">
+		<div class="inner">
+			<h3>{{ TITLE_PAGE }}</h3>
+			<div class="title-pm">{{ INFORM }}</div>
+			<div>{{ lang('BC_REPORT_INFOS') }}</div>
+			<div>
+				{% INCLUDE 'posting_buttons.html' %}
+				<div class="message-box">
+					<textarea type="text" id="message-box" name="message-box" rows="12" cols="72" onselect="storeCaret(this);" onclick="storeCaret(this);" onkeyup="storeCaret(this);" class="inputbox bzh" spellcheck="true" value=""></textarea></dd>
+				</div>
+				{% if S_SMILIES_ALLOWED %}
+				<div id="smiley-box" class="smiley-box bc-smilies">
+					<div class="second-smilies">
+						<strong>{{ lang('SMILIES') }}</strong><br>
+						{% for smiley in smiley %}
+							<a href="#" onclick="insert_text('{{ smiley.SMILEY_CODE }}',true);return false;">
+								<img src="{{ smiley.SMILEY_IMG }}" alt="{{ smiley.SMILEY_CODE }}" title="{{ smiley.SMILEY_EMOTION }}" width="{{ smiley.SMILEY_WIDTH }}" height="{{ smiley.SMILEY_HEIGHT }}">
+							</a>
+						{% endfor %}
+					</div>
+					<a href="{{ U_MORE_SMILIES }}" onclick="popup(this.href, 750, 350, '_phpbbsmilies'); return false;">{{ lang('MORE_SMILIES') }}</a>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<div class="panel">
+		<div class="inner">
+			<div class="content">
+				<fieldset class="submit-buttons">
+					<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}">&nbsp;
+					<input type="submit" name="cancel" class="button2" value="{{ lang('CANCEL') }}">
+				</fieldset>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+{% endif %}
+<div id="postingbox" style="display:none">
+	<form method="post" action="{{ S_POST_ACTION }}" id="report">
+	<div class="panel">
+		<div class="inner">
+			<h3>{{ TITLE_PAGE }}</h3>
+			{% if BC_ERROR %}
+			<p class="error">{{ BC_ERROR }}</p>
+			{% endif %}
+			<fieldset>
+				<dl>
+					<dt class="label"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="song_name" tabindex="1" name="song_name" size="65" class="inputbox autowidth" value="{{ TITLE }}"></dd>
+				</dl>
+				<dl>
+					<dt class="label"><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="artist" tabindex="2" name="artist" size="65" class="inputbox autowidth" value="{{ ARTIST }}"></dd>
+					<dd id="check-song"></dd>
+				</dl>
+				<dl>
+					<dt class="label"><label for="cat">[*] {{ lang('BC_SONG_CAT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_CAT_EXPLAIN') }}</dt>
+					<dd>
+						<select name="cat" id="cat" required="required" aria-required="true">
+							{{ SELECT_CATS }}
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt class="label"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
+					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}"></dd>
+					<dd id="check-video"></dd>
+				</dl>
+			</fieldset>
+		</div>
+	</div>
+
+	<div class="panel">
+		<div class="inner">
+			<div class="content">
+				<p class="report">{{ lang('BC_EDIT_SONG') }} || {{ lang('BC_REPORT_CLOSE_CONTACT') }}</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<div class="inner">
+			<div class="content">
+				<fieldset class="submit-buttons">
+					<span id="result-span" class="undisplay"></span>
+					<input type="hidden" id="ex_cat" name="ex_cat" value="{{ CHART_CAT }}">
+					<input type="hidden" id="ex_cat_nb" name="ex_cat_nb" value="{{ CAT_NB }}">
+					<input type="hidden" id="user_id" name="user_id" value="{{ USER_ID }}">
+					<input type="hidden" id="name" name="name" value="{{ NAME }}">
+					<input type="hidden" id="colour" name="colour" value="{{ COLOUR }}">
+					<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}">&nbsp;
+					<input type="submit" name="cancel" class="button2" value="{{ lang('CANCEL') }}">
+				</fieldset>
+			</div>
+		</div>
+	</div>
+	</form>
+</div>
+<br>
+{% if not S_IS_POSTER %}
+{% INCLUDEJS T_ASSETS_PATH ~ '/javascript/editor.js' %}
+<script>
+	var form_name = 'postform';
+	var text_name = 'message-box';
+</script>
+{% endif %}
+{% endif %}
+
+{% INCLUDE 'overall_footer.html' %}

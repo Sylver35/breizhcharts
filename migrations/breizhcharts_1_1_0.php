@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -52,7 +52,7 @@ class breizhcharts_1_1_0 extends migration
 						'result_add_time'		=> ['INT:11', 0],
 					],
 					'PRIMARY_KEY'	=> 'result_id',
-					'KEYS'	=> [
+					'KEYS'			=> [
 						'result_song_id'		=> ['INDEX', 'result_song_id'],
 						'result_nb'				=> ['INDEX', 'result_nb'],
 					],

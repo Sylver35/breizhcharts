@@ -4,52 +4,66 @@
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
+{% if SELECT_WINS %}
+<div class="action-bar bar-top litle-pagin on_left">
+	{{ lang('BC_LAST_WINNERS_SELECT') }} <select id="select_wins" onchange="window.location=this.options[this.selectedIndex].value;">{{ SELECT_WINS }}</select>
+</div>
+{% endif %}
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dd>{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</dd>
+					<dt>
+						<div class="list-inner">{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</div>
+					</dt>
+					<dd class="lastpost"></dd>
 				</dl>
 			</li>
 		</ul>
 
 		<ul class="topiclist forums medium allmax">
 			<li class="row bg3">
-				<dl class="centered" style="font-weight: bold;">
-					<dd class="centered width-7">{{ lang('BC_RANK') }}</dd>
-					<dd class="centered width-50">{{ lang('BC_SONG_TITLE') }}</dd>
-					<dd class="centered width-10">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd class="centered width-10">{{ lang('BC_USER') }}</dd>
-					<dd class="centered width-15">{{ lang('BC_LAST_POS') }}</dd>
+				<dl class="title_tab">
+					<dt class="fantom"></dt>
+					<dd class="width-7">{{ lang('BC_RANK') }}</dd>
+					<dd class="width-50">{{ lang('BC_SONG_TITLE') }}</dd>
+					<dd class="width-10">{{ lang('BC_SONG_VIDEO') }}</dd>
+					<dd class="width-10">{{ lang('BC_USER') }}</dd>
+					<dd class="width-15">{{ lang('BC_LAST_POS') }}</dd>
 					{% if S_UPS %}
-					<dd class="centered width-7">{{ lang('BC_WON') }}</dd>
+					<dd class="width-7">{{ lang('BC_WON') }}</dd>
 					{% endif %}
 				</dl>
 			</li>
 			{% if winners|length %}
 			{% for winner in winners %}
 			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
-				<dl>
-					<dd class="centered width-7">
+				<dl class="content_tab tab_charts">
+					<dt class="fantom"></dt>
+					<dd class="width-7">
 						<div class="video-div">
+							{% if winner.NB > 3 %}
+							<a href="#" title="{{ winner.RANK }}" class="button button-icon-only"><span class="song-title position">{{ winner.RANK }}</span></a>
+							{% else %}
 							{{ winner.RANK }}
+							{% endif %}
 						</div>
 					</dd>
 					<dd class="width-50">
 						<div class="video-div">
-							<b><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a></b> {{ lang('BC_FROM') }} <b>{{ winner.ARTIST }}</b>
+							<span class="song-title"><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a> {{ lang('BC_FROM') }} {{ winner.ARTIST }}</span>
 						</div>
 					</dd>
-					<dd class="centered width-10">
+					<dd class="width-10">
 						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">
 							<img src="{{ winner.THUMBNAIL }}" alt="{{ winner.SONG }}" height="45px">
 						</a>
 					</dd>
-					<dd class="centered width-10">
-						<div style="margin: 10px 1px 1px 8px;text-align:center;">{{ winner.USER }}</div>
+					<dd class="width-10">
+						{{ winner.USER }}
 					</dd>
-					<dd class="centered width-15">
+					<dd class="width-15">
 						<div class="song-nforate">
 							<div class="bzh-inline-rating">
 								<ul class="bzh-star-rating">
@@ -74,7 +88,7 @@
 						</div>
 					</dd>
 					{% if S_UPS %}
-					<dd class="centered width-7">
+					<dd class="width-7">
 						<div class="winnners">
 							{{ winner.WIN }}
 						</div>
@@ -96,10 +110,6 @@
 	</div>
 </div>
 
-<div>
-	{{ lang('BC_LAST_WINNERS_SELECT') }} <select id="select_wins" onchange="breizhcharts.selectWins(this.value);">{{ SELECT_WINS }}</select>
-</div>
-
 {% if S_BONUS_WINNER %}
 <br>
 <div class="forabg">
@@ -107,7 +117,8 @@
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dd>{{ lang('BC_BONUS_WINNER_HEADER') }}</dd>
+					<dt>{{ lang('BC_BONUS_WINNER_HEADER') }}</dt>
+					<dd></dd>
 				</dl>
 			</li>
 		</ul>

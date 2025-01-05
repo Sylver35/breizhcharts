@@ -32,6 +32,14 @@
 					<dd><input type="text" id="year" name="year"{% if S_REQ_2 %} required aria-required="true"{% endif %} tabindex="5" size="4" class="inputbox autowidth" value="{{ CHART_YEAR }}"></dd>
 				</dl>
 				<dl>
+					<dt class="label"><label for="cat">[*] {{ lang('BC_SONG_CAT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_CAT_EXPLAIN') }}</dt>
+					<dd>
+						<select name="cat" id="cat" required="required" aria-required="true">
+							{{ SELECT_CATS }}
+						</select>
+					</dd>
+				</dl>
+				<dl>
 					<dt class="label"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}"></dd>
 					<dd id="check-video"></dd>
@@ -39,7 +47,7 @@
 				{% if S_COMMENT %}
 				<dl>
 					<dt class="label"><label for="comment">{{ lang('BC_COMMENT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_COMMENT_EXPLAIN') }}</dt>
-					<dd><textarea type="text" id="video" tabindex="8" name="comment" size="65" class="inputbox" spellcheck="true" value="{{ CHART_COMMENT }}"></textarea></dd>
+					<dd><textarea type="text" id="comment" tabindex="8" name="comment" size="65" class="inputbox" spellcheck="true" value="{{ CHART_COMMENT }}"></textarea></dd>
 				</dl>
 				{% endif %}
 			</fieldset>
@@ -50,12 +58,14 @@
 		<div class="inner">
 			<fieldset class="submit-buttons">
 				<span id="result-span" class="undisplay"></span>
-				{{ S_HIDDEN_FIELDS }}
-				{{ S_FORM_TOKEN }}
+				<input type="hidden" id="ex_cat" name="ex_cat" value="{{ CHART_CAT }}">
+				<input type="hidden" id="ex_cat_nb" name="ex_cat_nb" value="{{ CAT_NB }}">
 				{% if not BC_ERROR %}
 				<input type="submit" tabindex="8" accesskey="s" id="button" name="post" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" class="button1">
 				{% endif %}
 				<input type="Button" tabindex="9" accesskey="c" onclick="window.history.go(-1); return false;" value="{{ lang('CANCEL') }}" title="{{ lang('CANCEL') }}" class="button1">
+				{{ S_HIDDEN_FIELDS }}
+				{{ S_FORM_TOKEN }}
 			</fieldset>
 		</div>
 	</div>

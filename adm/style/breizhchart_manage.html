@@ -1,92 +1,124 @@
 {% INCLUDE 'overall_header.html' %}
 
+{% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
+
 <a name="maincontent"></a>
 
 {% if U_BACK %}
-	<a href="{{ U_BACK }}" style="float: right;">&laquo; {{ lang('BACK') }}</a>
+	<a href="{{ U_BACK }}" class="right-float">&laquo; {{ lang('BACK') }}</a>
 {% endif %}
 
 <h1>{{ lang('BC_PAGE_TITLE') }}</h1>
 <p>{{ lang('BC_PAGE_DESC') }}</p>
-<p><img src="https://img.shields.io/badge/{{ lang('CURRENT_VERSION') }}-{{ BC_CHARTS_VERSION }}-green.svg?style=plastic" title="{{ lang('CURRENT_VERSION') }} {{ BC_CHARTS_VERSION }}"></p>
-
+{{ DATA }}
 {% if not S_BREIZHCHARTS_EDIT %}
 <form id="breizhchart_manage" method="post" action="{{ U_ACTION }}">
-	<div class="pagination" style="float:left">
-		{{ lang('SORT_BY') }} : {{ S_SELECT_SORT_KEY }} {{ S_SELECT_SORT_DIR }}&nbsp;<input class="btnlite" type="submit" name="sort" value="{{ lang('GO') }}">
+	<div class="pagination left-float">
+		{{ lang('SORT_BY') }}{{ lang('COLON') }} {{ S_LIMIT_DAYS }} {{ S_SELECT_SORT_KEY }} {{ S_SELECT_SORT_DIR }}&nbsp;<input class="btnlite" type="submit" name="sort" value="{{ lang('GO') }}">
 	</div>
-	<div class="pagination top-pagination">
+	<div class="pagination top-pagination top-right">
 	{% if pagination|length %}
-		{% INCLUDE 'pagination.html' %}
+		{{ TOTAL }} &bull; {% INCLUDE 'pagination.html' %}
 	{% else %}
-		&bull; {{ PAGE_NUMBER }}
+		{{ TOTAL }} &bull; {{ PAGE_NUMBER }}
 	{% endif %}
 	</div>
 	<table cellspacing="1">
 		<thead>
 			<tr>
-				<th style="width: 18%;text-align: center;">{{ lang('BC_SONG_TITLE') }}</th>
-				<th style="width: 18%;text-align: center;">{{ lang('BC_SONG_ARTIST') }}</th>
-				<th style="width: 15%;text-align: center;">{{ lang('BC_SONG_ALBUM') }}</th>
-				<th style="width: 15%;text-align: center;">{{ lang('BC_ADDED_BY') }}</th>
-				<th style="width: 10%;text-align: center;">{{ lang('BC_SONG_VIDEO') }}</th>
-				<th style="width: 10%;text-align: center;">{{ lang('BC_LAST_RANK') }}</th>
-				<th style="width: 8%;text-align: center;">{{ lang('ACTION') }}</th>
+				<th class="centered width-4">{{ lang('BC_CURR_POS') }}</th>
+				<th class="centered width-15">{{ lang('BC_SONG_TITLE') }}</th>
+				<th class="centered width-15">{{ lang('BC_SONG_ARTIST') }}</th>
+				<th class="centered width-15">{{ lang('BC_SONG_ALBUM') }}</th>
+				<th class="centered width-12">{{ lang('BC_SONG_CAT') }}</th>
+				<th class="centered width-13">{{ lang('BC_ADDED_BY') }}</th>
+				<th class="centered width-8">{{ lang('BC_SONG_VIDEO') }}</th>
+				<th class="centered width-8">{{ lang('BC_ACTUAL_NOTE') }}</th>
+				<th class="centered width-10">{{ lang('ACTION') }}</th>
 			</tr>
 		</thead>
 		<tbody>
 		{% if charts|length %}
 		{% for chart in charts %}
 			<tr class="{% if chart.S_ROW_COUNT is even %}row1{% else %}row2{% endif %}">
-				<td><strong>{{ chart.TITLE }}</strong></td>
+				<td class="centered strong">{{ chart.POSITION }}</td>
+				<td class="strong">
+				{% if chart.U_REPORTED %}
+					<a href="{{ U_REPORTED }}" title="{{ lang('BC_REPORTED') }}" class="button-icon button-icon-only"><i class="bzh-red icon fa-exclamation-triangle fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BUTTON_REPORT') }}</span></a>&nbsp;&nbsp;
+				{% endif %}
+				{{ chart.TITLE }}
+				</td>
 				<td>{{ chart.ARTIST }}</td>
 				<td>{{ chart.ALBUM }}</td>
-				<td>{{ chart.USERNAME }}<br><span style="font-size: 0.8em;"><i>{{ chart.ADDED_TIME }}</i></span></td>
-				<td style="text-align: center;"><img src="{{ chart.PICTURE }}" height="35px" alt="{{ chart.TITLE_PIC }}" title="{{ chart.TITLE_PIC }}"></td>
-				<td style="text-align: center;">{{ chart.LAST_RANK }}</td>
-				<td style="text-align: center;"><a href="{{ chart.U_EDIT }}">{{ ICON_EDIT }}</a>&nbsp;&nbsp;<a href="{{ chart.U_DEL }}">{{ ICON_DELETE }}</a></td>
+				<td class="centered strong">{{ chart.CAT }}</td>
+				<td class="centered">{{ chart.USERNAME }}<br><span class="mini"><i>{{ chart.ADDED_TIME }}</i></span></td>
+				<td class="centered"><img src="{{ chart.PICTURE }}" class="album" alt="{{ chart.TITLE_PIC }}" title="{{ chart.TITLE_PIC }}"></td>
+				<td class="centered">
+					<div class="song-nforate">
+						<div class="bzh-inline-rating">
+							<ul class="bzh-star-rating" id="stars-{{ chart.SONG_ID }}">
+								{{ chart.STARS_VOTE }}
+							</ul>
+						</div>
+						<div id="bzh_result-{{ chart.SONG_ID }}" class="bzh-box">
+							<br>{{ chart.TOTAL_RATE }}
+						</div>
+						<div class="bzh-clr"></div>
+					</div>
+				</td>
+				<td class="centered">
+					<a href="{{ chart.U_EDIT }}">{{ ICON_EDIT }}</a>&nbsp;&nbsp;
+					<a href="{{ chart.U_DEL }}">{{ ICON_DELETE }}</a>
+				</td>
 			</tr>
 		{% endfor %}
 		{% else %}
 			<tr>
-				<td colspan="7" style="text-align: center;">{{ lang('BC_NO_ENTRY') }}</td>
+				<td colspan="7" class="centered strong">{{ lang('BC_NO_ENTRY') }}</td>
 			</tr>
 		{% endif %}
 		</tbody>
 	</table>
 	<div class="pagination bottom-pagination">
 	{% if pagination|length %}
-		{% INCLUDE 'pagination.html' %}
+		{{ TOTAL }} &bull; {% INCLUDE 'pagination.html' %}
 	{% else %}
-		&bull; {{ PAGE_NUMBER }}
+		{{ TOTAL }} &bull; {{ PAGE_NUMBER }}
 	{% endif %}
 	</div>
 </form>
 
 {% else %}
 <form method="post" id="acp_music_edit" action="{{ U_ACTION }}" >
-	<input type="hidden" name="id" value="{{ ID }}">
 	<fieldset>
 		<legend>{{ lang('BC_EDIT') }}</legend>
 		<dl>
-			<dt><label for="song_name">{{ lang('BC_SONG_TITLE') }}:</label><br><span>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</span></dt>
+			<dt><label for="song_name">{{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</span></dt>
 			<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" name="song_name" id="song_name" size="70" value="{{ TITLE }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="artist">{{ lang('BC_SONG_ARTIST') }}:</label><br><span>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</span></dt>
+			<dt><label for="artist">{{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</span></dt>
 			<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" name="artist" id="artist" size="70" value="{{ ARTIST }}"></dd>
 			<dd id="check-song"></dd>
 		</dl>
 		<dl>
-			<dt><label for="album">{{ lang('BC_SONG_ALBUM') }}:</label><br><span>{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</span></dt>
+			<dt><label for="album">{{ lang('BC_SONG_ALBUM') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_SONG_ALBUM_EXPLAIN') }}</span></dt>
 			<dd><input type="text" name="album" id="album" size="70" value="{{ ALBUM }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="year">{{ lang('BC_SONG_YEAR') }}:</label><br><span>{{ lang('BC_SONG_YEAR_EXPLAIN') }}</span></dt>
+			<dt><label for="year">{{ lang('BC_SONG_YEAR') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_SONG_YEAR_EXPLAIN') }}</span></dt>
 			<dd><input type="text" name="year" id="year" size="4" value="{{ YEAR }}"></dd>
 		</dl>
 		<dl>
-			<dt><label for="video">{{ lang('BC_SONG_VIDEO') }}:</label><br><span>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</span></dt>
+			<dt class="label"><label for="cat">{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_CAT_EXPLAIN') }}</dt>
+			<dd>
+				<select name="cat" id="cat" required aria-required="true">
+					{{ SELECT_CATS }}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt><label for="video">{{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</span></dt>
 			<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ VIDEO }}"></dd>
 			<dd id="check-video"></dd>
 		</dl>
@@ -94,6 +126,10 @@
 
 	<fieldset class="submit-buttons">
 		<legend>{{ lang('SUBMIT') }}</legend>
+		<input type="hidden" name="id" value="{{ ID }}">
+		<input type="hidden" id="ex_cat" name="ex_cat" value="{{ CAT }}">
+		<input type="hidden" id="ex_cat_nb" name="ex_cat_nb" value="{{ CAT_NB }}">
+		<input type="hidden" name="st" value="{{ ST }}">
 		<input type="hidden" name="sk" value="{{ SK }}">
 		<input type="hidden" name="sd" value="{{ SD }}">
 		<input class="button1" id="submit" name="submit" value="{{ lang('SUBMIT') }}" type="submit">&nbsp;

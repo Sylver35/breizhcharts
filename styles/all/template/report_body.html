@@ -1,0 +1,59 @@
+{% INCLUDE 'overall_header.html' %}
+
+{% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
+
+<form id="report" method="post" action="{{ U_VALIDATE }}" onsubmit="breizhcharts.validateForm(this.form);">
+<div class="panel">
+	<div class="inner">
+		<div class="content">
+			<h4 class="report">{{ TITLE_REPORT }}</h4>
+			<p>{{ lang('REPORT_VIDEO_EXPLAIN') }}</p>
+			<fieldset>
+			{% if ERROR %}<dl><dd class="error">{{ ERROR }}</dd></dl>{% endif %}
+			<dl class="fields2">
+				<dt><label for="reason_id">{{ lang('REASON') }}{{ lang('COLON') }}</label></dt>
+				<dd>
+					<select name="reason_id" id="reason_id" class="full" onchange="breizhcharts.validate()" required="required">
+					{% for reason in reasons %}
+						<option id="reason-{{ reason.ID }}"{{ reason.SELECTED }} value="{{ reason.VALUE }}">{{ reason.DESCRIPTION }}</option>
+					{% endfor %}
+					</select>
+				</dd>
+			</dl>
+			<dl class="fields2">
+				<dt>
+					<label for="report_text">{{ lang('MORE_INFO') }}{{ lang('COLON') }}</label><br><span>{{ lang('CAN_LEAVE_BLANK') }}</span>
+					<br><br><img src="{{ THUMBNAIL }}" alt="video" style="max-width: 130px;">
+				</dt>
+				<dd>
+					<textarea name="report_text" id="report_text" onblur="breizhcharts.validaTextarea();" rows="10" cols="76" class="inputbox" spellcheck="true"></textarea>
+					<br><span id="result-span" class="undisplay"></span>
+				</dd>
+			</dl>
+			
+			</fieldset>
+		</div>
+	</div>
+</div>
+
+<div class="panel">
+	<div class="inner">
+		<div class="content">
+			<fieldset class="submit-buttons">
+				<input type="hidden" name="song_name" value="{{ TITLE }}">
+				<input type="hidden" name="artist" value="{{ ARTIST }}">
+				<input type="hidden" name="poster_id" value="{{ POSTER_ID }}">
+				<input type="hidden" name="poster_name" value="{{ POSTER_NAME }}">
+				<input type="hidden" name="poster_colour" value="{{ POSTER_COLOUR }}">
+				<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}" id="submit1">&nbsp;
+				<input type="submit" name="cancel" class="button2" value="{{ lang('CANCEL') }}" onclick="window.history.go(-1); return false;">
+				{{ S_HIDDEN_FIELDS }}
+				{{ S_FORM_TOKEN }}
+			</fieldset>
+		</div>
+	</div>
+</div>
+</form>
+<br>
+
+{% INCLUDE 'overall_footer.html' %}

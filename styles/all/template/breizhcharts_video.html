@@ -2,27 +2,83 @@
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
+{% if S_REPORTED %}
+<div class="rules">
+	<div class="inner">
+		<h4>{{ lang('BC_REPORTED') }}</h4>
+		<br>
+		<span class="title_report">{{ REPORTED_TITLE }}</span>
+		{% if U_REPORTED %}
+		<a href="{{ U_REPORTED }}" title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
+			<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
+		</a>&nbsp;
+		{% endif %}
+		{{ REPORTED_DESC }}
+	</div>
+</div>
+{% endif %}
+
 <div class="panel">
 	<div class="inner">
+		<div class="rate-video">
+			<dd id="bzh_vote-{{ SONG_ID }}">
+				<div class="song-nforate">
+					<div class="bzh-inline-rating">
+						<ul class="bzh-star-rating" id="stars-{{ SONG_ID }}">
+							{{ STARS_VOTE }}
+						</ul>
+					</div>
+					<div id="bzh_result-{{ SONG_ID }}" class="bzh-box">
+						{{ TOTAL_RATE }}<br>
+						{{ SONG_RATED }}<br>
+						<div class="{{ VOTED_IMG }}"></div>{{ USER_VOTE }}
+					</div>
+					<div class="bzh-clr"></div>
+				</div>
+			</dd>
+			<ul class="post-buttons">
+				<li>
+					{% if U_REPORTED %}
+					<a href="{{ U_REPORTED }}" title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
+						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
+					</a>
+					{% elseif S_REPORTED %}
+					<a href="#" title="{{ lang('BC_REPORTED') }}" class="button button-icon-only">
+						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }}</span>
+					</a>
+					{% elseif U_REPORT %}
+					<a href="{{ U_REPORT }}" title="{{ lang('BC_REPORT') }}" class="button button-icon-only">
+						<i class="bzh-red icon fa-exclamation fa-fw"></i><span class="sr-only">{{ lang('BC_REPORT') }}</span>
+					</a>
+					{% endif %}
+					{% if U_EDIT_SONG %}
+					<a href="{{ U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only">
+						<i class="bzh-green icon fa fa fa-wrench"></i><span class="sr-only">{{ lang('BC_EDIT_SONG') }}</span>
+					</a>
+					{% endif %}
+					<a href="#" title="{{ TITLE_SONG_VIEW }}" class="button button-icon-only" id="a_view"><span class="song-title position" id="span_view">{{ SONG_VIEW }}</span></a>
+				</li>
+			</ul>
+		</div>
 		<div class="video-frame">
 			<div id="ytplayer"></div>
 		</div>
 	</div>
 </div>
-
+<div id="result-div"></div>
 <script>
-	var tag = document.createElement('script'), player;
-	tag.src = "https://www.youtube.com/player_api";
-	var scriptTag = document.getElementsByTagName('script')[0];
-	scriptTag.parentNode.insertBefore(tag, scriptTag);
-	function onYouTubePlayerAPIReady(){
-		player = new YT.Player('ytplayer',{
-			videoId: '{{ YOUTUBE_ID }}',
-			width: '900',
-			height: '600',
-			playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
-		});
-	}
+var tag = document.createElement('script'), player;
+tag.src = "https://www.youtube.com/player_api";
+var scriptTag = document.getElementsByTagName('script')[0];
+scriptTag.parentNode.insertBefore(tag, scriptTag);
+function onYouTubePlayerAPIReady(){
+	player = new YT.Player('ytplayer',{
+		videoId: '{{ YOUTUBE_ID }}',
+		width: '{{ VIDEO_WIDTH }}',
+		height: '{{ VIDEO_HEIGHT }}',
+		playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 1},
+	});
+}
 </script>
 
 {% INCLUDE 'overall_footer.html' %}

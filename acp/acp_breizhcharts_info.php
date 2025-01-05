@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -23,6 +23,11 @@ class acp_breizhcharts_info
 				],
 				'manage_charts'	=> [
 					'title'	=> 'BC_MANAGE',
+					'auth'	=> 'ext_sylver35/breizhcharts && acl_a_breizhcharts_manage',
+					'cat'	=> ['ACP_BC'],
+				],
+				'categories'	=> [
+					'title'	=> 'BC_CATEGORIES',
 					'auth'	=> 'ext_sylver35/breizhcharts && acl_a_breizhcharts_manage',
 					'cat'	=> ['ACP_BC'],
 				],

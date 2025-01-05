@@ -7,7 +7,7 @@
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/language.js' %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/calendar-setup.js' %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/config.js' %}
-{% elseif S_BREIZHCHARTS_EDIT %}
+{% elseif S_BREIZHCHARTS_EDIT or S_MANAGE_CATS %}
 <script>
 var breizhcharts = {
 	checkSong: '{{ U_CHECK_SONG }}',
@@ -15,15 +15,18 @@ var breizhcharts = {
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="loader">',
 	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="true">',
 	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="false">',
+	videoAjax: '{{ lang("BC_SHOW_VIDEO_AJAX")|escape("js") }}',
+	presentError: '{{ lang("BC_PRESENT_ERROR")|escape("js") }}',
 	submit: '{{ lang("SUBMIT")|escape("js") }}',
 	error: '{{ lang("ERROR")|escape("js") }}',
 	ok: '{{ lang("BC_OK")|escape("js") }}',
 	errorVideo: '{{ lang("BC_AJAX_VIDEO_NO")|escape("js") }}',
-	id: {{ ID }},
+	id: {% if ID %}{{ ID }}{% else %}0{% endif %},
 };
 (function($){  // Avoid conflicts with other libraries
 	'use strict';
 
+{% if S_BREIZHCHARTS_EDIT %}
 	breizhcharts.checkSongArtist = function(){
 		var songName = $('#song_name').val(), artist = $('#artist').val();
 		if(songName === '' || artist === ''){
@@ -51,6 +54,7 @@ var breizhcharts = {
 			}
 		});
 	}
+
 	breizhcharts.checkVideo = function(){
 		$.ajax({
 			type: 'POST',
@@ -59,8 +63,11 @@ var breizhcharts = {
 			data: 'url='+encodeURIComponent($('#video').val()),
 			cache: false,
 			success: function(result){
-				if(result.sort === 1){
-					$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="35">');
+				if(result.sort === 3){
+					$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+breizhcharts.presentError+' : </span>'+result.name+'<br>'+result.time+'<br>'+breizhcharts.videoAjax+' <a href="'+result.url+'"><img src="'+result.image+'" style="height:80px;" alt="img"></a>');
+					$('#button').attr({'disabled': true, 'title': breizhcharts.error});
+				}else if(result.sort === 1){
+					$('#check-video').html(breizhcharts.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="60">');
 				}else{
 					$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
 					$('#button').attr({'disabled': true, 'title': breizhcharts.error});
@@ -69,6 +76,7 @@ var breizhcharts = {
 			}
 		});
 	}
+
 	breizhcharts.urlValide = function(url){
 		var regex = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
 		 if(regex.test(url)){ 
@@ -76,6 +84,53 @@ var breizhcharts = {
 		}
 		return false;
 	}
+
+{% elseif S_MANAGE_CATS %}
+	breizhcharts.moveCats = function(action, cat_id){
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			data: 'action='+action+'&cat_id='+cat_id,
+			url: '{{ U_MOVE_CATS }}',
+			cache: false,
+			success: function(response){
+				var bodyRow = '', actionUrl = $('#action_url').val();
+				for(var i = 0; i < response.total; i++){
+					var data = response.datas[i];
+					$('#succes-div').show();
+					setTimeout(function(){$('#succes-div').hide()},1000);
+					if(data.error === false){
+						continue;
+					}else if(data.error === undefined){
+						bodyRow += '<tr class="'+data.rowCount+' row-height">';
+						bodyRow += '<td class="centered strong">'+data.catId+'</td>';
+						bodyRow += '<td class="centered strong">'+data.catOrder+'</td>';
+						bodyRow += '<td class="centered strong medium">'+data.catName+'</td>';
+						bodyRow += '<td class="centered strong">'+data.catNb+'</td>';
+						bodyRow += '<td class="centered">';
+						if(data.firstOrder){
+							bodyRow += '<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> ';
+						}else{
+							bodyRow += '<span class="up"><a class="pointer" onclick="breizhcharts.moveCats(\'move_up\','+data.catId+')">{{ ICON_MOVE_UP }}</a></span> ';
+						}
+						if(data.rowMax){
+							bodyRow += '<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span> ';
+						}else{
+							bodyRow += '<span class="down"><a class="pointer" onclick="breizhcharts.moveCats(\'move_down\','+data.catId+')">{{ ICON_MOVE_DOWN }}</a></span> ';
+						}
+						bodyRow += '<a href="'+actionUrl+data.uEdit+'" class="action-icon">{{ ICON_EDIT }}</a> <a href="'+actionUrl+data.uDelete+'" class="action-icon">{{ ICON_DELETE }}</a>';
+						bodyRow += '</td></tr>';
+					}
+				}
+				$('#cat-body').html(bodyRow);
+			},
+			error: function(){
+				$('#error-div').show();
+				setTimeout(function(){$('#error-div').hide()},2000);
+			}
+		});
+	}
+{% endif %}
 })(jQuery);
 </script>
 {% endif %}

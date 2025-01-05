@@ -1,0 +1,102 @@
+{% INCLUDE 'overall_header.html' %}
+
+{% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
+
+<a name="maincontent"></a>
+
+{% if U_BACK %}
+	<a href="{{ U_BACK }}" class="right-float">&laquo; {{ lang('BACK') }}</a>
+{% endif %}
+
+<h1>{{ CAT_TITLE }}</h1>
+<br>
+<p class="title-explain">{{ CAT_TITLE_EXPLAIN }}</p>
+
+{% if S_MANAGE_CATS %}
+<form method="post" id="acp_categories" action="{{ U_ADD }}">
+	<p class="quick quick-left">
+		<input type="hidden" id="action_url" value="{{ U_ACTION }}">
+		<input class="button2" name="add" type="submit" value="{{ lang('BC_CAT_ADD') }}" title="{{ lang('BC_CAT_ADD') }}">
+	</p>
+	<div class="pagination top-pagination">
+		{{ TOTAL_CATS }}
+	</div>
+	<table cellspacing="1">
+		<thead>
+			<tr>
+				<th class="centered width-15">{{ lang('ID') }}</th>
+				<th class="centered width-20">{{ lang('POSITION') }}</th>
+				<th class="centered width-20">{{ lang('BC_CAT_SORT') }}</th>
+				<th class="centered width-20">{{ lang('BC_CAT_NB_SONGS') }}</th>
+				<th class="centered width-15">{{ lang('ACTIONS') }}</th>
+			</tr>
+		</thead>
+		<tbody id="cat-body">
+		{% if categories|length %}
+		{% for category in categories %}
+			<tr class="{% if category.S_ROW_COUNT is even %}row1{% else %}row2{% endif %} row-height">
+				<td class="centered strong">{{ category.CAT_ID }}</td>
+				<td class="centered strong">{{ category.POSITION }}</td>
+				<td class="centered strong medium">{{ category.CAT_NAME }}</td>
+				<td class="centered strong">{{ category.CAT_NB }}</td>
+				<td class="centered">
+					{% if category.CAT_ORDER eq 1 %}
+						<span class="up-disabled">{{ ICON_MOVE_UP_DISABLED }}</span> 
+					{% else %}
+						<span class="up"><a class="pointer" onclick="breizhcharts.moveCats('move_up', {{ category.CAT_ID }})">{{ ICON_MOVE_UP }}</a></span> 
+					{% endif %}
+					{% if category.ROW_MAX %}
+						<span class="down-disabled">{{ ICON_MOVE_DOWN_DISABLED }}</span> 
+					{% else %}
+						<span class="down"><a class="pointer" onclick="breizhcharts.moveCats('move_down', {{ category.CAT_ID }})">{{ ICON_MOVE_DOWN }}</a></span> 
+					{% endif %}
+					<a href="{{ category.U_EDIT }}" class="action-icon">{{ ICON_EDIT }}</a> 
+					<a href="{{ category.U_DELETE }}" class="action-icon">{{ ICON_DELETE }}</a>
+				</td>
+			</tr>
+		{% endfor %}
+		{% else %}
+			<tr>
+				<td colspan="7" class="centered strong">{{ lang('BC_NO_ENTRY') }}</td>
+			</tr>
+		{% endif %}
+		{{ S_FORM_TOKEN }}
+		</tbody>
+	</table>
+</form>
+
+{% else %}
+<form method="post" id="acp_cat_edit" action="{{ U_ACTION_FORM }}" >
+	<input type="hidden" name="id" value="{{ CAT_ID }}">
+	<fieldset>
+		<legend>{{ CAT_NAME }}</legend>
+		<dl>
+			<dt><label for="cat_name">{{ lang('BC_CAT_NAME') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_CAT_NAME_EXPLAIN') }}</span></dt>
+			<dd><input required aria-required="true" type="text" name="cat_name" id="cat_name" size="30" value="{{ CAT_NAME }}"></dd>
+		</dl>
+		{% if not S_ADD_CAT %}
+		<dl>
+			<dt><label for="cat_nb">{{ lang('BC_CAT_NB_EDIT') }}{{ lang('COLON') }}</label><br><span>{{ lang('BC_CAT_NB_EDIT_EXPLAIN') }}</span></dt>
+			<dd><input type="text" name="cat_nb" id="cat_nb" size="4" value="{{ CAT_NB }}"></dd>
+			<dd id="check-song"></dd>
+		</dl>
+		{% endif %}
+	</fieldset>
+
+	<fieldset class="submit-buttons">
+		<legend>{{ lang('SUBMIT') }}</legend>
+		<input class="button1" type="submit" id="submit" name="submit" value="{{ lang('SUBMIT') }}">&nbsp;
+		<input class="button2" type="reset" id="reset" name="reset" value="{{ lang('RESET') }}">
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+{% endif %}
+
+<div id="succes-div">
+   <span>{{ lang('SC_MOVE_SUCCESS') }}</span>
+</div>
+<div id="error-div">
+   <span>{{ lang('SC_MOVE_ERROR') }}</span>
+</div>
+
+{% INCLUDE 'overall_footer.html' %}

@@ -1,27 +1,33 @@
+
+{% if RANDOM_INDEX and RANDOM_INDEX eq 1 %}
+{% INCLUDE '@sylver35_breizhcharts/random_index.html' %}
+{% endif %}
+
 {% if S_CHECK_FIRST %}
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dd style="width:100%; text-align:center;">{{ RESULT_PERIOD }}</dd>
+					<dt class="fantom"></dt>
+					<dd class="centered">{{ RESULT_PERIOD }}</dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist topics">
 			<li class="bg1">
 			{% if winners|length %}
-				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
-					<div style="display: table-row;padding: 0;margin: 0;">
+				<div class="winners">
+					<div class="content_win">
 						{% for winner in winners %}
-						<span style="display: table-cell;text-align: center;">
+						<span class="row_winners">
 							{{ winner.RANK }}<br><br>
 							<b>{{ winner.SONG }}</b><br>
 							{{ lang('BC_FROM') }}<br>
 							<b>{{ winner.ARTIST }}</b>
 							<br><br>
 							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,410);return false;">
-								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" height="50px">
+								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" class="thumbnail">
 							</a>
 							<br>
 							<div>
@@ -29,36 +35,16 @@
 									<div class="bzh-inline-rating">
 										<ul class="bzh-star-rating">
 											<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="one-star">1</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="two-star">2</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="three-star">3</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="four-star">4</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="five-star">5</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="six-star">6</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a>
-											</li>
-											<li>
-												<a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a>
-											</li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="one-star">1</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="two-star">2</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="three-star">3</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="four-star">4</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="five-star">5</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="six-star">6</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a></li>
+											<li><a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a></li>
 										</ul>
 									</div>
 									<div class="bzh-box">
@@ -76,9 +62,9 @@
 				<br>
 				{% if BONUS_WINNER %}
 				<br>
-				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
-					<div style="display: table-row;padding: 0;margin: 0;">
-						<span style="display: table-cell;text-align: center;">
+				<div class="winners">
+					<div class="content_win">
+						<span class="row_winners">
 							{{ BONUS_WINNER }}
 						</span>
 					</div>
@@ -110,26 +96,27 @@
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dd style="width:100%; text-align:center;">{{ lang('BC_NEWEST_PERIOD') }}</dd>
+					<dt class="fantom"></dt>
+					<dd class="centered">{{ lang('BC_NEWEST_PERIOD') }}</dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist topics">
 			<li class="bg1">
-				<div style="display: table;margin: auto;width: 100%;padding: 8px 2px 2px 2px;">
-					<div style="display: table-row;padding: 0;margin: 0;">
+				<div class="winners">
+					<div class="content_win">
 					{% for newest in newests %}
 					{% if newest.LINE %}
 					</div>
 					<br>
-					<div style="display: table-row;padding: 0;margin: 0;">
+					<div class="content_win">
 					{% endif %}
-						<span style="display: table-cell;text-align: center;width: 25%;">
+						<span class="row_winners quart">
 							<b>{{ newest.SONG }}</b><br>
 							{{ lang('BC_FROM') }}<br>
 							<b>{{ newest.ARTIST }}</b><br><br>
 							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
-								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" height="50px">
+								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" class="thumbnail">
 							</a>
 							<br><br>
 							{{ newest.USER }}

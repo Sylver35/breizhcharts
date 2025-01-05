@@ -1,4 +1,4 @@
-{% if S_LIST or S_LAST_WINNERS or S_ADD_SONG or S_EDIT_SONG %}
+{% if S_IN_CHARTS %}
 {% INCLUDEJS '@sylver35_breizhcharts/breizhcharts.js' %}
 <script>
 var breizhcharts = {};
@@ -6,15 +6,31 @@ var bcConfig = {
 	voteUrl: '{{ U_VOTE_MUSIC }}',
 	checkSong: '{{ U_CHECK_SONG }}',
 	checkUrl: '{{ U_CHECK_VIDEO }}',
-	winUrl: '{{ U_SELECT_WINNERS }}',
+	viewSongUrl: '{{ U_VIEW_SONG }}',
+	winUrl: '{{ U_LAST_WINNERS }}',
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="">',
 	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="">',
 	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="">',
 	submit: '{{ lang("SUBMIT")|escape("js") }}',
+	errorUrl: '{{ lang("BC_INVALID_URL")|escape("js") }}',
+	errorSelect: '{{ lang("BC_ERROR_SELECT")|escape("js") }}',
+	errorSelectNo: '{{ lang("BC_ERROR_SELECT_NO")|escape("js") }}',
+	videoAjax: '{{ lang("BC_SHOW_VIDEO_AJAX")|escape("js") }}',
+	editOpen: '{{ lang("BC_EDIT_SONG")|escape("js") }}',
+	closeOpen: '{{ lang("BC_REPORT_CLOSE")|escape("js") }}',
+	errorVote: '{{ lang("BC_AJAX_NOTE_NO")|escape("js") }}',
+	msgOpen: '{{ INFORM }}',
+	editClose: '{{ lang("BC_REPORT_EDIT_CLOSE")|escape("js") }}',
+	presentError: '{{ lang("BC_PRESENT_ERROR")|escape("js") }}',
 	error: '{{ lang("ERROR")|escape("js") }}',
 	ok: '{{ lang("BC_OK")|escape("js") }}',
 	nav: '{{ NAV_ID }}',
-	id: {% if S_EDIT_SONG %}{{ CHART_ID }}{% else %}0{% endif %},
+	id: {% if CHART_ID %}{{ CHART_ID }}{% else %}0{% endif %},
 };
+{% if S_IN_VIDEO %}
+$(document).ready(function() {
+	setTimeout(function(){breizhcharts.viewSong()}, 15000);
+});
+{% endif %}
 </script>
 {% endif %}

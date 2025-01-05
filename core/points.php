@@ -2,7 +2,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -122,6 +122,24 @@ class points
 		]);
 	}
 
+	public function return_last_winner()
+	{
+		if ($this->points_active() && $this->config['breizhcharts_winner_id'] > 0)
+		{
+			$sql = 'SELECT user_id, username, user_colour
+				FROM ' . USERS_TABLE . '
+					WHERE user_id = ' . $this->config['breizhcharts_winner_id'];
+			$result = $this->db->sql_query($sql, 6800);
+			$row = $this->db->sql_fetchrow($result);
+			$this->db->sql_freeresult($result);
+
+			$this->template->assign_vars([
+				'S_BONUS_WINNER'	=> true,
+				'BONUS_WINNER'		=> $this->language->lang('BC_BONUS_WINNER', get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']), $this->config['breizhcharts_voters_points'], $this->config['points_name']),
+			]);
+		}
+	}
+
 	public function Last_bonus_winner()
 	{
 		if ($this->points_active() && $this->config['breizhcharts_winner_id'] > 0)
@@ -140,20 +158,19 @@ class points
 		}
 	}
 
-	public function points_in_vote()
+	public function points_in_vote($message)
 	{
-		$message = '';
 		if ($this->points_active() && $this->config['breizhcharts_points_per_vote'])
 		{
 			// Giving points for voting, if UPS is installed and active
 			$this->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_points_per_vote']);
-			$message = $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
+			$message .= $this->language->lang('BC_VOTE_SUCCESS_UPS', $this->config['breizhcharts_points_per_vote'], $this->config['points_name']);
 		}
 
 		return $message;
 	}
 
-	public function get_message_return($id)
+	public function get_message_return($id, $song_name)
 	{
 		$message = $this->language->lang('BC_SONG_ADDED') . '<br>';
 		if ($this->points_active() && $this->config['breizhcharts_ups_points'])
@@ -161,10 +178,11 @@ class points
 			$this->add_user_points($this->user->data['user_id'], $this->config['breizhcharts_ups_points']);
 			$message = $this->language->lang('BC_SONG_ADDED_UPS', $this->config['breizhcharts_ups_points'], $this->config['points_name']) . '<br>';
 		}
-		$message .= $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music') . '">', '</a>') . '<br>';
-		$message .= $this->language->lang('BC_BACKLINK_VIDEO', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'video', 'id' => $id]) . '#start">', '</a>');
+		$url = $this->helper->route('sylver35_breizhcharts_video', ['id' => $id, 'song_name' => $song_name]) . '#nav';
+		$message .= $this->language->lang('BC_BACKLINK', '<a href="' . $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0]) . '">', '</a>') . '<br>';
+		$message .= $this->language->lang('BC_BACKLINK_VIDEO', '<a href="' . $url . '">', '</a>');
 
-		 return $message;
+		 return ['message' => $message, 'url' => $url];
 	}
 
 	private function bonus_winner()

@@ -1,0 +1,8 @@
+breizhcharts_report_video_controller:
+    path:             /video/{id}/report
+    methods:          [GET, POST]
+    defaults:
+        _controller:  phpbb.report.controller:handle
+        mode:         'post'
+    requirements:
+        id:           \d+

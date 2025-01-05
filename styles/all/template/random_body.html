@@ -1,0 +1,24 @@
+{% if RANDOM_CHART %}
+<div class="panel">
+	<div class="inner">
+		<div class="content">
+			<h3>{{ lang('BC_SONG_RANDOM') }}</h3>
+			<div>
+				{% for random in randoms %}
+				<div class="contener-flex {% if random.RAND_NB is odd %}rand-left{% else %}rand-right{% endif %}">
+					<div class="rand-flex-1">
+						<a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}"><img src="{{ random.RAND_THUMBNAIL }}" alt="{{ random.RAND_TITLE }}" class="thumbnail"></a>
+					</div>
+					<div class="rand-flex-2">
+						<span class="song-title">{{ random.RAND_TITLE }}</span><br>
+						{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} {{ random.RAND_CAT }}<br>
+						{{ lang('BC_ADDED_BY') }}{{ lang('COLON') }} {{ random.RAND_USERNAME }}<br>
+						<span class="total_rate">{{ random.TOTAL_RATE }}</span>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
