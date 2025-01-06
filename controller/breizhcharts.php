@@ -498,7 +498,7 @@ class breizhcharts
 			throw new http_exception(403, 'BC_SONG_ADD_NO');
 		}
 
-		$error = [];
+		$action = $this->request->variable('action', '');
 		$data_video = [
 			'song_name'		=> $this->request->variable('song_name', '', true),
 			'artist'		=> $this->request->variable('artist', '', true),
@@ -514,22 +514,23 @@ class breizhcharts
 			'reported_text'	=> '',
 		];
 
-		if ($this->request->is_set_post('post'))
+		if ($action === 'validate_add')
 		{
-			$error[] = $this->verify->verify_chart_before_send($data_video, 0);
-			if (!$error)
+			$error = $this->verify->verify_chart_before_send($data_video, 0);
+			if (!count($error))
 			{
 				$this->validate_add_video($data_video);
 			}
 		}
 
-		$error[] = $this->verify->verify_max_entries($error);
+		$error = isset($error) ? $error : [];
+		$error = $this->verify->verify_max_entries($error);
 		$this->charts->get_template_charts(false);
 
 		$this->template->assign_vars([
 			'NAV_ID'			=> 'add_video',
 			'S_ADD_SONG'		=> true,
-			'BC_ERROR'			=> $error,
+			'BC_ERROR'			=> (count($error)) ? implode('<br>', $error) : '',
 			'TITLE_PAGE'		=> $this->language->lang('BC_ADD_SONG'),
 			'CHART_SONG_NAME'	=> $data_video['song_name'],
 			'CHART_ARTIST'		=> $data_video['artist'],
@@ -544,7 +545,7 @@ class breizhcharts
 			'U_EXT_PATH'		=> $this->ext_path_web,
 			'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video', ['check' => 1, 'song_id' => 0]),
-			'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_add_video'),
+			'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_add_video') . '?action=validate_add',
 		]);
 
 		$data = array_merge($data, [
@@ -602,60 +603,57 @@ class breizhcharts
 			throw new http_exception(403, 'NOT_AUTHORISED');
 		}
 
-		$error = '';
-		if ($this->request->is_set_post('post'))
+		$action = $this->request->variable('action', '');
+		//if ($this->request->is_set_post('post'))
+		if ($action === 'validate_edit')
 		{
 			$error = $this->validate_edit_song($data['song_id'], $data['start'], $data['cat']);
 		}
-		else
-		{
-			$this->charts->get_template_charts(false);
 
-			$sql = $this->db->sql_build_query('SELECT', [
-				'SELECT'	=> 'b.*, c.cat_nb',
-				'FROM'		=> [$this->breizhcharts_table => 'b'],
-				'LEFT_JOIN'	=> [
-					[
-						'FROM'	=> [$this->breizhcharts_cats_table => 'c'],
-						'ON'	=> 'c.cat_id = b.cat',
-					],
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'b.*, c.cat_nb',
+			'FROM'		=> [$this->breizhcharts_table => 'b'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [$this->breizhcharts_cats_table => 'c'],
+					'ON'	=> 'c.cat_id = b.cat',
 				],
-				'WHERE'		=> 'b.song_id = ' . (int) $data['song_id'],
-			]);
-			$result = $this->db->sql_query($sql);
-			$data_video = $this->db->sql_fetchrow($result);
-			$this->db->sql_freeresult($result);
+			],
+			'WHERE'		=> 'b.song_id = ' . (int) $data['song_id'],
+		]);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
 
-			if (((int) $this->user->data['user_id'] !== (int) $data_video['poster_id']))
+		if (((int) $this->user->data['user_id'] !== (int) $row['poster_id']))
+		{
+			if (!$data['moderate'])
 			{
-				if (!$data['moderate'])
-				{
-					throw new http_exception(403, 'NOT_AUTHORISED');
-				}
+				throw new http_exception(403, 'NOT_AUTHORISED');
 			}
-
-			$title_mode = $this->language->lang('BC_EDIT_SONG') . ' : ' . $data_video['song_name'];
-			$this->template->assign_vars([
-				'S_EDIT_SONG'		=> true,
-				'ERROR'				=> implode('<br>', $error),
-				'TITLE_PAGE'		=> $title_mode,
-				'CHART_ID'			=> $data_video['song_id'],
-				'CHART_SONG_NAME'	=> $data_video['song_name'],
-				'CHART_ARTIST'		=> $data_video['artist'],
-				'CHART_ALBUM'		=> $data_video['album'],
-				'CHART_YEAR'		=> $data_video['year'],
-				'CHART_VIDEO'		=> $data_video['video'],
-				'CHART_CAT'			=> $data_video['cat'],
-				'CAT_NB'			=> $data_video['cat_nb'] ? $data_video['cat_nb'] : 0,
-				'SELECT_CATS'		=> $this->work->get_cats_select($data_video['cat']),
-				'S_REQ_1'			=> $this->config['breizhcharts_required_1'],
-				'S_REQ_2'			=> $this->config['breizhcharts_required_2'],
-				'U_EXT_PATH'		=> $this->ext_path_web,
-				'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
-				'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video', ['check' => 0, 'song_id' => $data_video['song_id']]),
-				'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $data_video['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]),
-			]);
 		}
+
+		$this->charts->get_template_charts(false);
+		$this->template->assign_vars([
+			'S_EDIT_SONG'		=> true,
+			'ERROR'				=> isset($error) ? implode('<br>', $error) : '',
+			'TITLE_PAGE'		=> $this->language->lang('BC_EDIT_SONG') . ' : ' . $row['song_name'],
+			'CHART_ID'			=> $row['song_id'],
+			'CHART_SONG_NAME'	=> $row['song_name'],
+			'CHART_ARTIST'		=> $row['artist'],
+			'CHART_ALBUM'		=> $row['album'],
+			'CHART_YEAR'		=> $row['year'],
+			'CHART_VIDEO'		=> $row['video'],
+			'CHART_CAT'			=> $row['cat'],
+			'CAT_NB'			=> $row['cat_nb'] ? $row['cat_nb'] : 0,
+			'SELECT_CATS'		=> $this->work->get_cats_select($row['cat']),
+			'S_REQ_1'			=> $this->config['breizhcharts_required_1'],
+			'S_REQ_2'			=> $this->config['breizhcharts_required_2'],
+			'U_EXT_PATH'		=> $this->ext_path_web,
+			'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
+			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video', ['check' => 0, 'song_id' => $row['song_id']]),
+			'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) . '?action=validate_edit',
+		]);
 
 		$data = array_merge($data, [
 			'rules'			=> false,
@@ -681,9 +679,10 @@ class breizhcharts
 		$ex_cat = $this->request->variable('ex_cat', 0);
 		$ex_cat_nb = $this->request->variable('ex_cat_nb', 0);
 
-		if ($error = $this->verify->verify_chart_before_send($data_video, $id))
+		$error = $this->verify->verify_chart_before_send($data_video, $id);
+		if (count($error))
 		{
-			return implode('<br>', $error);
+			return $error;
 		}
 		else
 		{

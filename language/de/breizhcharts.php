@@ -70,7 +70,8 @@ $lang = array_merge($lang, [
 	'BC_ADDED_TIME'					=> 'Eingestellt am:<br><strong>%1$s</strong>',
 	'BC_ADDED_TIME_SHORT'			=> 'Von : %1$s',
 	'BC_ALL_TITLE'					=> 'Die Chart Platzierungen - Alle Songs',
-	'BC_ALREADY_EXISTS_ERROR'		=> 'Der Song <strong>%1$s</strong> von <strong>%2$s</strong> existiert bereits. Wähle einen neuen Song zum Einstellen.',
+	'BC_ALREADY_EXISTS_ERROR'		=> 'Der song <strong>%1$s</strong> von <strong>%2$s</strong> existiert bereits. Wähle einen neuen Song zum Einstellen.',
+	'BC_ALREADY_EXISTS_SIMPLE'		=> 'Der song %1$s existiert bereits. Wähle einen neuen Song zum Einstellen.',
 	'BC_ALREADY_VOTED'				=> 'Du hast diesen Song bereits bewertet',
 	'BC_ENTER'						=> 'Eintrag',
 	'BC_DATE'						=> 'l j F Y, H:i',
@@ -79,7 +80,7 @@ $lang = array_merge($lang, [
 	'BC_ANNOUNCE_MSG'				=> 'Hallo Zusammen,' . "\n\n" . 'Es wurde ein neuer Song zu den Music Charts hinzugefügt! ' . "\n" . '[img]%1$s[/img]' . "\n\n" . '🎶 Titel: [b]%2$s[/b] ' . "\n" . '🎸 Künstler: [b]%3$s[/b] ' . "\n" . '🎵 Musikgenre: [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Viel Spaß beim Anschauen und Anhören und nicht vergessen abzustimmen!',
 	'BC_ANNOUNCE_TITLE'				=> '🎼 %1$s von %2$s',
 	'BC_ANNOUNCE_USER'				=> '👉 Anmerkung des Autors: [quote]%1$s[/quote]' . "\n",
-	'BC_ANNOUNCE_SEPARATE'			=> "\n\n" . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------------------' . "\n",// Separation in topic when needed
+	'BC_ANNOUNCE_SEPARATE'			=> "\n\n &emsp&emsp&emsp&emsp&emsp&emsp----------------------------------------------------- \n",// Separation in topic when needed
 	'BC_ARTIST_ERROR'				=> 'Du musst schon einen Song Künstler eingeben!',
 	'BC_BACKLINK'					=> '%sZurück zur Chartübersicht%s',
 	'BC_BACKLINK_ADD'				=> '<br><br>%sZurück zur Eingabeseite%s',
@@ -225,7 +226,6 @@ $lang = array_merge($lang, [
 	'ACL_U_BC_EDIT'					=> 'Kann eigene Songs in Musik Charts bearbeiten',
 	'ACL_U_BC_DELETE'				=> 'Kann Ihre Songs in der Musik Charts löschen',
 	'ACL_U_BC_REPORT'				=> 'Kann Songs in Musik charts melden',
-	'GO_TO_YOUTUBE'					=> '<a href="https://www.youtube.com" onclick="window.open(this.href);return false;" title="Gehe zu YouTube">Besuchen Sie die YouTube-Seite</a>',
 	'BC_INVALID_URL'				=> 'Die URL ist keine gültige URL',
 	'REPORT_VIDEO'					=> 'Ein Video melden',
 	'REPORT_VIDEO_EXPLAIN'			=> 'Mit diesem Bericht können Sie etwaige Probleme mit einem Video melden.<br>Defekter Link, Video entfernt, anstößig oder kann nicht mehr außerhalb von YouTube ausgestrahlt werden.',

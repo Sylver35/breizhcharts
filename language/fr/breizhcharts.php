@@ -71,6 +71,7 @@ $lang = array_merge($lang, [
 	'BC_ADDED_TIME_SHORT'			=> 'Le : %1$s',
 	'BC_ALL_TITLE'					=> 'Hit Parade - Toutes les chansons',
 	'BC_ALREADY_EXISTS_ERROR'		=> 'La chanson <strong>%1$s</strong> de <strong>%2$s</strong> existe déjà. Veuillez en choisir une autre.',
+	'BC_ALREADY_EXISTS_SIMPLE'		=> 'La chanson %1$s existe déjà. Veuillez en choisir une autre.',
 	'BC_ALREADY_VOTED'				=> 'Vous avez déjà voté pour cette chanson',
 	'BC_ENTER'						=> 'Entrée',
 	'BC_DATE'						=> 'l j F Y, H:i',
@@ -78,8 +79,8 @@ $lang = array_merge($lang, [
 	'BC_COMMENT_EXPLAIN'			=> 'Un sujet sera automatiquement créé dans le forum.<br>Vous pouvez ajouter ici un commentaire.',
 	'BC_ANNOUNCE_MSG'				=> 'Bonjour à tous, ' . "\n\n" . 'Il y a une nouvelle chanson dans le Hit Parade ! ' . "\n" . '[img]%1$s[/img]' . "\n\n" . '🎶 Titre : [b]%2$s[/b] ' . "\n" . '🎸 Artiste : [b]%3$s[/b] ' . "\n" . '🎵 Genre musical : [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Bonne écoute des nouveautés et n’oubliez pas de voter !',
 	'BC_ANNOUNCE_TITLE'				=> '🎼 %1$s de %2$s',
-	'BC_ANNOUNCE_USER'				=>  '👉 Note de l’auteur : [quote]%1$s[/quote]' . "\n",
-	'BC_ANNOUNCE_SEPARATE'			=> "\n\n" . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------------------' . "\n",// Separation in topic when needed
+	'BC_ANNOUNCE_USER'				=> '👉 Note de l’auteur : [quote]%1$s[/quote]' . "\n",
+	'BC_ANNOUNCE_SEPARATE'			=> "\n\n &emsp&emsp&emsp&emsp&emsp&emsp----------------------------------------------------- \n",// Separation in topic when needed
 	'BC_ARTIST_ERROR'				=> 'Vous devez entrer un artiste ou un groupe.',
 	'BC_BACKLINK'					=> '%sRetour au classement général%s',
 	'BC_BACKLINK_ADD'				=> '<br><br>%sRetour à la page d’ajout%s',
@@ -225,7 +226,6 @@ $lang = array_merge($lang, [
 	'ACL_U_BC_EDIT'					=> 'Peut éditer ses chansons dans le Hit Parade',
 	'ACL_U_BC_DELETE'				=> 'Peut supprimer ses chansons dans le Hit Parade',
 	'ACL_U_BC_REPORT'				=> 'Peut rapporter des chansons dans le Hit Parade',
-	'GO_TO_YOUTUBE'					=> '<a href="https://www.youtube.com" onclick="window.open(this.href);return false;" title="Aller sur YouTube">Visitez le site YouTube</a>',
 	'BC_INVALID_URL'				=> 'L’url n’est pas une url valide',
 	'REPORT_VIDEO'					=> 'Rapporter une vidéo',
 	'REPORT_VIDEO_EXPLAIN'			=> 'Ce rapport vous permet de signaler tous problèmes avec une vidéo.<br>Lien cassé, vidéo supprimée, choquante ou ne pouvant plus être diffusée en dehors de YouTube.',

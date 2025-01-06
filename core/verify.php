@@ -85,7 +85,14 @@ class verify
 		// Check if new song probably already exist
 		if ($this->verify_song_name($id, $data['song_name'], $data['artist']) !== false)
 		{
-			$error[] = $this->language->lang('BC_ALREADY_EXISTS_ERROR', $data['song_name'], $data['artist']);
+			$error['song'] = $this->language->lang('BC_ALREADY_EXISTS_ERROR', $data['song_name'], $data['artist']);
+		}
+
+		// Check if video probably already exist
+		$video = $this->verify_url_in_db($data['video'], $id);
+		if (isset($video['name']))
+		{
+			$error['video'] = $this->language->lang('BC_ALREADY_EXISTS_SIMPLE', $video['name']);
 		}
 
 		foreach ($list as $key => $lang)
@@ -94,14 +101,27 @@ class verify
 			{
 				if (empty($data[$key]) && $this->config['breizhcharts_required_' . $i])
 				{
-					$error[] = $this->language->lang($lang);
+					$error[$data[$key]] = $this->language->lang($lang);
 				}
 			}
 			else if (empty($data[$key]))
 			{
-				$error[] = $this->language->lang($lang);
+				$error[$data[$key]] = $this->language->lang($lang);
 			}
 			$i++;
+		}
+
+		return $error;
+	}
+
+	public function verify_max_entries($error)
+	{
+		if ($this->config['breizhcharts_max_entries'] > 0)
+		{
+			if ($this->config['breizhcharts_songs_nb'] > $this->config['breizhcharts_max_entries'])
+			{
+				$error['entries'] = $this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']);
+			}
 		}
 
 		return $error;
@@ -119,19 +139,6 @@ class verify
 		$this->db->sql_freeresult($result);
 
 		return $song_exist;
-	}
-
-	public function verify_max_entries($error)
-	{
-		if ($this->config['breizhcharts_max_entries'] > 0)
-		{
-			if ($this->config['breizhcharts_songs_nb'] > $this->config['breizhcharts_max_entries'])
-			{
-				$error[] = $this->language->lang('BC_COUNT_ERROR', $this->config['breizhcharts_max_entries']);
-			}
-		}
-
-		return $error;
 	}
 
 	public function build_data_in_mode($data)

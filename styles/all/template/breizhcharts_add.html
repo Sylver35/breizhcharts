@@ -60,9 +60,7 @@
 				<span id="result-span" class="undisplay"></span>
 				<input type="hidden" id="ex_cat" name="ex_cat" value="{{ CHART_CAT }}">
 				<input type="hidden" id="ex_cat_nb" name="ex_cat_nb" value="{{ CAT_NB }}">
-				{% if not BC_ERROR %}
 				<input type="submit" tabindex="8" accesskey="s" id="button" name="post" value="{{ lang('SUBMIT') }}" title="{{ lang('SUBMIT') }}" class="button1">
-				{% endif %}
 				<input type="Button" tabindex="9" accesskey="c" onclick="window.history.go(-1); return false;" value="{{ lang('CANCEL') }}" title="{{ lang('CANCEL') }}" class="button1">
 				{{ S_HIDDEN_FIELDS }}
 				{{ S_FORM_TOKEN }}

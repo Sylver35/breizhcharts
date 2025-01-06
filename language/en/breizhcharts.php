@@ -71,6 +71,7 @@ $lang = array_merge($lang, [
 	'BC_ADDED_TIME_SHORT'			=> 'On : %1$s',
 	'BC_ALL_TITLE'					=> 'The Charts - All Songs',
 	'BC_ALREADY_EXISTS_ERROR'		=> 'The song <strong>%1$s</strong> from <strong>%2$s</strong> already exists. Please select another song to add.',
+	'BC_ALREADY_EXISTS_SIMPLE'		=> 'The song %1$s existe déjà. already exists. Please select another song to add.',
 	'BC_ALREADY_VOTED'				=> 'You already voted for this song',
 	'BC_ENTER'						=> 'Entry',
 	'BC_DATE'						=> 'l j F Y, H:i',
@@ -79,7 +80,7 @@ $lang = array_merge($lang, [
 	'BC_ANNOUNCE_MSG'				=> 'Hello everybody,' . "\n\n" . 'There was a new song added to the Music Charts!' . "\n" . '[img]%1$s[/img]' . "\n\n" . '🎶 Title: [b]%2$s[/b] ' . "\n" . '🎸 Artist: [b]%3$s[/b] ' . "\n" . '🎵 Musical genre: [b]%4$s[/b]' . "\n\n" . '[b]%5$s[/b][b][url=%6$s]%7$s[/url][/b] ' . "\n\n" . 'Have fun watching and listening the new song and don’t forget to vote!',
 	'BC_ANNOUNCE_TITLE'				=> '🎼 %1$s of %2$s',
 	'BC_ANNOUNCE_USER'				=> '👉 Author’s Note: [quote]%1$s[/quote]' . "\n",
-	'BC_ANNOUNCE_SEPARATE'			=> "\n\n" . '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------------------' . "\n",// Separation in topic when needed
+	'BC_ANNOUNCE_SEPARATE'			=> "\n\n &emsp&emsp&emsp&emsp&emsp&emsp----------------------------------------------------- \n",// Separation in topic when needed
 	'BC_ARTIST_ERROR'				=> 'You have to enter an artist!',
 	'BC_BACKLINK'					=> '%sBack to the Chart Overview%s',
 	'BC_BACKLINK_ADD'				=> '<br><br>%sBack to the adding page%s',
@@ -225,7 +226,6 @@ $lang = array_merge($lang, [
 	'ACL_U_BC_EDIT'					=> 'Can edit own songs in Music Charts',
 	'ACL_U_BC_DELETE'				=> 'Can remove his songs from the Music Charts',
 	'ACL_U_BC_REPORT'				=> 'Can report songs in Music Charts',
-	'GO_TO_YOUTUBE'					=> '<a href="https://www.youtube.com" onclick="window.open(this.href);return false;" title="Go to YouTube">Visit the YouTube site</a>',
 	'BC_INVALID_URL'				=> 'The url is not a valid url',
 	'REPORT_VIDEO'					=> 'Report a video',
 	'REPORT_VIDEO_EXPLAIN'			=> 'This report allows you to report any problems with a video.<br>Broken link, deleted video, offensive or no longer able to be broadcast outside of YouTube.',
