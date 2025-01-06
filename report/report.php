@@ -178,15 +178,15 @@ class report
 	{
 		$error = '';
 		$action = $this->request->variable('action', '');
-		if ($action == 'validate')
+		if ($action === 'validate')
 		{
 			$error = $this->validate_report_song($id);
 		}
-		else if ($action == 'close_report')
+		else if ($action === 'close_report')
 		{
 			$this->validate_close_report($id);
 		}
-		else if ($action == 'send_pm')
+		else if ($action === 'send_pm')
 		{
 			$this->send_pm($id);
 		}
@@ -253,7 +253,7 @@ class report
 		$this->template->assign_vars([
 			'S_IN_VIEW_REPORT'	=> true,
 			'CHART_ID'			=> $id,
-			'BC_ERROR'			=> $error,
+			'BC_ERROR'			=> (count($error)) ? implode('<br>', $error) : '',
 			'S_IS_POSTER'		=> $is_poster,
 			'TITLE_PAGE'		=> $this->language->lang('BC_REPORT_TITLE', $row['song_name']),
 			'TITLE_REPORT'		=> $this->language->lang('BC_REPORT_TITLE', $row['song_name']) . $this->language->lang('BC_FROM') . $row['artist'],
@@ -477,9 +477,10 @@ class report
 		$name = $this->request->variable('name', '', true);
 		$colour = $this->request->variable('colour', '', true);
 
-		if ($error = $this->verify->verify_chart_before_send($data_video, $id))
+		$error = $this->verify->verify_chart_before_send($data_video, $id);
+		if (count($error))
 		{
-			return implode('<br>', $error);
+			return $error;
 		}
 		else
 		{
