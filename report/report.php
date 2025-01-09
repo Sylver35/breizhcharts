@@ -351,7 +351,7 @@ class report
 		$message = $this->language->lang('BC_REPORT_SEND_MESSAGE',
 			$row['username'],
 			$this->colorize($row['user_colour']),
-			$this->user->data(['username']),
+			$this->user->data['username'],
 			$this->colorize($this->user->data['user_colour']),
 			$this->language->lang('BC_REPORTED_ON', $row['song_name'], $row['artist']),
 			$row['name'],
