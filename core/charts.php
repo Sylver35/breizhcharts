@@ -277,40 +277,40 @@ class charts
 		{
 			$is_user = (int) $row['poster_id'] === (int) $this->user->data['user_id'];
 			$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $data['moderate']);
-			$row['user_vote'] = isset($row['user_vote']) ? (int) $row['user_vote'] : 0;
+			$can_delete = ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
 			$title_cat = $data['cat'] ? ' - ' . $row['cat_name'] : '';
 			$can_vote = $data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote');
 
 			$this->template->assign_block_vars('charts', [
-				'POSITION'		=> $position[$row['song_id']]['position'],
-				'SONG_ID'		=> $row['song_id'],
-				'TITLE'			=> $row['song_name'],
-				'ARTIST'		=> $row['artist'],
-				'ALBUM'			=> $row['album'],
-				'YEAR'			=> $row['year'],
-				'SONG_VIEW'		=> $row['song_view'],
-				'CAT'			=> isset($row['cat_name']) ? $row['cat_name'] : '',
-				'USERNAME'		=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
-				'TENDENCY_IMG'	=> $this->work->get_tendency_image($position[$row['song_id']]['position'], (int) $row['last_pos']),
-				'ACTUAL'		=> $this->language->lang('BC_ACTUAL', $position[$row['song_id']]['position']),
-				'LAST'			=> ((int) $row['last_pos'] === 0) ? $this->language->lang('BC_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
-				'BEST'			=> $this->language->lang('BC_BEST_POS', $row['best_pos']),
-				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
-				'THUMBNAIL'		=> $this->work->get_youtube_img($row['video'], true),
-				'STARS_VOTE'	=> $this->work->stars_vote($row['song_id'], $row['song_note'], $row['user_vote'], $can_vote),
-				'TOTAL_RATE'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
-				'SONG_RATED'	=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
-				'USER_VOTE'		=> $can_vote ? $this->language->lang('BC_AJAX_NOTE', (int) $row['user_vote']) : $this->language->lang('BC_AJAX_NOTE_NO'),
-				'VOTED_IMG'		=> $row['user_vote'] ? 'rated' : 'not-rated',
-				'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
-				'S_REPORT'		=> $this->auth->acl_get('u_breizhcharts_report'),
-				'S_REPORTED'	=> $row['reported'],
-				'U_REPORTED'	=> ($row['reported'] && $can_edit) ? $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) : '',
-				'U_TOPIC_VIDEO'	=> $row['topic_id'] ? append_sid("{$this->root_path}viewtopic.{$this->php_ext}", 't=' . $row['topic_id']) : '',
-				'U_SHOW_VIDEO'	=> $this->helper->route('sylver35_breizhcharts_video', ['id' => (int) $row['song_id'], 'song_name' => $this->work->display_url($row['song_name'])]) . '#nav',
-				'U_SHOW_POPUP'	=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
-				'U_DELETE_SONG'	=> ($data['moderate'] || $this->auth->acl_get('u_breizhcharts_delete')) ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
-				'U_EDIT_SONG'	=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) : '',
+				'POSITION'			=> $position[$row['song_id']]['position'],
+				'SONG_ID'			=> $row['song_id'],
+				'TITLE'				=> $row['song_name'],
+				'ARTIST'			=> $row['artist'],
+				'ALBUM'				=> $row['album'],
+				'YEAR'				=> $row['year'],
+				'CAT'				=> isset($row['cat_name']) ? $row['cat_name'] : '',
+				'USERNAME'			=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
+				'TENDENCY_IMG'		=> $this->work->get_tendency_image($position[$row['song_id']]['position'], (int) $row['last_pos']),
+				'ACTUAL'			=> $this->language->lang('BC_ACTUAL', $position[$row['song_id']]['position']),
+				'LAST'				=> ((int) $row['last_pos'] === 0) ? $this->language->lang('BC_ENTER') : $this->language->lang('BC_LATEST', $row['last_pos']),
+				'BEST'				=> $this->language->lang('BC_BEST_POS', $row['best_pos']),
+				'VIDEO'				=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
+				'THUMBNAIL'			=> $this->work->get_youtube_img($row['video'], true),
+				'STARS_VOTE'		=> $this->work->stars_vote($row['song_id'], $row['song_note'], $row['user_vote'], $can_vote),
+				'TOTAL_RATE'		=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
+				'SONG_RATED'		=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
+				'USER_VOTE'			=> $can_vote ? $this->language->lang('BC_AJAX_NOTE', (int) $row['user_vote']) : $this->language->lang('BC_AJAX_NOTE_NO'),
+				'VOTED_IMG'			=> $row['user_vote'] ? 'rated' : 'not-rated',
+				'ADDED_TIME'		=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
+				'TITLE_SONG_VIEW'	=> $this->language->lang('BC_SONG_VIEW_SHORT', (int) $row['song_view']),
+				'S_REPORT'			=> $this->auth->acl_get('u_breizhcharts_report'),
+				'S_REPORTED'		=> $row['reported'],
+				'U_REPORTED'		=> ($row['reported'] && $can_edit) ? $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) : '',
+				'U_TOPIC_VIDEO'		=> $row['topic_id'] ? append_sid("{$this->root_path}viewtopic.{$this->php_ext}", 't=' . $row['topic_id']) : '',
+				'U_SHOW_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_video', ['id' => (int) $row['song_id'], 'song_name' => $this->work->display_url($row['song_name'])]) . '#nav',
+				'U_SHOW_POPUP'		=> $this->helper->route('sylver35_breizhcharts_page_popup', ['id' => $row['song_id']]),
+				'U_DELETE_SONG'		=> $can_delete ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
+				'U_EDIT_SONG'		=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) : '',
 			]);
 			$i++;
 		}
@@ -453,32 +453,35 @@ class charts
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$is_user = ((int) $row['poster_id'] === (int) $this->user->data['user_id']) && $data['is_user'];
-		$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $data['moderate']);
+		$poster = ((int) $row['poster_id'] === (int) $this->user->data['user_id']) && $data['is_user'];
+		$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $poster || $data['moderate']);
 		$can_report = ($this->auth->acl_get('u_breizhcharts_report') && $data['is_user'] || $data['moderate']);
 		$can_vote = $data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote');
 
 		$this->template->assign_vars([
 			'S_IN_VIDEO'		=> true,
 			'SONG_ID'			=> $row['song_id'],
-			'S_REPORTED'		=> $row['reported'],
+			'SONG_VIEW'			=> $row['song_view'],
 			'REPORTED_TITLE'	=> $row['reported'] ? $this->user->lang['bc_report_reasons']['TITLE'][$row['reason']] : '',
 			'REPORTED_DESC'		=> $row['reported'] ? $this->user->lang['bc_report_reasons']['DESCRIPTION'][$row['reason']] : '',
 			'TITLE_PAGE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
 			'YOUTUBE_ID'		=> $this->work->get_youtube_id($row['video']),
-			'VIDEO_WIDTH'		=> $this->config['breizhcharts_video_width'],
-			'VIDEO_HEIGHT'		=> $this->config['breizhcharts_video_height'],
-			'SONG_VIEW'			=> $row['song_view'],
+			'VIDEO_WIDTH'		=> $data['mobile'] ? '640' : $this->config['breizhcharts_video_width'],
+			'VIDEO_HEIGHT'		=> $data['mobile'] ? '360' : $this->config['breizhcharts_video_height'],
 			'TITLE_SONG_VIEW'	=> $this->language->lang('BC_SONG_VIEW', (int) $row['song_view']),
 			'STARS_VOTE'		=> $this->work->stars_vote($row['song_id'], $row['song_note'], $row['vote_rate'], $can_vote),
 			'TOTAL_RATE'		=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
 			'SONG_RATED'		=> $this->language->lang('BC_AJAX_NOTE_NB', (int) $row['nb_note']),
 			'USER_VOTE'			=> $can_vote ? $this->language->lang('BC_AJAX_NOTE', (int) $row['vote_rate']) : $this->language->lang('BC_AJAX_NOTE_NO'),
 			'VOTED_IMG'			=> ($row['vote_rate'] && $data['is_user']) ? 'rated' : 'not-rated',
-			'U_VIEW_SONG'		=> $this->helper->route('sylver35_breizhcharts_song_view', ['id' => $row['song_id']]),
-			'U_REPORT'			=> (!$row['reported'] && !$is_user && $can_report) ? $this->helper->route('sylver35_breizhcharts_report_video', ['id' => $row['song_id']]) : '',
-			'U_REPORTED'		=> ($row['reported'] && $can_edit) ? $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) : '',
+			'U_VIEW_SONG'		=> $this->helper->route('sylver35_breizhcharts_song_view', ['id' => $row['song_id'], 'song_view' => $row['song_view']]),
+			'U_REPORT'			=> $this->helper->route('sylver35_breizhcharts_report_video', ['id' => $row['song_id']]),
+			'U_REPORT_AUTO'		=> $this->helper->route('sylver35_breizhcharts_report_video_auto', ['id' => $row['song_id']]),
+			'U_REPORTED'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]),
 			'U_EDIT_SONG'		=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) : '',
+			'S_REPORT'			=> !$poster && $can_report,
+			'S_VIEW_REPORT'		=> $poster || $data['moderate'],
+			'S_REPORTED'		=> $row['reported'],
 		]);
 
 		$data = array_merge($data, [

@@ -6,6 +6,7 @@ services:
         class: sylver35\breizhcharts\controller\admin_controller
         arguments:
             - '@sylver35.breizhcharts.core.work'
+            - '@sylver35.breizhcharts.core.verify'
             - '@template'
             - '@language'
             - '@user'
@@ -57,6 +58,7 @@ services:
         class: sylver35\breizhcharts\event\main_listener
         arguments:
             - '@sylver35.breizhcharts.core.charts'
+            - '@sylver35.breizhcharts.core.work'
             - '@sylver35.breizhcharts.core.check'
             - '@sylver35.breizhcharts.core.verify'
             - '@template'

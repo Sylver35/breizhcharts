@@ -190,4 +190,5 @@ $lang = array_merge($lang, array(
 	'LOG_USER_EDITED_SONG'			=> '<strong>Chanson du Hit Parade éditée</strong><br>» %1$s.',
 	'LOG_USER_REPORT_SONG'			=> '<strong>Chanson de Hit Parade rapportée par %1$s</strong><br>» %2$s',
 	'LOG_USER_REPORT_CLOSE'			=> '<strong>Rapport du Hit Parade cloturé</strong><br>» %1$s',
+	'LOG_USER_REPORT_SONG_AUTO'		=> '<strong>Chanson de Hit Parade rapportée automatiquement</strong><br>» %1$s',
 ));

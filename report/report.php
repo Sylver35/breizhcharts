@@ -8,6 +8,7 @@
 
 namespace sylver35\breizhcharts\report;
 
+use phpbb\json_response;
 use phpbb\exception\http_exception;
 use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\work;
@@ -153,6 +154,10 @@ class report
 			$i = 0;
 			foreach ($this->user->lang['bc_report_reasons']['DESCRIPTION'] as $key => $value)
 			{
+				if ($key == 'AUTO')
+				{
+					continue;
+				}
 				$this->template->assign_block_vars('reasons', array(
 					'ID'			=> $i,
 					'VALUE'			=> ($i == 0) ? '' : $key,
@@ -243,18 +248,16 @@ class report
 			throw new http_exception(403, 'NOT_AUTHORISED');
 		}
 
-		$reason = $this->user->lang['bc_report_reasons']['TITLE'][$row['reason']];
-		$description = $this->user->lang['bc_report_reasons']['DESCRIPTION'][$row['reason']];
-		$user = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
-		$user_report = get_username_string('full', $row['id'], $row['name'], $row['colour']);
-		$is_poster = (int) $row['user_id'] === (int) $this->user->data['user_id'];
+		$row = $this->initialize_report($row);
 		$this->enable_posting();
 
 		$this->template->assign_vars([
 			'S_IN_VIEW_REPORT'	=> true,
 			'CHART_ID'			=> $id,
-			'BC_ERROR'			=> (count($error)) ? implode('<br>', $error) : '',
-			'S_IS_POSTER'		=> $is_poster,
+			'BC_ERROR'			=> $error,
+			'NAV_ID'			=> 'reports-list',
+			'S_IS_POSTER'		=> $row['is_poster'],
+			'S_REPORT_AUTO'		=> (int) $row['reported'] === 3,
 			'TITLE_PAGE'		=> $this->language->lang('BC_REPORT_TITLE', $row['song_name']),
 			'TITLE_REPORT'		=> $this->language->lang('BC_REPORT_TITLE', $row['song_name']) . $this->language->lang('BC_FROM') . $row['artist'],
 			'THUMBNAIL'			=> $this->work->get_youtube_img($row['video'], true),
@@ -267,27 +270,48 @@ class report
 			'CHART_CAT'			=> $row['cat'] ? $row['cat'] : 0,
 			'CAT_NB'			=> $row['cat_nb'],
 			'CHART_VIDEO'		=> $row['video'],
-			'USERNAME'			=> $user,
+			'USERNAME'			=> $row['user'],
 			'USER_ID'			=> $row['user_id'],
 			'NAME'				=> $row['username'],
 			'COLOUR'			=> $row['user_colour'],
-			'NAV_ID'			=> 'reports-list',
-			'ADDED_BY'			=> $this->language->lang('BC_ADDED_BY') . ' ' . $user,
-			'EXPLAIN'			=> $this->language->lang('BC_REPORT_FROM', $user_report, $reason, $this->user->format_date($row['reported_time'], $this->language->lang('BC_FORMAT_DATE_PM'))),
-			'DESCRIPTION'		=> $description,
-			'REPORT_TEXT'		=> $row['reported_text'] ? $row['reported_text'] : $this->language->lang('BC_REPORT_NEANT'),
-			'CLOSE_NO_REASON'	=> $is_poster ? $this->language->lang('BC_REPORT_CLOSE_NO_REASON_OWN', $user_report) : $this->language->lang('BC_REPORT_CLOSE_NO_REASON', $user, $user_report),
+			'ADDED_BY'			=> $this->language->lang('BC_ADDED_BY') . ' ' . $row['user'],
+			'EXPLAIN'			=> $this->language->lang('BC_REPORT_FROM', $row['user_report'], $row['reason_title'], $this->user->format_date($row['reported_time'], $this->language->lang('BC_FORMAT_DATE_PM'))),
+			'DESCRIPTION'		=> $row['description'],
+			'REPORT_TEXT'		=> $row['reported_text'],
+			'CLOSE_NO_REASON'	=> $row['is_poster'] ? $this->language->lang('BC_REPORT_CLOSE_NO_REASON_OWN', $row['user_report']) : $this->language->lang('BC_REPORT_CLOSE_NO_REASON', $row['user'], $row['user_report']),
 			'SELECT_CATS'		=> $this->work->get_cats_select($row['cat']),
 			'U_DELETE_SONG'		=> $this->auth->acl_get('u_breizhcharts_delete') ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
 			'U_CHECK_SONG'		=> $this->helper->route('sylver35_breizhcharts_check_song'),
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video', ['check' => 1, 'song_id' => $row['song_id']]),
 			'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=validate',
 			'S_POST_MESSAGE'	=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=send_pm',
-			'S_POST_CLOSE'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=close_report&amp;song=' . $row['song_name'] . '&amp;artist=' . $row['artist'] . '&amp;reason=' . $row['reason'] . '&amp;poster_id=' . $row['user_id'] . '&amp;report_id=' . $row['id'],
+			'S_POST_CLOSE'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=close_report&amp;song=' . $row['song_name'] . '&amp;artist=' . $row['artist'] . '&amp;reason=' . $row['reason_title'] . '&amp;poster_id=' . $row['user_id'] . '&amp;report_id=' . $row['id'],
 		]);
 		$this->db->sql_freeresult($result);
 
 		return $row['song_name'];
+	}
+
+	private function initialize_report($row)
+	{
+		if ((int) $row['reported'] === 3)
+		{
+			$row['user_report'] = $this->colorize('', $this->language->lang('BC_AUTO_NAME'));
+			list($yt_error, $text1, $text2) = explode('||', $row['reported_text']);
+			$row['reported_text'] = $this->language->lang($text1);
+			$row['reported_text'] .= ($yt_error == 150) ? '<br>' . $this->language->lang('BC_101_RETURN') . $this->language->lang($text2) : '';
+		}
+		else
+		{
+			$row['user_report'] = get_username_string('full', $row['id'], $row['name'], $row['colour']);
+			$row['reported_text'] = $row['reported_text'] ? $row['reported_text'] : $this->language->lang('BC_REPORT_NEANT');
+		}
+		$row['reason_title'] = $this->user->lang['bc_report_reasons']['TITLE'][$row['reason']];
+		$row['description'] = $this->user->lang['bc_report_reasons']['DESCRIPTION'][$row['reason']];
+		$row['user'] = get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']);
+		$row['is_poster'] = (int) $row['user_id'] === (int) $this->user->data['user_id'];
+
+		return $row;
 	}
 
 	private function send_pm($id)
@@ -326,12 +350,12 @@ class report
 		$subject = $this->language->lang('BC_REPORT_SEND_SUBJECT', $row['song_name']);
 		$message = $this->language->lang('BC_REPORT_SEND_MESSAGE',
 			$row['username'],
-			$row['user_colour'] ? $row['user_colour'] : '435B8A',
-			$this->user->data['username'],
-			$this->user->data['user_colour'] ? $this->user->data['user_colour'] : '435B8A',
+			$this->colorize($row['user_colour']),
+			$this->user->data(['username']),
+			$this->colorize($this->user->data['user_colour']),
 			$this->language->lang('BC_REPORTED_ON', $row['song_name'], $row['artist']),
 			$row['name'],
-			$row['colour'] ? $row['colour'] : '435B8A',
+			$this->colorize($row['colour']),
 			$this->user->format_date($row['reported_time'], $this->language->lang('BC_FORMAT_DATE_PM')),
 			$this->user->lang['bc_report_reasons']['TITLE'][$row['reason']],
 			$this->user->lang['bc_report_reasons']['DESCRIPTION'][$row['reason']],
@@ -428,13 +452,13 @@ class report
 		$subject = $this->language->lang('BC_PM_REPORT_SUBJECT', $reason);
 		$message = $this->language->lang($sort_message,
 			$poster_name,
-			$poster_colour ? $poster_colour : '435B8A',
+			$this->colorize($poster_colour),
 			$this->language->lang('BC_REPORTED_ON', $song, $artist),
 			$reason,
 			$report_name,
-			$report_colour ? $report_colour : '435B8A',
+			$this->colorize($report_colour),
 			$this->user->data['username'],
-			$this->user->data['user_colour'] ? $this->user->data['user_colour'] : '435B8A',
+			$this->colorize($this->user->data['user_colour']),
 			$this->user->format_date(time(), $this->language->lang('BC_FORMAT_DATE_PM')),
 		);
 		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
@@ -524,22 +548,64 @@ class report
 		trigger_error($this->language->lang('BC_REPORTED_THANKS', $song_name) . '<br><br>' . $this->language->lang('BC_BACKLINK', '<a href="' . $redirect_url . '">', '</a>'));
 	}
 
-	private function send_pms_report($id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason)
+	public function report_validate_auto($id)
+	{
+		$error = $this->request->variable('error', 0);
+		$json_response = new json_response;
+
+		$sql = $this->db->sql_build_query('SELECT', [
+			'SELECT'	=> 'b.*, u.user_id, u.username, u.user_colour',
+			'FROM'		=> [$this->breizhcharts_table => 'b'],
+			'LEFT_JOIN'	=> [
+				[
+					'FROM'	=> [USERS_TABLE => 'u'],
+					'ON'	=> 'u.user_id = b.poster_id',
+				],
+			],
+			'WHERE'		=> 'song_id = ' . (int) $id,
+		]);
+		$result = $this->db->sql_query($sql);
+		$row = $this->db->sql_fetchrow($result);
+		$this->db->sql_freeresult($result);
+
+		if ($row['reported'] > 0)
+		{
+			$json_response->send([
+				'sort'		=> 1,
+				'error'		=> $error,
+				'content'	=> $row['reported'],
+			]);
+			return;
+		}
+
+		$data_chart = [
+			'reported'			=> 3,
+			'reason'			=> 'AUTO',
+			'reported_time'		=> time(),
+			'reported_text'		=> $error . '||BC_AUTO_' . $error . '||' . (($error == 150) ? 'BC_AUTO_101' : ''),
+		];
+
+		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data_chart) . ' WHERE song_id = ' . (int) $id);
+		$this->cache->destroy('_breizhcharts_reported');
+
+		$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_REPORT_SONG_AUTO', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist'])]);
+		$this->send_pms_report((int) $id, $row['song_name'], $row['artist'], $row['user_id'], $row['username'], $row['user_colour'], 'AUTO', $error);
+
+		$json_response->send([
+			'sort'		=> 2,
+			'error'		=> $error,
+			'content'	=> $this->language->lang('BC_AUTO_' . $error),
+		]);
+	}
+
+	private function send_pms_report($id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason, $auto = 0)
 	{
 		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
-
-		// Grab an array of user_id's with admin permission
-		$admin_ary = $this->auth->acl_get_list(false, 'a_breizhcharts_manage');
-		$admin_ary = (!empty($admin_ary[0]['a_breizhcharts_manage'])) ? $admin_ary[0]['a_breizhcharts_manage'] : [];
-		// Grab an array of user_id's with moderator permission
-		$modo_ary = $this->auth->acl_get_list(false, 'm_breizhcharts_manage');
-		$modo_ary = (!empty($modo_ary[0]['m_breizhcharts_manage'])) ? $modo_ary[0]['m_breizhcharts_manage'] : [];
-		$list_ary = array_unique(array_merge($admin_ary, $modo_ary));
 
 		$switch_lang = false;
 		$sql = 'SELECT *
 			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . (int) $poster_id . ' OR ' . $this->db->sql_in_set('user_id', $list_ary);
+			WHERE user_id = ' . (int) $poster_id . ' OR ' . $this->db->sql_in_set('user_id', $this->list_manage());
 		$result = $this->db->sql_query($sql);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
@@ -548,16 +614,21 @@ class report
 
 			$options = 0;
 			$uid = $bitfield = '';
+			// Form the complete reason description with auto error if needed
+			$description = $this->user->lang['bc_report_reasons']['DESCRIPTION'][$reason];
+			$description .= ($auto) ? $this->language->lang('BC_AUTO_RETURN', $auto) . $this->language->lang('BC_AUTO_' . $auto) : '';
+			$description .= ($auto == 101) ? $this->language->lang('BC_101_RETURN') . $this->language->lang('BC_AUTO_101') : '';
+
 			$subject = $this->language->lang('BC_PM_REPORT_SUBJECT', $this->user->lang['bc_report_reasons']['TITLE'][$reason]);
 			$message = $this->language->lang('BC_PM_REPORT_MESSAGE',
 				$row['username'],
-				$row['user_colour'] ? $row['user_colour'] : '435B8A',
-				$this->user->data['username'],
-				$this->user->data['user_colour'],
+				$this->colorize($row['user_colour']),
+				(!$auto) ? $this->user->data['username'] : $this->language->lang('BC_AUTO_NAME'),
+				(!$auto) ? $this->colorize($this->user->data['user_colour']) : $this->colorize(''),
 				$this->user->format_date(time(), $this->language->lang('BC_FORMAT_DATE_PM')),
 				$this->language->lang('BC_REPORTED_ON', $song_name, $artist),
 				$poster_name,
-				$poster_colour ? $poster_colour : '435B8A',
+				$this->colorize($poster_colour),
 				$this->user->lang['bc_report_reasons']['DESCRIPTION'][$reason],
 				$this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $id]),
 			);
@@ -584,6 +655,37 @@ class report
 			$switch_lang = $this->work->language_switch($row['user_lang'], $switch_lang);
 		}
 		$this->db->sql_freeresult($result);
+	}
+
+	private function colorize($colour, $name = '')
+	{
+		$data = $colour;
+		if (!$colour && !$name)
+		{
+			$data = '435B8A';
+		}
+		else if (!$colour && $name)
+		{
+			$data = '<span style="color: #435B8A;font-weight: bold;">' . $name . '</span>';
+		}
+
+		return $data;
+	}
+
+	private function list_manage()
+	{
+		// Grab an array of user_id's with admin permission
+		$admin_ary = $this->auth->acl_get_list(false, 'a_breizhcharts_manage');
+		$admin_ary = (!empty($admin_ary[0]['a_breizhcharts_manage'])) ? $admin_ary[0]['a_breizhcharts_manage'] : [];
+
+		// Grab an array of user_id's with moderator permission
+		$modo_ary = $this->auth->acl_get_list(false, 'm_breizhcharts_manage');
+		$modo_ary = (!empty($modo_ary[0]['m_breizhcharts_manage'])) ? $modo_ary[0]['m_breizhcharts_manage'] : [];
+
+		// Merge the two arrays
+		$list_ary = array_unique(array_merge($admin_ary, $modo_ary));
+
+		return $list_ary;
 	}
 
 	private function enable_posting()

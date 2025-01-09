@@ -28,7 +28,7 @@ class breizhcharts_1_3_0 extends migration
 			// Version of extension
 			['config.update', ['breizhcharts_version', '1.3.0']],
 
-			['config.add', ['breizhcharts_period_activ', 1]],
+			['config.add', ['breizhcharts_period_activ', 0]],
 			['config.add', ['breizhcharts_video_width', 900]],
 			['config.add', ['breizhcharts_video_height', 600]],		
 		];

@@ -190,4 +190,5 @@ $lang = array_merge($lang, array(
 	'LOG_USER_EDITED_SONG'			=> 'Hat den Song <strong>%1$s</strong> bearbeitet',
 	'LOG_USER_REPORT_SONG'			=> '<strong>Music Charts song, berichtet von %1$s</strong><br>» %2$s',
 	'LOG_USER_REPORT_CLOSE'			=> '<strong>Music Charts-Bericht geschlossen</strong><br>» %1$s',
+	'LOG_USER_REPORT_SONG_AUTO'		=> '<strong>Music Charts song automatisch gemeldet</strong><br>» %1$s',
 ));

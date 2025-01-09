@@ -88,31 +88,53 @@
 		var $url = $('#video').val();
 		if($url === ''){
 			return;
-		}else{
-			if(breizhcharts.urlValide($url) == false){
-				$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorUrl+'</span>');
-				return;
-			}
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				url: bcConfig.checkUrl,
-				data: 'url='+encodeURIComponent($url),
-				cache: false,
-				success: function(result){
-					if(result.sort === 3){
-						$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.presentError+' : </span>'+result.name+'<br>'+result.time+'<br>'+bcConfig.videoAjax+' <a href="'+result.url+'"><img src="'+result.image+'" style="height:80px;" alt="img"></a>');
-						$('#button').attr({'disabled': true, 'title': bcConfig.error});
-					}else if(result.sort === 1){
-						$('#check-video').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="60">');
-					}else{
-						$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
-						$('#button').attr({'disabled': true, 'title': bcConfig.error});
-					}
-					$('#check-song > span > strong').css('color','initial');
-				}
-			});
 		}
+		if(breizhcharts.urlValide($url) == false){
+			$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorUrl+'</span>');
+			return;
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: bcConfig.checkUrl,
+			data: 'url='+encodeURIComponent($url),
+			cache: false,
+			success: function(result){
+				if(result.sort === 3){
+					$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.presentError+' : </span>'+result.name+'<br>'+result.time+'<br>'+bcConfig.videoAjax+' <a href="'+result.url+'"><img src="'+result.image+'" style="height:80px;" alt="img"></a>');
+					$('#button').attr({'disabled': true, 'title': bcConfig.error});
+				}else if(result.sort === 1){
+					$('#check-video').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="60">');
+				}else{
+					$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
+					$('#button').attr({'disabled': true, 'title': bcConfig.error});
+				}
+				$('#check-song > span > strong').css('color','initial');
+			}
+		});
+	}
+
+	breizhcharts.reportError = function(event){
+		if($('#reported').val() > 0){
+			return;
+		}
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: bcConfig.reportAutoUrl,
+			data: 'error='+event.data,
+			cache: false,
+			success: function(result){
+				$('#result-div').show().html('<div style="text-align:center;">Error: '+result.error+'<br>'+result.content+'</div>');
+				$('#can-report').hide();
+				$('#view-report').show();
+				setTimeout(breizhcharts.clearMessage,15000);
+			},
+			error: function(result,statut,erreur){
+				var obj = result.responseText;
+				console.log(JSON.parse(JSON.stringify(obj)));
+			}
+		});
 	}
 
 	breizhcharts.viewSong = function(){

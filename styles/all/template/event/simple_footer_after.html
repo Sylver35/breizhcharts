@@ -1,6 +1,24 @@
 {% if S_IN_VIDEO %}
-<!--// Hide this part just for a good display of videos -->
+{% INCLUDEJS '@sylver35_breizhcharts/breizhcharts.js' %}
+
 <script>
+var bcConfig = {
+	viewSongUrl: '{{ U_VIEW_SONG }}',
+	reportAutoUrl: '{{ U_REPORT_AUTO }}',
+	id: {% if CHART_ID %}{{ CHART_ID }}{% else %}0{% endif %},
+}, breizhcharts = {};
+(function($){  // Avoid conflicts with other libraries
+	'use strict'
+
+	/* Hide this part just for a good display of videos */
 	$('.copyright').hide();
+	$('#phpbb').css({'background-image':'none', 'padding':'0'});
+	$('#wrap').css({'border':'none', 'max-width':'100%', 'border-radius':'0'});
+
+	/* Increment song view after 15 seconds */
+	$(document).ready(function() {
+		setTimeout(function(){breizhcharts.viewSong()}, 15000);
+	});
+})(jQuery);
 </script>
 {% endif %}

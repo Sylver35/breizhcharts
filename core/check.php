@@ -101,6 +101,31 @@ class check
 		$this->template->assign_var('BC_COPYRIGHT', $this->language->lang('BC_COPYRIGHT', $meta['version'], $homepages[0]));
 	}
 
+	public function update_breizhcharts_check()
+	{
+		$modified = false;
+		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'] && $this->config['breizhcharts_period_activ'])
+		{
+			if (!$this->user->data['breizhchart_check_1'])
+			{
+				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+				$modified = true;
+			}
+			else if (!$this->user->data['breizhchart_check_2'])
+			{
+				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
+				{
+					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+					$modified = true;
+				}
+			}
+		}
+		if (!$modified)
+		{
+			$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
+		}
+	}
+
 	public function check_charts_voted()
 	{
 		if ($this->config['breizhcharts_period_activ'])
@@ -119,31 +144,6 @@ class check
 				{
 					$this->second_check_charts();
 				}
-			}
-		}
-	}
-
-	public function update_breizhcharts_check()
-	{
-		$modified = false;
-		if ($this->user->data['is_registered'] && !$this->user->data['is_bot'])
-		{
-			if ($this->user->data['breizhchart_check_1'] == false)
-			{
-				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_1 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
-				$modified = true;
-			}
-			else if ($this->user->data['breizhchart_check_2'] == false)
-			{
-				if (time() > ($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'] - ($this->config['breizhcharts_check_time'] * 3600)))
-				{
-					$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_check_2 = 1, breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
-					$modified = true;
-				}
-			}
-			if (!$modified)
-			{
-				$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 			}
 		}
 	}

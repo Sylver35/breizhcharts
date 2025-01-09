@@ -8,6 +8,7 @@ var bcConfig = {
 	checkUrl: '{{ U_CHECK_VIDEO }}',
 	viewSongUrl: '{{ U_VIEW_SONG }}',
 	winUrl: '{{ U_LAST_WINNERS }}',
+	reportAutoUrl: '{{ U_REPORT_AUTO }}',
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="">',
 	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="">',
 	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="">',
@@ -28,6 +29,7 @@ var bcConfig = {
 	id: {% if CHART_ID %}{{ CHART_ID }}{% else %}0{% endif %},
 };
 {% if S_IN_VIDEO %}
+/* Increment view song after 15 seconds */
 $(document).ready(function() {
 	setTimeout(function(){breizhcharts.viewSong()}, 15000);
 });

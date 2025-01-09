@@ -19,10 +19,11 @@ sylver35_breizhcharts_video:
         id: \d+
 
 sylver35_breizhcharts_song_view:
-    path: /breizhcharts_song_view/{id}
+    path: /breizhcharts_song_view/{id}/{song_view}
     defaults: { _controller: sylver35.breizhcharts.controller.breizhcharts:song_view }
     requirements:
         id: \d+
+        song_view: \d+
 
 sylver35_breizhcharts_result:
     path: /breizhcharts/list_results
@@ -70,6 +71,12 @@ sylver35_breizhcharts_check_song:
 sylver35_breizhcharts_report_video:
     path: /breizhcharts/report/video/{id}
     defaults: { _controller: sylver35.breizhcharts.report.controller:report_video  }
+    requirements:
+        id: \d+
+
+sylver35_breizhcharts_report_video_auto:
+    path: /breizhcharts/report_auto/video/{id}
+    defaults: { _controller: sylver35.breizhcharts.report.controller:report_validate_auto  }
     requirements:
         id: \d+
 

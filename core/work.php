@@ -220,7 +220,7 @@ class work
 
 	public function display_url($value)
 	{
-		return str_replace([' ', '&nbsp;', '?'], ['_', '_', ''], $value);
+		return str_replace([' ', '&nbsp;', '?', "'"], ['_', '_', '', '’'], $value);
 	}
 
 	public function get_all_wins($result_id)
@@ -346,8 +346,8 @@ class work
 					'name'				=> $row['name'],
 					'colour'			=> $row['colour'],
 					'user_id'			=> $row['user_id'],
-					'username'			=> $row['username'],
-					'user_colour'		=> $row['user_colour'],
+					'username'			=> ($row['user_id'] == 3) ? 'auto' : $row['username'],
+					'user_colour'		=> ($row['user_id'] == 3) ? '435B8A' : $row['user_colour'],
 					'reason'			=> $row['reason'],
 					'reported_time'		=> $row['reported_time'],
 				];

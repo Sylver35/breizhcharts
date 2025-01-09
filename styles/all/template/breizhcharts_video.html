@@ -38,16 +38,17 @@
 			</dd>
 			<ul class="post-buttons">
 				<li>
-					{% if U_REPORTED %}
-					<a href="{{ U_REPORTED }}" title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
+					{% if S_VIEW_REPORT %}
+					<a href="{{ U_REPORTED }}" id="view-report"{% if not S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
 						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
 					</a>
-					{% elseif S_REPORTED %}
-					<a href="#" title="{{ lang('BC_REPORTED') }}" class="button button-icon-only">
+					{% else %}
+					<a href="#" id="view-report"{% if not S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORTED') }}" class="button button-icon-only">
 						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }}</span>
 					</a>
-					{% elseif U_REPORT %}
-					<a href="{{ U_REPORT }}" title="{{ lang('BC_REPORT') }}" class="button button-icon-only">
+					{% endif %}
+					{% if S_REPORT %}
+					<a href="{{ U_REPORT }}" id="can-report"{% if S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORT') }}" class="button button-icon-only">
 						<i class="bzh-red icon fa-exclamation fa-fw"></i><span class="sr-only">{{ lang('BC_REPORT') }}</span>
 					</a>
 					{% endif %}
@@ -61,23 +62,35 @@
 			</ul>
 		</div>
 		<div class="video-frame">
-			<div id="ytplayer"></div>
+			<div id="player"></div>
 		</div>
 	</div>
 </div>
 <div id="result-div"></div>
+<input type="hidden" id="reported" name="reported" value="{{ S_REPORTED }}">
 <script>
 var tag = document.createElement('script'), player;
 tag.src = "https://www.youtube.com/player_api";
 var scriptTag = document.getElementsByTagName('script')[0];
 scriptTag.parentNode.insertBefore(tag, scriptTag);
 function onYouTubePlayerAPIReady(){
-	player = new YT.Player('ytplayer',{
+	player = new YT.Player('player', {
 		videoId: '{{ YOUTUBE_ID }}',
 		width: '{{ VIDEO_WIDTH }}',
 		height: '{{ VIDEO_HEIGHT }}',
-		playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 1},
+		playerVars: {'autoplay': 1, 'controls': 0, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 1},
+		events: {
+			'onReady': onPlayerReady,
+			'onError': onPlayerError,
+		}
 	});
+}
+function onPlayerReady(event){
+	event.target.setVolume(100);
+	event.target.playVideo();
+}
+function onPlayerError(event){
+	setTimeout(function(){breizhcharts.reportError(event)}, 5000);
 }
 </script>
 

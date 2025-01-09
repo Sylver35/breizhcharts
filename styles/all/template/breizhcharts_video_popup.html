@@ -1,31 +1,40 @@
 {% INCLUDE 'simple_header.html' %}
+
 {% INCLUDECSS '@sylver35_breizhcharts/breizhcharts.css' %}
 
 <h3 class="video-title">{{ VIDEO_TITLE }}</h3>
 
 <div class="video-frame">
-	<div id="ytplayer"></div>
+	<div id="player"></div>
 </div>
+<div id="result-div"></div>
+<div id="view-report"></div>
+<div id="can-report"></div>
+<input type="hidden" id="reported" name="reported" value="{{ S_REPORTED }}">
 <script>
-	var tag = document.createElement('script'), player;
-	tag.src = "https://www.youtube.com/player_api";
-	var scriptTag = document.getElementsByTagName('script')[0];
-	scriptTag.parentNode.insertBefore(tag, scriptTag);
-	function onYouTubePlayerAPIReady(){
-		player = new YT.Player('ytplayer',{
-			videoId: '{{ YOUTUBE_ID }}',
-			playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
-		});
-	}
-	var phpbb = document.getElementById('phpbb'), wrap = document.getElementById('wrap');
-	phpbb.style.backgroundImage = 'none';
-	phpbb.style.padding = '0';
-	wrap.style.border = 'none';
-	wrap.style.padding = '0';
-	wrap.style.maxWidth = '100%';
-	wrap.style.borderRadius = '0';
+var tag = document.createElement('script'), player;
+tag.src = "https://www.youtube.com/player_api";
+var scriptTag = document.getElementsByTagName('script')[0];
+scriptTag.parentNode.insertBefore(tag, scriptTag);
+function onYouTubePlayerAPIReady(){
+	player = new YT.Player('player', {
+		videoId: '{{ YOUTUBE_ID }}',
+		playerVars: {'autoplay': 1, 'controls': 0, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
+		events: {
+			'onReady': onPlayerReady,
+			'onError': onPlayerError,
+		}
+	});
+}
+function onPlayerReady(event){
+	event.target.setVolume(100);
+	event.target.playVideo();
+}
+function onPlayerError(event){
+	setTimeout(function(){breizhcharts.reportError(event)}, 5000);
+}
 </script>
-
+<span href="#" title="{{ TITLE_SONG_VIEW }}" id="a_view" style="display:none;"><span class="song-title position" id="span_view">{{ SONG_VIEW }}</span></span>
 <div class="close"><a href="#" onclick="self.close();">{{ lang('CLOSE_WINDOW') }}</a></div>
 
 {% INCLUDE 'simple_footer.html' %}

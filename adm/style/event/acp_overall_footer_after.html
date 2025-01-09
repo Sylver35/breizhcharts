@@ -21,6 +21,7 @@ var breizhcharts = {
 	error: '{{ lang("ERROR")|escape("js") }}',
 	ok: '{{ lang("BC_OK")|escape("js") }}',
 	errorVideo: '{{ lang("BC_AJAX_VIDEO_NO")|escape("js") }}',
+	errorUrl: '{{ lang("BC_INVALID_URL")|escape("js") }}',
 	id: {% if ID %}{{ ID }}{% else %}0{% endif %},
 };
 (function($){  // Avoid conflicts with other libraries
@@ -56,11 +57,19 @@ var breizhcharts = {
 	}
 
 	breizhcharts.checkVideo = function(){
+		var $video = $('#video').val();
+		if($video == ''){
+			return;
+		}
+		if(breizhcharts.urlValide($video) == false){
+			$('#check-video').html(breizhcharts.ajaxFalse+' <span style="color:red;">'+breizhcharts.errorUrl+'</span>');
+			return;
+		}
 		$.ajax({
 			type: 'POST',
 			dataType: 'json',
 			url: breizhcharts.checkUrl,
-			data: 'url='+encodeURIComponent($('#video').val()),
+			data: 'url='+encodeURIComponent($video),
 			cache: false,
 			success: function(result){
 				if(result.sort === 3){

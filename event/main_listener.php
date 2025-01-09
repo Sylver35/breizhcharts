@@ -180,7 +180,6 @@ class main_listener implements EventSubscriberInterface
 		if ($this->config['breizhcharts_random_index'] && $this->auth->acl_get('u_breizhcharts_view'))
 		{
 			$this->verify->get_random_song();
-			$this->template->assign_var('RANDOM_INDEX', $this->config['breizhcharts_random_index']);
 		}
 	}
 

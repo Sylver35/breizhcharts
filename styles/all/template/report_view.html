@@ -45,7 +45,9 @@
 					{% if not S_IS_POSTER %}
 					<span class="actions-report"><a href="#nav" title="{{ INFORM }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.messageClose()" id="a-message"><i class="bzh-blue icon fa fa-comments" id="i-message"></i> <span id="span-message">{{ INFORM }}</span></a></span>
 					{% endif %}
+					{% if not S_REPORT_AUTO %}
 					<span class="actions-report"><a href="#nav" title="{{ REPORT_CONTACT }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.reportClose()" id="a-close"><i class="bzh-blue icon fa fa-bell-slash" id="i-close"></i> <span id="span-close">{{ lang('BC_REPORT_CLOSE') }}</span></a></span>
+					{% endif %}
 				</dl>
 			</fieldset>
 		</div>

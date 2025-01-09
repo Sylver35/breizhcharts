@@ -145,6 +145,7 @@ class breizhcharts
 		}
 
 		$data = [
+			'rules'			=> true,
 			'mode'			=> (string) $mode,
 			'name'			=> (string) $name,
 			'song_id'		=> (int) $id,
@@ -152,7 +153,7 @@ class breizhcharts
 			'result_id'		=> (int) $result_id,
 			'song_name'		=> (string) $song_name,
 			'cat'			=> (int) ($cat ? $cat : 0),
-			'rules'			=> true,
+			'mobile'		=> $this->verify->session_mobile(),
 			'is_user'		=> ((int) $this->user->data['user_id'] !== ANONYMOUS) && !$this->user->data['is_bot'],
 			'start'			=> $start ? $start : (int) $this->request->variable('start', 0),
 			'moderate'		=> $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']),
@@ -284,27 +285,21 @@ class breizhcharts
 		$this->handle('video', 0, $id, 0, 0, 0, '', $song_name);
 	}
 
-	public function song_view($id)
+	public function song_view($id, $song_view)
 	{
+		$new_song_view = $song_view + 1;
 		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET song_view = song_view + 1 WHERE song_id = ' . (int) $id);
-
-		$sql = 'SELECT song_view
-			FROM ' . $this->breizhcharts_table . '
-				WHERE song_id = ' . (int) $id;
-		$result = $this->db->sql_query($sql);
-		$song_view = (int) $this->db->sql_fetchfield('song_view');
-		$this->db->sql_freeresult($result);
 
 		$json_response = new json_response;
 		$json_response->send([
-			'song_view'	=> $song_view,
-			'title'		=> $this->language->lang('BC_SONG_VIEW', $song_view),
+			'song_view'	=> $new_song_view,
+			'title'		=> $this->language->lang('BC_SONG_VIEW', $new_song_view),
 		]);
 	}
 
 	public function display_popup($id)
 	{
-		$sql = 'SELECT song_id, song_name, artist, video
+		$sql = 'SELECT song_id, song_name, artist, video, song_view
 			FROM ' . $this->breizhcharts_table . '
 				WHERE song_id = ' . (int) $id;
 		$result = $this->db->sql_query($sql);
@@ -312,9 +307,13 @@ class breizhcharts
 		$this->db->sql_freeresult($result);
 
 		$this->template->assign_vars([
-			'S_IN_VIDEO'	=> true,
-			'VIDEO_TITLE' 	=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
-			'YOUTUBE_ID'	=> $this->work->get_youtube_id($row['video']),
+			'S_IN_VIDEO'		=> true,
+			'S_REPORTED'		=> $row['reported'],
+			'SONG_VIEW'			=> $row['song_view'],
+			'TITLE_SONG_VIEW'	=> $this->language->lang('BC_SONG_VIEW', (int) $row['song_view']),
+			'VIDEO_TITLE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
+			'YOUTUBE_ID'		=> $this->work->get_youtube_id($row['video']),
+			'U_VIEW_SONG'		=> $this->helper->route('sylver35_breizhcharts_song_view', ['id' => $row['song_id'], 'song_view' => $row['song_view']]),
 		]);
 
 		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']));
@@ -570,6 +569,7 @@ class breizhcharts
 		}
 		unset($data_video['comment']);
 
+		$this->db->sql_query('UPDATE ' . USERS_TABLE . ' SET breizhchart_last = ' . time() . ' WHERE user_id = ' . (int) $this->user->data['user_id']);
 		$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_table . $this->db->sql_build_array('INSERT', $data_video));
 		$id = $this->db->sql_last_inserted_id();
 		$data_video['song_id'] = $id;

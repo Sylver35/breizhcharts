@@ -1,4 +1,3 @@
-
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -20,10 +19,11 @@
 						<a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}"><img src="{{ random.RAND_THUMBNAIL }}" alt="{{ random.RAND_TITLE }}" class="thumbnail"></a>
 					</div>
 					<div class="rand-flex-2">
-						<span class="song-title">{{ random.RAND_TITLE }}</span><br>
+						<span class="song-title"><a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}">{{ random.RAND_TITLE }}</a></span><br>
 						{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} {{ random.RAND_CAT }}<br>
 						{{ lang('BC_ADDED_BY') }}{{ lang('COLON') }} {{ random.RAND_USERNAME }}<br>
-						<span class="total_rate">{{ random.TOTAL_RATE }}</span>
+						<span class="total_rate">{{ random.TOTAL_RATE }}</span><br>
+						{{ random.RAND_VIEW }}
 					</div>
 				</div>
 				{% endfor %}
@@ -31,4 +31,3 @@
 		</ul>
 	</div>
 </div>
-

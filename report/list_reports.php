@@ -117,7 +117,7 @@ class list_reports
 				'REASON'		=> $this->user->lang['bc_report_reasons']['TITLE'][$row['reason']],
 				'TIME'			=> $row['reported_time'],
 				'USERNAME'		=> get_username_string('full', $row['poster_id'], $row['name'], $row['colour']),
-				'REPORTNAME'	=> get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
+				'REPORTNAME'	=> ((int) $row['user_id'] === 3) ? '<strong>' . $this->language->lang('BC_AUTO_NAME') . '</strong>' : get_username_string('full', $row['user_id'], $row['username'], $row['user_colour']),
 				'VIDEO'			=> $this->language->lang('BC_SHOW_VIDEO', $row['song_name']),
 				'THUMBNAIL'		=> $this->work->get_youtube_img($row['video'], true),
 				'ADDED_TIME'	=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),

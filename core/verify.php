@@ -346,7 +346,7 @@ class verify
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
 			'FROM'		=> [$this->breizhcharts_table => ''],
-			'WHERE'		=> 'song_id <> ' . $song_id . ' AND ' . $this->db->sql_lower_text('video') . ' LIKE ' . $this->work->get_like($url),
+			'WHERE'		=> 'song_id <> ' . (int) $song_id . ' AND ' . $this->db->sql_lower_text('video') . ' LIKE ' . $this->work->get_like($url),
 		]);
 		$result = $this->db->sql_query($sql);
 		if ($row = $this->db->sql_fetchrow($result))
@@ -365,16 +365,9 @@ class verify
 
 	public function get_random_song($in_chart = false)
 	{
-		if ($in_chart)
+		if ($in_chart && !$this->config['breizhcharts_random'])
 		{
-			if (!$this->config['breizhcharts_random'])
-			{
-				return;
-			}
-			else
-			{
-				$this->template->assign_var('RANDOM_CHART', 'true');
-			}
+			return;
 		}
 
 		$i = 1;
@@ -395,7 +388,6 @@ class verify
 		{
 			$this->template->assign_block_vars('randoms', [
 				'RAND_NB'			=> $i,
-				'S_RANDOM_SONG'		=> true,
 				'RAND_SONG_ID'		=> $row['song_id'],
 				'RAND_NAME'			=> $row['song_name'],
 				'RAND_ARTIST'		=> $row['artist'],
@@ -404,6 +396,7 @@ class verify
 				'RAND_CAT'			=> $this->work->get_cat_name($row['cat']),
 				'RAND_THUMBNAIL'	=> $this->work->get_youtube_img($row['video'], true),
 				'RAND_TITLE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
+				'RAND_VIEW'			=> $this->language->lang('BC_SONG_VIEW', (int) $row['song_view']),
 				'RAND_USERNAME'		=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
 				'TOTAL_RATE'		=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
 				'U_RAND_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_video', ['id' => (int) $row['song_id'], 'song_name' => $this->work->display_url($row['song_name'])]) . '#nav',
@@ -411,5 +404,29 @@ class verify
 			$i++;
 		}
 		$this->db->sql_freeresult($result);
+
+		$this->template->assign_vars([
+			'S_RANDOM_SONG'		=> $i > 1,
+			'RANDOM_INDEX'		=> $this->config['breizhcharts_random_index'],
+		]);
+	}
+
+	public function session_mobile()
+	{
+		$browser = strtolower($this->user->browser);
+
+		if (!empty($browser))
+		{
+			if (preg_match("#ipad|tablet#i", $browser))
+			{
+				return false;
+			}
+			else if (preg_match("#mobile|android|iphone|mobi|ipod|fennec|webos|j2me|midp|cdc|cdlc|bada#i", $browser))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

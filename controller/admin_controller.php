@@ -211,18 +211,39 @@ class admin_controller
 			trigger_error($this->language->lang('FORM_INVALID') . adm_back_link($this->u_action), E_USER_WARNING);
 		}
 
+		$i = 1;
+		$error = '';
+		$ex_cat = $this->request->variable('ex_cat', 0);
+		$ex_cat_nb = $this->request->variable('ex_cat_nb', 0);
 		$data = [
 			'song_name'		=> $this->request->variable('song_name', '', true),
 			'artist'		=> $this->request->variable('artist', '', true),
-			'album'			=> $this->request->variable('album', '', true),
-			'year'			=> $this->request->variable('year', ''),
 			'cat'			=> $this->request->variable('cat', 0),
 			'video'			=> $this->request->variable('video', '', true),
+			'album'			=> $this->request->variable('album', '', true),
+			'year'			=> $this->request->variable('year', ''),
+		];
+		$list = [
+			'song_name'	=> 'BC_NEED_TITLE',
+			'artist'	=> 'BC_NEED_ARTIST',
+			'cat'		=> 'BC_CAT_NEED',
+			'video'		=> 'BC_REQUIRED_VIDEO_ERROR',
 		];
 
-		$ex_cat = $this->request->variable('ex_cat', 0);
-		$ex_cat_nb = $this->request->variable('ex_cat_nb', 0);
+		foreach ($list as $key => $lang)
+		{
+			if (empty($data[$key]) && $i < 5)
+			{
+				$error .= $this->language->lang($lang) . '<br>';
+			}
+			$i++;
+		}
 
+		if ($error)
+		{
+			trigger_error($error . adm_back_link($this->u_action));	
+		}
+		/*
 		if (!$data['song_name'])
 		{
 			trigger_error($this->language->lang('BC_NEED_TITLE') . adm_back_link($this->u_action));	
@@ -234,7 +255,7 @@ class admin_controller
 		else if (!$data['cat'])
 		{
 			trigger_error($this->language->lang('BC_CAT_NEED') . adm_back_link($this->u_action));	
-		}
+		}*/
 		else
 		{
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . (int) $id);
