@@ -254,6 +254,7 @@ $lang = array_merge($lang, [
 	'BC_REPORT_EDIT_CLOSE'			=> 'Close the panel',
 	'BC_REPORT_INFORM'				=> 'Inform the user %1$s',
 	'BC_REPORT_CLOSE'				=> 'Close report',
+	'BC_REPORT_CLOSE_END'			=> 'The requested report is permanently closed',
 	'BC_REPORT_CLOSE_CONTACT'		=> 'Close the report and notify users',
 	'BC_REPORT_CLOSE_NO_REASON'		=> 'Close the report because the reason is not good…<br>%1$s and %2$s will be informed of the decision',
 	'BC_REPORT_CLOSE_NO_REASON_OWN'	=> 'Close the report because the reason is not good…<br>%1$s will be informed of the decision',

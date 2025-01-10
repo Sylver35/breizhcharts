@@ -12,6 +12,7 @@ use sylver35\breizhcharts\core\work;
 use sylver35\breizhcharts\core\check;
 use sylver35\breizhcharts\core\points;
 use sylver35\breizhcharts\core\verify;
+use sylver35\breizhcharts\core\contact;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -41,6 +42,9 @@ class charts
 
 	/** @var \sylver35\breizhcharts\core\verify */
 	protected $verify;
+
+	/** @var \sylver35\breizhcharts\core\contact */
+	protected $contact;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -111,12 +115,13 @@ class charts
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, check $check, points $points, verify $verify, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_result_table, $breizhcharts_voters_table)
+	public function __construct(work $work, check $check, points $points, verify $verify, contact $contact, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_result_table, $breizhcharts_voters_table)
 	{
 		$this->work = $work;
 		$this->check = $check;
 		$this->points = $points;
 		$this->verify = $verify;
+		$this->contact = $contact;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -418,6 +423,7 @@ class charts
 			'S_IN_CHARTS'		=> true,
 			'S_RULES'			=> $rules,
 			'NB_REPORT'			=> isset($reports['nb']) ? $reports['nb'] : 0,
+			'HAS_REPORT'		=> ($reports['nb'] > 0) ? ' red-icon' : '',
 			'MC_TITLE_EXPLAIN'	=> $title_explain,
 			'MC_TOP_XX'			=> $this->language->lang('BC_TOP_TEN', $this->config['breizhcharts_num_top']),
 			'U_ADD_SONG'		=> ($is_user && $this->auth->acl_get('u_breizhcharts_add')) ? $this->helper->route('sylver35_breizhcharts_add_video') . '#nav' : '',
@@ -515,14 +521,14 @@ class charts
 			$points_active = $this->points->points_active();
 			if ($points_active)
 			{
-				$this->work->run_random_winner();
+				$this->contact->run_random_winner();
 				$this->points->points_to_winners();
 			}
 
 			// Send PM to the winners
 			if ($this->config['breizhcharts_pm_enable'])
 			{
-				$this->work->send_pm_to_winners($points_active);
+				$this->contact->send_pm_to_winners($points_active);
 			}
 
 			// Reset all notes

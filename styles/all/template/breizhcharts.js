@@ -115,7 +115,7 @@
 	}
 
 	breizhcharts.reportError = function(event){
-		if($('#reported').val() > 0){
+		if($('#reported').val() > 0 || event.data == 0){
 			return;
 		}
 		$.ajax({
@@ -132,7 +132,8 @@
 			},
 			error: function(result,statut,erreur){
 				var obj = result.responseText;
-				console.log(JSON.parse(JSON.stringify(obj)));
+				$('#result-div').show().html(JSON.parse(JSON.stringify(obj)));
+				setTimeout(breizhcharts.clearMessage,15000);
 			}
 		});
 	}

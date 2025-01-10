@@ -107,6 +107,7 @@ services:
             - '@sylver35.breizhcharts.core.check'
             - '@sylver35.breizhcharts.core.points'
             - '@sylver35.breizhcharts.core.verify'
+            - '@sylver35.breizhcharts.core.contact'
             - '@template'
             - '@language'
             - '@user'
@@ -186,6 +187,23 @@ services:
             - '%sylver35.breizhcharts.table.breizhcharts_cats%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
 
+    sylver35.breizhcharts.core.contact:
+        class: sylver35\breizhcharts\core\contact
+        arguments:
+            - '@sylver35.breizhcharts.core.points'
+            - '@language'
+            - '@user'
+            - '@auth'
+            - '@controller.helper'
+            - '@dbal.conn'
+            - '@request'
+            - '@config'
+            - '%core.root_path%'
+            - '%core.php_ext%'
+            - '%sylver35.breizhcharts.table.breizhcharts%'
+            - '%sylver35.breizhcharts.table.breizhcharts_cats%'
+            - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+
     sylver35.breizhcharts.core.tools:
         class: sylver35\breizhcharts\core\tools
         arguments:
@@ -222,6 +240,7 @@ services:
             - '@sylver35.breizhcharts.core.charts'
             - '@sylver35.breizhcharts.core.work'
             - '@sylver35.breizhcharts.core.verify'
+            - '@sylver35.breizhcharts.core.contact'
             - '@template'
             - '@language'
             - '@user'

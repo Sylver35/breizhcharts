@@ -286,6 +286,8 @@ class verify
 
 	public function create_phpbb_navigation($data)
 	{
+		$this->get_voters();
+		$this->get_uploaders();
 		$nav_name = $this->language->lang('BC_CHARTS_SIMPLE');
 		$param = isset($data['url_param']) ? $data['url_param'] : '';
 		$param2 = isset($data['url_param2']) ? $data['url_param2'] : '';
@@ -363,7 +365,7 @@ class verify
 		return $video;
 	}
 
-	public function get_random_song($in_chart = false)
+	public function get_random_songs($in_chart = false)
 	{
 		if ($in_chart && !$this->config['breizhcharts_random'])
 		{

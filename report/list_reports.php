@@ -131,6 +131,7 @@ class list_reports
 			'S_IN_REPORT_LIST'	=> true,
 			'S_REPORTS_LIST'	=> true,
 			'NAV_ID'			=> 'reports-list',
+			'HAS_REPORT'		=> ($i > 0) ? ' red-icon' : '',
 			'TITLE_PAGE'		=> $data['title_mode'],
 		]);
 

@@ -19,7 +19,7 @@ scriptTag.parentNode.insertBefore(tag, scriptTag);
 function onYouTubePlayerAPIReady(){
 	player = new YT.Player('player', {
 		videoId: '{{ YOUTUBE_ID }}',
-		playerVars: {'autoplay': 1, 'controls': 0, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
+		playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
 		events: {
 			'onReady': onPlayerReady,
 			'onError': onPlayerError,
@@ -34,7 +34,7 @@ function onPlayerError(event){
 	setTimeout(function(){breizhcharts.reportError(event)}, 5000);
 }
 </script>
-<span href="#" title="{{ TITLE_SONG_VIEW }}" id="a_view" style="display:none;"><span class="song-title position" id="span_view">{{ SONG_VIEW }}</span></span>
+<span href="#" title="{{ TITLE_SONG_VIEW }}" id="a_view" style="display: none;"><span class="song-title position" id="span_view">{{ SONG_VIEW }}</span></span>
 <div class="close"><a href="#" onclick="self.close();">{{ lang('CLOSE_WINDOW') }}</a></div>
 
 {% INCLUDE 'simple_footer.html' %}

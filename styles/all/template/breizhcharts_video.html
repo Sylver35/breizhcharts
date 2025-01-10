@@ -78,7 +78,7 @@ function onYouTubePlayerAPIReady(){
 		videoId: '{{ YOUTUBE_ID }}',
 		width: '{{ VIDEO_WIDTH }}',
 		height: '{{ VIDEO_HEIGHT }}',
-		playerVars: {'autoplay': 1, 'controls': 0, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 1},
+		playerVars: {'autoplay': 1, 'html5': 1, 'modestbranding': 1, 'rel': 1, 'showinfo': 0},
 		events: {
 			'onReady': onPlayerReady,
 			'onError': onPlayerError,

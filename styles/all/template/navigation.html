@@ -22,7 +22,7 @@
 			<li><a id="nav-tools" class="navigation_songs" href="{{ U_BC_TOOLS }}" title="{{ lang('BC_TOOLS_TITLE') }}"><i class="bzh-nav icon fa fa-tachometer"></i>{{ lang('BC_TOOLS') }}</a></li>
 			{% endif %}
 			{% if S_REPORTS_LIST %}
-			<li class="report"><a id="nav-reports-list" class="navigation_songs" href="{{ U_REPORTS_LIST }}" title="{{ lang('BC_REPORTED_LIST_TITLE') }}"><i class="bzh-nav icon fa fa-exclamation-triangle"></i> {{ lang('BC_REPORTED_LIST') }} ({{ NB_REPORT }})</a></li>
+			<li class="report"><a id="nav-reports-list" class="navigation_songs" href="{{ U_REPORTS_LIST }}" title="{{ lang('BC_REPORTED_LIST_TITLE') }}"><i class="bzh-nav icon fa fa-exclamation-triangle{{ HAS_REPORT }}"></i> {{ lang('BC_REPORTED_LIST') }} ({{ NB_REPORT }})</a></li>
 			{% endif %}
 		</ul>
 		{% if U_USER_NAV %}

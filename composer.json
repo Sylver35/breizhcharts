@@ -3,7 +3,7 @@
     "type": "phpbb-extension",
     "description": "vous pouvez proposer à vos utilisateurs un hit parade de musique, qu’ils peuvent créer eux-mêmes. les utilisateurs  peuvent ajouter de nouvelles chansons, qui participeront ensuite à l'élection. Vous pouvez définir une période d’élection ou non, où les utilisateurs peuvent ensuite voter une fois pour chaque musique. De cette façon, vous recevrez un tableau dynamique..",
     "version": "1.4.0",
-    "time": "2025-01-06",
+    "time": "2025-01-10",
     "keywords": ["phpbb", "extension", "breizh", "music", "song", "charts"],
     "license": "GPL-2.0-only",
     "authors": [

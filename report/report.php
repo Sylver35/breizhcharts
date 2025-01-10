@@ -13,6 +13,7 @@ use phpbb\exception\http_exception;
 use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\work;
 use sylver35\breizhcharts\core\verify;
+use sylver35\breizhcharts\core\contact;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -35,6 +36,9 @@ class report
 
 	/** @var \sylver35\breizhcharts\core\verify */
 	protected $verify;
+
+	/** @var \sylver35\breizhcharts\core\contact */
+	protected $contact;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -88,11 +92,12 @@ class report
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, work $work, verify $verify, template $template, language $language, user $user, db $db, log $log, cache $cache, request $request, config $config, auth $auth, helper $helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table)
+	public function __construct(charts $charts, work $work, verify $verify, contact $contact, template $template, language $language, user $user, db $db, log $log, cache $cache, request $request, config $config, auth $auth, helper $helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table)
 	{
 		$this->charts = $charts;
 		$this->work = $work;
 		$this->verify = $verify;
+		$this->contact = $contact;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -193,7 +198,7 @@ class report
 		}
 		else if ($action === 'send_pm')
 		{
-			$this->send_pm($id);
+			$this->contact->send_pm_view_report($id);
 		}
 
 		$song_name = $this->get_report_data($id, $error);
@@ -248,6 +253,15 @@ class report
 			throw new http_exception(403, 'NOT_AUTHORISED');
 		}
 
+		if (!$row['reported'])
+		{
+			
+			$redirect_url = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? $this->helper->route('sylver35_breizhcharts_list_report') : $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own', 'cat' => 0]);
+			$return_msg = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? 'BC_REPORT_BACKLINK' : 'BC_REPORT_BACKLINK_OWN';
+			meta_refresh(3, $redirect_url);
+			trigger_error($this->language->lang('BC_REPORT_CLOSE_END') . '<br><br>' . $this->language->lang($return_msg, '<a href="' . $redirect_url . '">', '</a>'));
+		}
+
 		$row = $this->initialize_report($row);
 		$this->enable_posting();
 
@@ -296,7 +310,7 @@ class report
 	{
 		if ((int) $row['reported'] === 3)
 		{
-			$row['user_report'] = $this->colorize('', $this->language->lang('BC_AUTO_NAME'));
+			$row['user_report'] = $this->contact->colorize('', $this->language->lang('BC_AUTO_NAME'));
 			list($yt_error, $text1, $text2) = explode('||', $row['reported_text']);
 			$row['reported_text'] = $this->language->lang($text1);
 			$row['reported_text'] .= ($yt_error == 150) ? '<br>' . $this->language->lang('BC_101_RETURN') . $this->language->lang($text2) : '';
@@ -312,81 +326,6 @@ class report
 		$row['is_poster'] = (int) $row['user_id'] === (int) $this->user->data['user_id'];
 
 		return $row;
-	}
-
-	private function send_pm($id)
-	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
-		$message_user = $this->request->variable('message-box', '', true);
-
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'b.*, a.*, u.user_id, u.username, u.user_colour, u.user_lang, v.user_id as id, v.username as name, v.user_colour as colour',
-			'FROM'		=> [$this->breizhcharts_table => 'b'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = b.poster_id',
-				],
-				[
-					'FROM'	=> [USERS_TABLE => 'v'],
-					'ON'	=> 'v.user_id = b.reported',
-				],
-				[
-					'FROM'	=> [$this->breizhcharts_cats_table => 'a'],
-					'ON'	=> 'a.cat_id = b.cat',
-				],
-			],
-			'WHERE'		=> 'b.song_id = ' . (int) $id,
-		]);
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		// Switch language if needed
-		$switch_lang = $this->work->language_switch($row['user_lang'], false);
-
-		$options = 0;
-		$uid = $bitfield = '';
-		$subject = $this->language->lang('BC_REPORT_SEND_SUBJECT', $row['song_name']);
-		$message = $this->language->lang('BC_REPORT_SEND_MESSAGE',
-			$row['username'],
-			$this->colorize($row['user_colour']),
-			$this->user->data['username'],
-			$this->colorize($this->user->data['user_colour']),
-			$this->language->lang('BC_REPORTED_ON', $row['song_name'], $row['artist']),
-			$row['name'],
-			$this->colorize($row['colour']),
-			$this->user->format_date($row['reported_time'], $this->language->lang('BC_FORMAT_DATE_PM')),
-			$this->user->lang['bc_report_reasons']['TITLE'][$row['reason']],
-			$this->user->lang['bc_report_reasons']['DESCRIPTION'][$row['reason']],
-			$row['reported_text'] ? $row['reported_text'] : '',
-			$message_user,
-		);
-		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
-
-		// Switch language if needed
-		$this->work->language_switch($row['user_lang'], $switch_lang);
-
-		$data = [
-			'address_list'		=> ['u' => [$row['user_id'] => 'to']],
-			'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-			'from_username'		=> 'Admin',
-			'from_user_ip'		=> '',
-			'icon_id'			=> 0,
-			'enable_bbcode'		=> true,
-			'enable_smilies'	=> true,
-			'enable_urls'		=> true,
-			'enable_sig'		=> true,
-			'message'			=> $message,
-			'bbcode_bitfield'	=> $bitfield,
-			'bbcode_uid'		=> $uid,
-		];
-		submit_pm('post', utf8_encode_ucr($subject), $data, false);
-
-		$redirect_url = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? $this->helper->route('sylver35_breizhcharts_list_report') : $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own', 'cat' => 0]) . '#nav';
-		$return_msg = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? 'BC_REPORT_BACKLINK' : 'BC_REPORT_BACKLINK_OWN';
-		meta_refresh(3, $redirect_url);
-		trigger_error($this->language->lang('BC_REPORT_SEND_FINISH', get_username_string('full', $row['user_id'], $row['username'], $row['user_colour'])) . '<br><br>' . $this->language->lang($return_msg, '<a href="' . $redirect_url . '">', '</a>'));
 	}
 
 	private function validate_close_report($id)
@@ -425,62 +364,17 @@ class report
 		// Send pm to song poster
 		if ((int) $poster_id !== (int) $this->user->data['user_id'])
 		{
-			$this->send_pm_close('poster', $poster['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
+			$this->contact->send_pm_close('poster', $poster['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
 		}
 
 		// Send pm to song reporter
-		$this->send_pm_close('reporter', $report['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
+		$this->contact->send_pm_close('reporter', $report['user_lang'], $song, $artist, $reason, $poster['user_id'], $poster['username'], $poster['user_colour'], $report['user_id'], $report['username'], $report['user_colour']);
 		
 		// Redirect now
 		$redirect_url = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? $this->helper->route('sylver35_breizhcharts_list_report') : $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own', 'cat' => 0]) . '#nav';
 		$return_msg = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? 'BC_REPORT_BACKLINK' : 'BC_REPORT_BACKLINK_OWN';
 		meta_refresh(3, $redirect_url);
 		trigger_error($this->language->lang('BC_REPORT_CLOSE_FINISH_TO', get_username_string('full', $poster['user_id'], $poster['username'], $poster['user_colour']), get_username_string('full', $report['user_id'], $report['username'], $report['user_colour'])) . '<br><br>' . $this->language->lang($return_msg, '<a href="' . $redirect_url . '">', '</a>'));
-	}
-
-	private function send_pm_close($action, $lang, $song, $artist, $reason, $poster_id, $poster_name, $poster_colour, $report_id, $report_name, $report_colour)
-	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
-
-		// Switch language if needed
-		$switch_lang = $this->work->language_switch($lang, false);
-
-		$options = 0;
-		$uid = $bitfield = '';
-		$sort_message = ($action == 'poster') ? 'BC_PM_REPORT_CLOSE' : 'BC_PM_REPORT_CLOSE_TO';
-		$reason = $this->user->lang['bc_report_reasons']['TITLE'][$reason];
-		$subject = $this->language->lang('BC_PM_REPORT_SUBJECT', $reason);
-		$message = $this->language->lang($sort_message,
-			$poster_name,
-			$this->colorize($poster_colour),
-			$this->language->lang('BC_REPORTED_ON', $song, $artist),
-			$reason,
-			$report_name,
-			$this->colorize($report_colour),
-			$this->user->data['username'],
-			$this->colorize($this->user->data['user_colour']),
-			$this->user->format_date(time(), $this->language->lang('BC_FORMAT_DATE_PM')),
-		);
-		generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
-
-		$data = [
-			'address_list'		=> ['u' => [(($action == 'poster') ? $poster_id : $report_id) => 'to']],
-			'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-			'from_username'		=> 'Admin',
-			'from_user_ip'		=> '',
-			'icon_id'			=> 0,
-			'enable_bbcode'		=> true,
-			'enable_smilies'	=> true,
-			'enable_urls'		=> true,
-			'enable_sig'		=> true,
-			'message'			=> $message,
-			'bbcode_bitfield'	=> $bitfield,
-			'bbcode_uid'		=> $uid,
-		];
-		submit_pm('post', utf8_encode_ucr($subject), $data, false);
-
-		// Switch language if needed
-		$this->work->language_switch($lang, $switch_lang);
 	}
 
 	private function validate_report_song($id)
@@ -540,7 +434,7 @@ class report
 		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data_chart) . ' WHERE song_id = ' . (int) $id);
 		$this->cache->destroy('_breizhcharts_reported');
 
-		$this->send_pms_report((int) $id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason_id);
+		$this->contact->send_pms_report((int) $id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason_id);
 
 		$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_REPORT_SONG', time(), ['reportee_id' => $this->user->data['user_id'], $this->user->data['username'], $this->language->lang('BC_FROM_OF', $song_name, $artist)]);
 		$redirect_url = $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0, 'start' => 0]);
@@ -552,6 +446,12 @@ class report
 	{
 		$error = $this->request->variable('error', 0);
 		$json_response = new json_response;
+		$list_error = [2, 5, 100, 101, 150];
+	
+		if (((int) $this->user->data['user_id'] === ANONYMOUS) || $this->user->data['is_bot'] || !in_array($error, $list_error))
+		{
+			return;
+		}
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> 'b.*, u.user_id, u.username, u.user_colour',
@@ -573,7 +473,6 @@ class report
 			$json_response->send([
 				'sort'		=> 1,
 				'error'		=> $error,
-				'content'	=> $row['reported'],
 			]);
 			return;
 		}
@@ -589,103 +488,13 @@ class report
 		$this->cache->destroy('_breizhcharts_reported');
 
 		$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_REPORT_SONG_AUTO', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist'])]);
-		$this->send_pms_report((int) $id, $row['song_name'], $row['artist'], $row['user_id'], $row['username'], $row['user_colour'], 'AUTO', $error);
+		$this->contact->send_pms_report((int) $id, $row['song_name'], $row['artist'], $row['user_id'], $row['username'], $row['user_colour'], 'AUTO', $error);
 
 		$json_response->send([
 			'sort'		=> 2,
 			'error'		=> $error,
 			'content'	=> $this->language->lang('BC_AUTO_' . $error),
 		]);
-	}
-
-	private function send_pms_report($id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason, $auto = 0)
-	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
-
-		$switch_lang = false;
-		$sql = 'SELECT *
-			FROM ' . USERS_TABLE . '
-			WHERE user_id = ' . (int) $poster_id . ' OR ' . $this->db->sql_in_set('user_id', $this->list_manage());
-		$result = $this->db->sql_query($sql);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Switch language if needed
-			$switch_lang = $this->work->language_switch($row['user_lang'], $switch_lang);
-
-			$options = 0;
-			$uid = $bitfield = '';
-			// Form the complete reason description with auto error if needed
-			$description = $this->user->lang['bc_report_reasons']['DESCRIPTION'][$reason];
-			$description .= ($auto) ? $this->language->lang('BC_AUTO_RETURN', $auto) . $this->language->lang('BC_AUTO_' . $auto) : '';
-			$description .= ($auto == 101) ? $this->language->lang('BC_101_RETURN') . $this->language->lang('BC_AUTO_101') : '';
-
-			$subject = $this->language->lang('BC_PM_REPORT_SUBJECT', $this->user->lang['bc_report_reasons']['TITLE'][$reason]);
-			$message = $this->language->lang('BC_PM_REPORT_MESSAGE',
-				$row['username'],
-				$this->colorize($row['user_colour']),
-				(!$auto) ? $this->user->data['username'] : $this->language->lang('BC_AUTO_NAME'),
-				(!$auto) ? $this->colorize($this->user->data['user_colour']) : $this->colorize(''),
-				$this->user->format_date(time(), $this->language->lang('BC_FORMAT_DATE_PM')),
-				$this->language->lang('BC_REPORTED_ON', $song_name, $artist),
-				$poster_name,
-				$this->colorize($poster_colour),
-				$this->user->lang['bc_report_reasons']['DESCRIPTION'][$reason],
-				$this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $id]),
-			);
-
-			generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
-
-			$data = [
-				'address_list'		=> ['u' => [$row['user_id'] => 'to']],
-				'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-				'from_username'		=> 'Admin',
-				'from_user_ip'		=> '',
-				'icon_id'			=> 0,
-				'enable_bbcode'		=> true,
-				'enable_smilies'	=> true,
-				'enable_urls'		=> true,
-				'enable_sig'		=> true,
-				'message'			=> $message,
-				'bbcode_bitfield'	=> $bitfield,
-				'bbcode_uid'		=> $uid,
-			];
-			submit_pm('post', utf8_encode_ucr($subject), $data, false);
-
-			// Switch language if needed
-			$switch_lang = $this->work->language_switch($row['user_lang'], $switch_lang);
-		}
-		$this->db->sql_freeresult($result);
-	}
-
-	private function colorize($colour, $name = '')
-	{
-		$data = $colour;
-		if (!$colour && !$name)
-		{
-			$data = '435B8A';
-		}
-		else if (!$colour && $name)
-		{
-			$data = '<span style="color: #435B8A;font-weight: bold;">' . $name . '</span>';
-		}
-
-		return $data;
-	}
-
-	private function list_manage()
-	{
-		// Grab an array of user_id's with admin permission
-		$admin_ary = $this->auth->acl_get_list(false, 'a_breizhcharts_manage');
-		$admin_ary = (!empty($admin_ary[0]['a_breizhcharts_manage'])) ? $admin_ary[0]['a_breizhcharts_manage'] : [];
-
-		// Grab an array of user_id's with moderator permission
-		$modo_ary = $this->auth->acl_get_list(false, 'm_breizhcharts_manage');
-		$modo_ary = (!empty($modo_ary[0]['m_breizhcharts_manage'])) ? $modo_ary[0]['m_breizhcharts_manage'] : [];
-
-		// Merge the two arrays
-		$list_ary = array_unique(array_merge($admin_ary, $modo_ary));
-
-		return $list_ary;
 	}
 
 	private function enable_posting()

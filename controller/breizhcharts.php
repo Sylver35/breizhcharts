@@ -175,12 +175,12 @@ class breizhcharts
 		$vars = ['data'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.list_mode_before', compact($vars)));
 
+		// Load the data in mode
 		$data = $this->initialyse_data($data);
-		$this->verify->get_voters();
-		$this->verify->get_uploaders();
+		// Create the navigation
 		$this->verify->create_phpbb_navigation($data);
-		// Add a random song
-		$this->verify->get_random_song(true);
+		// Add random songs
+		$this->verify->get_random_songs(true);
 
 		/**
 		 * You can use this event after all modes listed here
@@ -299,7 +299,7 @@ class breizhcharts
 
 	public function display_popup($id)
 	{
-		$sql = 'SELECT song_id, song_name, artist, video, song_view
+		$sql = 'SELECT song_id, song_name, artist, video, song_view, reported
 			FROM ' . $this->breizhcharts_table . '
 				WHERE song_id = ' . (int) $id;
 		$result = $this->db->sql_query($sql);
@@ -314,6 +314,7 @@ class breizhcharts
 			'VIDEO_TITLE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
 			'YOUTUBE_ID'		=> $this->work->get_youtube_id($row['video']),
 			'U_VIEW_SONG'		=> $this->helper->route('sylver35_breizhcharts_song_view', ['id' => $row['song_id'], 'song_view' => $row['song_view']]),
+			'U_REPORT_AUTO'		=> $this->helper->route('sylver35_breizhcharts_report_video_auto', ['id' => $row['song_id']]),
 		]);
 
 		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']));
@@ -702,7 +703,7 @@ class breizhcharts
 	{
 		if (confirm_box(true))
 		{
-			$sql = 'SELECT poster_id, song_name, artist, topic_id, cat
+			$sql = 'SELECT poster_id, song_name, artist, topic_id, cat, reported
 				FROM ' . $this->breizhcharts_table . '
 					WHERE song_id = ' . (int) $id;
 			$result = $this->db->sql_query($sql);
@@ -712,6 +713,7 @@ class breizhcharts
 			$artist = (string) $row['artist'];
 			$cat = (int) $row['cat'];
 			$topic_id = (int) $row['topic_id'];
+			$reported = (int) $row['reported'];
 			$this->db->sql_freeresult($result);
 
 			if (((int) $this->user->data['user_id'] !== $poster))
@@ -728,6 +730,11 @@ class breizhcharts
 			$this->verify->update_song_cat('delete', $cat);
 			// Refresh the cache positions
 			$this->cache->destroy('_breizhcharts_positions');
+			if ($reported)
+			{
+				// Refresh the reports if needed
+				$this->cache->destroy('_breizhcharts_reported');
+			}
 			$this->cache->destroy('sql', $this->breizhcharts_table);
 			$this->config->increment('breizhcharts_songs_nb', -1, true);
 
@@ -735,6 +742,9 @@ class breizhcharts
 			{
 				include_once($this->root_path . 'includes/functions_admin.' . $this->php_ext);
 				delete_topics('topic_id', [$topic_id], false);
+				// Resync topics_posted table
+				$topic_ids[] = (int) $topic_id;
+				update_posted_info($topic_ids);
 			}
 
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_ADMIN_CHART_DELETED', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $title, $artist)]);

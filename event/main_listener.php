@@ -176,10 +176,10 @@ class main_listener implements EventSubscriberInterface
 			}
 		}
 
-		// Add a random song
+		// Add random songs
 		if ($this->config['breizhcharts_random_index'] && $this->auth->acl_get('u_breizhcharts_view'))
 		{
-			$this->verify->get_random_song();
+			$this->verify->get_random_songs();
 		}
 	}
 

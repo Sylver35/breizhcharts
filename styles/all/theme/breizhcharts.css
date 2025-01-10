@@ -32,7 +32,7 @@ a.button-icon-only > i.bzh-red  {
 	font-size: 16px;
 }
 
-a.navigation_songs > i.bzh-nav {
+a.navigation_songs > i.bzh-nav, a.navigation_songs > i.bzh-nav::before  {
 	color: forestgreen;
 	font-size: 14px;
 }
@@ -42,8 +42,8 @@ a.navigation_songs > i.bzh-nav {
 	font-weight: bold;
 }
 
-a.navigation_actual > i.bzh-nav {
-	color: red;
+a.navigation_actual > i.bzh-nav, a.navigation_actual > i.bzh-nav::before, a.navigation_songs > i.red-icon, a.navigation_songs > i.red-icon::before {
+	color: orangered;
 	font-size: 14px;
 }
 
