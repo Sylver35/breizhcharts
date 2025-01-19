@@ -209,7 +209,6 @@ services:
             - '@sylver35.breizhcharts.core.work'
             - '@sylver35.breizhcharts.core.check'
             - '@sylver35.breizhcharts.core.points'
-            - '@sylver35.breizhcharts.core.verify'
             - '@sylver35.breizhcharts.core.contact'
             - '@language'
             - '@user'

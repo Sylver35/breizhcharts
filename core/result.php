@@ -11,7 +11,6 @@ namespace sylver35\breizhcharts\core;
 use sylver35\breizhcharts\core\work;
 use sylver35\breizhcharts\core\check;
 use sylver35\breizhcharts\core\points;
-use sylver35\breizhcharts\core\verify;
 use sylver35\breizhcharts\core\contact;
 use phpbb\language\language;
 use phpbb\user;
@@ -34,9 +33,6 @@ class result
 
 	/** @var \sylver35\breizhcharts\core\points */
 	protected $points;
-
-	/** @var \sylver35\breizhcharts\core\verify */
-	protected $verify;
 
 	/** @var \sylver35\breizhcharts\core\contact */
 	protected $contact;
@@ -94,7 +90,7 @@ class result
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, check $check, points $points, verify $verify, contact $contact, language $language, user $user, helper $helper, db $db, log $log, cache $cache, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_result_table, $breizhcharts_voters_table)
+	public function __construct(work $work, check $check, points $points, contact $contact, language $language, user $user, helper $helper, db $db, log $log, cache $cache, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_result_table, $breizhcharts_voters_table)
 	{
 		$this->work = $work;
 		$this->check = $check;
