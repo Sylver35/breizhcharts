@@ -20,6 +20,8 @@ use phpbb\controller\helper;
 use phpbb\cache\service as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
+use phpbb\extension\manager as ext_manager;
+use phpbb\path_helper;
 
 class tools
 {
@@ -50,11 +52,29 @@ class tools
 	/** @var \phpbb\cache\service */
 	protected $cache;
 
+	/** @var \phpbb\extension\manager */
+	protected $ext_manager;
+
+	/** @var \phpbb\path_helper */
+	protected $path_helper;
+
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
 
 	/** @var \phpbb\config\config */
 	protected $config;
+
+	/** @var string phpBB root path */
+	protected $root_path;
+
+	/** @var string php_ext */
+	protected $php_ext;
+
+	/** @var string ext_path */
+	protected $ext_path;
+
+	/** @var string ext_path_web */
+	protected $ext_path_web;
 
 	/**
 	 * The database tables
@@ -67,7 +87,7 @@ class tools
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, work $work, verify $verify, auth $auth, user $user, language $language, template $template, helper $helper, cache $cache, db $db, config $config, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
+	public function __construct(charts $charts, work $work, verify $verify, auth $auth, user $user, language $language, template $template, helper $helper, cache $cache, db $db, config $config, ext_manager $ext_manager, path_helper $path_helper, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
 	{
 		$this->charts = $charts;
 		$this->work = $work;
@@ -80,18 +100,24 @@ class tools
 		$this->cache = $cache;
 		$this->db = $db;
 		$this->config = $config;
+		$this->ext_manager = $ext_manager;
+		$this->path_helper = $path_helper;
+		$this->root_path = $root_path;
+		$this->php_ext = $php_ext;
 		$this->breizhcharts_table = $breizhcharts_table;
 		$this->breizhcharts_cats_table = $breizhcharts_cats_table;
 		$this->breizhcharts_voters_table = $breizhcharts_voters_table;
+		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
+		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
 
 	public function display_tools($mode)
 	{
 		$data = [
 			'mode'			=> $mode,
-			'is_user'		=> ((int) $this->user->data['user_id'] !== ANONYMOUS) && !$this->user->data['is_bot'],
+			'is_user'		=> $this->user->data['is_registered'] && !$this->user->data['is_bot'],
 			'moderate'		=> $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']),
-			'title_mode'	=> 'Outils du Hit Parade',
+			'title_mode'	=> $this->language->lang('BC_TOOLS_PAGE'),
 			'url'			=> 'sylver35_breizhcharts_tools',
 			'url_array'		=> ['mode' => 'all'],
 		];
@@ -101,9 +127,10 @@ class tools
 		$this->template->assign_vars([
 			'S_IN_TOOLS'		=> true,
 			'NAV_ID'			=> 'tools',
+			'TITLE_PAGE'		=> $data['title_mode'],
+			'IMAGE_FUTURE'		=> $this->ext_path_web . 'images/the_future_start_here.png',
 		]);
-		
-		
+
 		// Output the page
 		page_header($this->language->lang('BC_CHARTS') . ' - ' . $data['title_mode']);
 

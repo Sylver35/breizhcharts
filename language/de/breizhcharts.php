@@ -236,6 +236,7 @@ $lang = array_merge($lang, [
 	'BC_ERROR_SELECT_NO'			=> 'Bitte geben Sie zusätzliche Informationen ein',
 	'BC_FORMAT_DATE_PM'				=> 'l, d. F o G:i',// Format date used in pms, to avoid "less than a minute ago" Mittwoch, 25. Dezember 2024, 22:10 Uhr
 	'BC_TOOLS'						=> 'Werkzeuge',
+	'BC_TOOLS_PAGE'					=> 'Musik Charts Werkzeuge',
 	'BC_TOOLS_TITLE'				=> 'Greifen Sie auf Musik Charts Werkzeuge zu',
 	'BC_REPORT'						=> 'Video melden',
 	'BC_REPORT_INFO'				=> 'Wird zur Signalisierung eines Liedes verwendet',

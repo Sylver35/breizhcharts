@@ -29,7 +29,7 @@ class breizhcharts_1_3_0 extends migration
 			['config.update', ['breizhcharts_version', '1.3.0']],
 
 			['config.add', ['breizhcharts_period_activ', 0]],
-			['config.add', ['breizhcharts_video_width', 900]],
+			['config.add', ['breizhcharts_video_width', 960]],
 			['config.add', ['breizhcharts_video_height', 600]],		
 		];
 	}

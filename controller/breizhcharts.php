@@ -14,6 +14,7 @@ use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\work;
 use sylver35\breizhcharts\core\verify;
 use sylver35\breizhcharts\core\points;
+use sylver35\breizhcharts\core\result;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -43,6 +44,9 @@ class breizhcharts
 	/** @var \sylver35\breizhcharts\core\points */
 	protected $points;
 
+	/** @var \sylver35\breizhcharts\core\result */
+	protected $result;
+
 	/** @var \phpbb\template\template */
 	protected $template;
 
@@ -56,7 +60,7 @@ class breizhcharts
 	protected $auth;
 
 	/** @var \phpbb\controller\helper */
-	protected $helper;	
+	protected $helper;
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
@@ -108,12 +112,13 @@ class breizhcharts
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, work $work, verify $verify, points $points, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
+	public function __construct(charts $charts, work $work, verify $verify, points $points, result $result, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
 	{
 		$this->charts = $charts;
 		$this->work = $work;
 		$this->verify = $verify;
 		$this->points = $points;
+		$this->result = $result;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -154,7 +159,7 @@ class breizhcharts
 			'song_name'		=> (string) $song_name,
 			'cat'			=> (int) ($cat ? $cat : 0),
 			'mobile'		=> $this->verify->session_mobile(),
-			'is_user'		=> ((int) $this->user->data['user_id'] !== ANONYMOUS) && !$this->user->data['is_bot'],
+			'is_user'		=> ($this->user->data['is_registered'] && !$this->user->data['is_bot']),
 			'start'			=> $start ? $start : (int) $this->request->variable('start', 0),
 			'moderate'		=> $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']),
 			'title_mode'	=> $this->language->lang('BC_NEWEST'),
@@ -285,18 +290,6 @@ class breizhcharts
 		$this->handle('video', 0, $id, 0, 0, 0, '', $song_name);
 	}
 
-	public function song_view($id, $song_view)
-	{
-		$new_song_view = $song_view + 1;
-		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET song_view = song_view + 1 WHERE song_id = ' . (int) $id);
-
-		$json_response = new json_response;
-		$json_response->send([
-			'song_view'	=> $new_song_view,
-			'title'		=> $this->language->lang('BC_SONG_VIEW', $new_song_view),
-		]);
-	}
-
 	public function display_popup($id)
 	{
 		$sql = 'SELECT song_id, song_name, artist, video, song_view, reported
@@ -318,177 +311,6 @@ class breizhcharts
 		]);
 
 		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']));
-	}
-
-	public function handle_vote()
-	{
-		$id = (int) $this->request->variable('id', 0);
-		$rate = (int) $this->request->variable('rate', 0);
-		$ids = (string) $this->request->variable('ids', '');
-		$json_response = new json_response;
-
-		if (!$this->auth->acl_gets(['u_breizhcharts_vote', 'a_breizhcharts_manage', 'm_breizhcharts_manage']))
-		{
-			// No permission ! Send the response to the browser now
-			$json_response->send([
-				'sort'		=> 0,
-				'id'		=> $id,
-				'message'	=> $this->language->lang('BC_AJAX_NO_VOTE'),
-			]);
-			return;
-		}
-
-		// Check if user have already voted
-		$sql = 'SELECT COUNT(vote_song_id) AS counter
-			FROM ' . $this->breizhcharts_voters_table . '
-				WHERE vote_song_id = ' . (int) $id . '
-				AND vote_user_id = ' . (int) $this->user->data['user_id'];
-		$result = $this->db->sql_query($sql);
-		$counter = (int) $this->db->sql_fetchfield('counter');
-		$this->db->sql_freeresult($result);
-
-		if ($counter)
-		{
-			// Already voted ! Send the response to the browser now
-			$json_response->send([
-				'sort'		=> 0,
-				'id'		=> $id,
-				'message'	=> $this->language->lang('BC_ALREADY_VOTED'),
-			]);
-		}
-		else
-		{
-			if (!in_array($this->user->data['user_id'], explode(', ', $ids)))
-			{
-				// First time, add this user in the cache list
-				$this->cache->destroy('_breizhcharts_voters');
-			}
-			// Send the vote in the db
-			$data = $this->run_vote_ajax($id, $rate);
-
-			// Good ! Send the response to the browser now
-			$json_response->send([
-				'sort'		=> 1,
-				'id'		=> $id,
-				'total'		=> $data['total'],
-				'newResult'	=> number_format($data['new_note'] * 10, 2) . '%',
-				'totalRate'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($data['new_note'], 2)),
-				'songRated'	=> $this->language->lang('BC_AJAX_NOTE_NB', $data['new_nb']),
-				'userVote'	=> $this->language->lang('BC_AJAX_NOTE', $rate),
-				'message'	=> $data['message'],
-			]);
-		}
-	}
-
-	private function run_vote_ajax($id, $rate)
-	{
-		// Grab some data from the breizhcharts table
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'c.song_name, c.artist, c.song_note, c.nb_note, SUM(v.vote_rate) as total',
-			'FROM'		=> [$this->breizhcharts_table => 'c'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [$this->breizhcharts_voters_table => 'v'],
-					'ON'	=> 'v.vote_song_id = c.song_id',
-				],
-			],
-			'GROUP_BY'	=> 'c.song_name, c.artist, c.song_note, c.nb_note',
-			'WHERE'		=> 'song_id = ' . (int) $id,
-		]);
-		$result = $this->db->sql_query($sql);
-		$row = $this->db->sql_fetchrow($result);
-		$this->db->sql_freeresult($result);
-
-		// Create array for the voting
-		$sql_ary = [
-			'vote_user_id'	=> $this->user->data['user_id'],
-			'vote_song_id'	=> $id,
-			'vote_rate'		=> $rate,
-		];
-		$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_voters_table . $this->db->sql_build_array('INSERT', $sql_ary));
-
-		// Update the breizhcharts table
-		$total = (isset($row['total'])) ? (int) $row['total'] : 0;
-		$new_nb = (int) $row['nb_note'] + 1;
-		$new_note = ($total + $rate) / $new_nb;
-		$data = [
-			'song_note'	=> (float) $new_note,
-			'nb_note'	=> $new_nb,
-		];
-		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . (int) $id);
-		// Refresh the cache positions
-		$this->cache->destroy('_breizhcharts_positions');
-
-		$message = $this->points->points_in_vote($this->language->lang('BC_VOTE_SUCCESS', $row['song_name'], $row['artist']));
-
-		return [
-			'total'		=> $total,
-			'new_note'	=> $new_note,
-			'new_nb'	=> $new_nb,
-			'message'	=> $message,
-		];
-	}
-
-	public function check_song()
-	{
-		// Check if new song probably already exist
-		$id = (int) $this->request->variable('id', 0);
-		$song = (string) $this->request->variable('song', '', true);
-		$artist = (string) $this->request->variable('artist', '', true);
-		$json_response = new json_response;
-
-		if ($this->verify->verify_song_name($id, $song, $artist) !== false)
-		{
-			$json_response->send([
-				'sort'		=> 2,
-				'message'	=> $this->language->lang('BC_ALREADY_EXISTS_ERROR', $song, $artist),
-			]);
-		}
-		else
-		{
-			$json_response->send([
-				'sort'		=> 1,
-				'message'	=> $this->language->lang('BC_NO_EXISTS', $song, $artist),
-			]);
-		}
-	}
-
-	public function check_youtube_video($check, $song_id)
-	{
-		$url = (string) $this->request->variable('url', '', true);
-		$json_response = new json_response;
-
-		// First, check if video exist in the chart if needed
-		if ($check == 1)
-		{
-			$video = $this->verify->verify_url_in_db($url, $song_id);
-			if (isset($video['name']))
-			{
-				$json_response->send([
-					'sort'		=> 3,
-					'name'		=> $video['name'],
-					'time'		=> $video['time'],
-					'image'		=> $video['image'],
-					'url'		=> $video['url'],
-				]);
-			}
-		}
-		// Second, check existing video on YouTube
-		if ($youtube_id = $this->work->get_youtube_id($url))
-		{
-			$json_response->send([
-				'sort'		=> 1,
-				'message'	=> $this->language->lang('BC_AJAX_VIDEO'),
-				'content'	=> $this->work->get_youtube_img($youtube_id),
-			]);
-		}
-		else
-		{
-			$json_response->send([
-				'sort'		=> 2,
-				'message'	=> $this->language->lang('BC_AJAX_VIDEO_NO'),
-			]);
-		}
 	}
 
 	public function add_video($data)
@@ -565,7 +387,7 @@ class breizhcharts
 		if ($this->config['breizhcharts_announce_enable'])
 		{
 			$comment = isset($data_video['comment']) ? $data_video['comment'] : '';
-			$url = str_replace('./../', './', $this->charts->create_topic($data_video['song_name'], $data_video['artist'], $data_video['video'], $data_video['cat'], $comment));
+			$url = str_replace('./../', './', $this->result->create_topic($data_video['song_name'], $data_video['artist'], $data_video['video'], $data_video['cat'], $comment));
 			$data_video['topic_id'] = (int) $this->charts->find_string($url . '#', 't=', '#');
 		}
 		unset($data_video['comment']);

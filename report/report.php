@@ -448,7 +448,7 @@ class report
 		$json_response = new json_response;
 		$list_error = [2, 5, 100, 101, 150];
 	
-		if (((int) $this->user->data['user_id'] === ANONYMOUS) || $this->user->data['is_bot'] || !in_array($error, $list_error))
+		if (!$this->user->data['is_registered'] || $this->user->data['is_bot'] || !in_array($error, $list_error))
 		{
 			return;
 		}

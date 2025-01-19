@@ -13,6 +13,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\check;
 use sylver35\breizhcharts\core\verify;
+use sylver35\breizhcharts\core\result;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
@@ -34,6 +35,9 @@ class main_listener implements EventSubscriberInterface
 
 	/** @var \sylver35\breizhcharts\core\verify */
 	protected $verify;
+
+	/** @var \sylver35\breizhcharts\core\result */
+	protected $result;
 
 	/** @var \phpbb\template\template */
 	protected $template;
@@ -69,12 +73,13 @@ class main_listener implements EventSubscriberInterface
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, work $work, check $check, verify $verify, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $php_ext, $breizhcharts_table)
+	public function __construct(charts $charts, work $work, check $check, verify $verify, result $result, template $template, language $language, user $user, auth $auth, helper $helper, db $db, config $config, $php_ext, $breizhcharts_table)
 	{
 		$this->charts = $charts;
 		$this->work = $work;
 		$this->check = $check;
 		$this->verify = $verify;
+		$this->result = $result;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
@@ -156,7 +161,7 @@ class main_listener implements EventSubscriberInterface
 		{
 			if (time() - $this->config['breizhcharts_start_time'] > $this->config['breizhcharts_period'])
 			{
-				$this->charts->run_vote_charts_period();
+				$this->result->run_vote_charts_period();
 			}
 		}
 	}

@@ -236,6 +236,7 @@ $lang = array_merge($lang, [
 	'BC_ERROR_SELECT_NO'			=> 'Merci de saisir des informations complémentaires',
 	'BC_FORMAT_DATE_PM'				=> 'l d F o G:i',// Format date used in pms, to avoid "less than a minute ago" mercredi 25 décembre 2024 22:10
 	'BC_TOOLS'						=> 'Outils',
+	'BC_TOOLS_PAGE'					=> 'Outils du Hit Parade',
 	'BC_TOOLS_TITLE'				=> 'Accéder aux outils du Hit Parade',
 	'BC_REPORT'						=> 'Rapporter la vidéo',
 	'BC_REPORT_INFO'				=> 'Sert à signaler une chanson',

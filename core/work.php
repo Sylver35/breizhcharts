@@ -415,66 +415,6 @@ class work
 		return $options;
 	}
 
-	public function send_pm_to_winners($points_active)
-	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
-
-		$switch_lang = false;
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour, u.user_lang',
-			'FROM'		=> [$this->breizhcharts_table => 'c'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = c.poster_id',
-				]
-			],
-			'WHERE'		=> 'c.last_pos > 0',
-			'ORDER_BY'	=> 'c.last_pos ASC',
-		]);
-		$result = $this->db->sql_query_limit($sql, 3);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			// Switch language if needed
-			$switch_lang = $this->language_switch($row['user_lang'], $switch_lang);
-
-			$options = 0;
-			$uid = $bitfield = '';
-			$message = $this->language->lang('BC_PM_MESSAGE',
-				$row['username'],
-				$row['user_colour'] ? $row['user_colour'] : '435B8A',
-				$this->language->lang('BC_PLACE_LIST_' . (int) $row['last_pos']),
-				$row['song_name'],
-				$row['artist'],
-			);
-			if ($points_active)
-			{
-				$message .= $this->language->lang('BC_PM_MESSAGE_UPS', $this->config['breizhcharts_place_' . $row['last_pos']], $this->config['points_name']);
-			}
-			generate_text_for_storage($message, $uid, $bitfield, $options, true, true, true);
-
-			$data = [
-				'address_list'		=> ['u' => [$row['user_id'] => 'to']],
-				'from_user_id'		=> (int) $this->config['breizhcharts_pm_user'],
-				'from_username'		=> 'Admin',
-				'from_user_ip'		=> '',
-				'icon_id'			=> 0,
-				'enable_bbcode'		=> true,
-				'enable_smilies'	=> true,
-				'enable_urls'		=> true,
-				'enable_sig'		=> true,
-				'message'			=> $message,
-				'bbcode_bitfield'	=> $bitfield,
-				'bbcode_uid'		=> $uid,
-			];
-			submit_pm('post', utf8_encode_ucr($this->language->lang('BC_PM_SUBJECT_' . $row['last_pos'])), $data, false);
-
-			// Switch language if needed
-			$switch_lang = $this->language_switch($row['user_lang'], $switch_lang);
-		}
-		$this->db->sql_freeresult($result);
-	}
-
 	public function get_cat_name($cat)
 	{
 		if ($cat)

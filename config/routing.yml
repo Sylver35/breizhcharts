@@ -20,7 +20,7 @@ sylver35_breizhcharts_video:
 
 sylver35_breizhcharts_song_view:
     path: /breizhcharts_song_view/{id}/{song_view}
-    defaults: { _controller: sylver35.breizhcharts.controller.breizhcharts:song_view }
+    defaults: { _controller: sylver35.breizhcharts.controller.ajax:song_view }
     requirements:
         id: \d+
         song_view: \d+
@@ -35,7 +35,7 @@ sylver35_breizhcharts_add_video:
 
 sylver35_breizhcharts_check_video:
     path: /breizhcharts_check_video/{check}/{song_id}
-    defaults: { _controller: sylver35.breizhcharts.controller.breizhcharts:check_youtube_video }
+    defaults: { _controller: sylver35.breizhcharts.controller.ajax:check_youtube_video }
     requirements:
         check: \d+
         song_id: \d+
@@ -62,11 +62,11 @@ sylver35_breizhcharts_page_popup:
 
 sylver35_breizhcharts_vote:
     path: /breizhcharts_vote
-    defaults: { _controller: sylver35.breizhcharts.controller.breizhcharts:handle_vote  }
+    defaults: { _controller: sylver35.breizhcharts.controller.ajax:handle_vote  }
 
 sylver35_breizhcharts_check_song:
     path: /breizhcharts_check_song
-    defaults: { _controller: sylver35.breizhcharts.controller.breizhcharts:check_song  }
+    defaults: { _controller: sylver35.breizhcharts.controller.ajax:check_song  }
 
 sylver35_breizhcharts_report_video:
     path: /breizhcharts/report/video/{id}

@@ -34,17 +34,18 @@ a.button-icon-only > i.bzh-red  {
 
 a.navigation_songs > i.bzh-nav, a.navigation_songs > i.bzh-nav::before  {
 	color: forestgreen;
-	font-size: 14px;
+	font-size: 0.8rem;
 }
 
 .navbar a.navigation_actual {
 	color: orangered;
 	font-weight: bold;
+	font-size: 0.75rem;
 }
 
 a.navigation_actual > i.bzh-nav, a.navigation_actual > i.bzh-nav::before, a.navigation_songs > i.red-icon, a.navigation_songs > i.red-icon::before {
 	color: orangered;
-	font-size: 14px;
+	font-size: 0.7rem;
 }
 
 .title_report {
@@ -78,7 +79,7 @@ h4.report, p.report {
 
 #nav-charts ul.nav-main li {
 	float: left;
-	font-size: 11px;
+	font-size: 0.7rem;
 	line-height: 2em;
 	list-style-type: none;
 	margin-right: 7px;
@@ -108,7 +109,7 @@ h4.report, p.report {
 }
 
 #span_view {
-	font-size: 12px;
+	font-size: 0.6rem;
 }
 
 div.contener-flex {
@@ -136,7 +137,7 @@ div.item-flex-2 {
 div.item-flex-3 {
 	text-align: right;
 	width: 33%;
-	font-size: 11px;
+	font-size: 0.7rem;
 }
 
 div.rand-left {
@@ -153,18 +154,18 @@ div.rand-flex-1 {
 	align-content: center;
 	text-align: center;
 	width: 25%;
-	font-size: 11px;
+	font-size: 0.7rem;
 }
 
 div.rand-flex-2 {
 	align-content: center;
 	text-align: center;
 	width: 60%;
-	font-size: 11px;
+	font-size: 0.7rem;
 }
 
 dl.tab_charts > dd {
-	font-size: 10px;
+	font-size: 0.6rem;
 	align-content: center;
 	text-align: center;
 }
@@ -180,7 +181,7 @@ select.midle {
 dl.dl-default {
 	text-align: center;
 	font-weight: bold;
-	font-size: 16px;
+	font-size: 1rem;
 }
 
 div.rated {
@@ -202,7 +203,7 @@ div.uploaders {
 	background-color: #D5ECE6;
 	color: #2A5CBC;
 	margin: 10px 0;
-	font-size: 11px;
+	font-size: 0.7rem;
 	padding: 5px 10px;
 	border-radius: 7px;
 }
@@ -266,7 +267,7 @@ img.thumbnail {
 }
 
 h2.charts {
-	margin: 0.5em 0;
+	margin: 0.7rem 0;
 }
 
 .user-navigation {
@@ -276,7 +277,7 @@ h2.charts {
 }
 
 dl.title_tab {
-	font-size: 11px;
+	font-size: 0.7rem;
 	font-weight: bold;
 	display: flex;
 	align-content: center;
@@ -307,7 +308,7 @@ ul.topiclist li.reported {
 }
 
 div.add-time {
-	font-size: 9px;
+	font-size: 0.55rem;
 	margin-top: 5px;
 	display: block;
 }
@@ -350,7 +351,7 @@ div.close {
 }
 
 span.song-title, a.song-title {
-	font-size: 11px;
+	font-size: 0.7rem;
 	font-weight: bold;
 	padding: 0 3px;
 }
@@ -361,7 +362,7 @@ a.report-button {
 
 span.position {
 	color: darkgreen;
-	font-size: 12px;
+	font-size: 0.7rem;
 }
 
 span.total {
@@ -389,7 +390,7 @@ dt.label {
 }
 
 .medium {
-	font-size: 11px;
+	font-size: 0.7rem;
 }
 
 .maxi {
@@ -613,7 +614,7 @@ span.quart {
     border-radius: 7px;
 	padding: 5px;
     overflow: hidden;
-	font-size: 10px;
+	font-size: 0.6rem;
 	text-align: center;
 }
 

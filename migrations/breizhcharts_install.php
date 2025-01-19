@@ -25,7 +25,7 @@ class breizhcharts_install extends migration
 	public function update_data()
 	{
 		return [
-			['config.add', ['breizhcharts_acp_page', 15]],
+			['config.add', ['breizhcharts_acp_page', 12]],
 			['config.add', ['breizhcharts_announce_enable', 0]],
 			['config.add', ['breizhcharts_check_1', 1]],
 			['config.add', ['breizhcharts_check_2', 1]],
@@ -47,7 +47,7 @@ class breizhcharts_install extends migration
 			['config.add', ['breizhcharts_start_time', 0]],
 			['config.add', ['breizhcharts_start_time_bis', 0]],
 			['config.add', ['breizhcharts_ups_points', 10]],
-			['config.add', ['breizhcharts_user_page', 15]],
+			['config.add', ['breizhcharts_user_page', 12]],
 			['config.add', ['breizhcharts_version', '1.0.0']],
 			['config.add', ['breizhcharts_voters_points', 100]],
 			['config.add', ['breizhcharts_winner_id', 0]],
