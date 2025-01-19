@@ -26,7 +26,6 @@ use phpbb\request\request;
 use phpbb\config\config;
 use phpbb\extension\manager as ext_manager;
 use phpbb\path_helper;
-use Symfony\Component\DependencyInjection\Container as phpbb_container;
 use phpbb\event\dispatcher_interface as phpbb_dispatcher;
 
 class charts
@@ -85,9 +84,6 @@ class charts
 	/** @var \phpbb\path_helper */
 	protected $path_helper;
 
-	/** @var \Symfony\Component\DependencyInjection\Container */
-	protected $phpbb_container;
-
 	/** @var \phpbb\event\dispatcher_interface */
 	protected $phpbb_dispatcher;
 
@@ -115,7 +111,7 @@ class charts
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, check $check, points $points, verify $verify, contact $contact, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_container $phpbb_container, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_result_table, $breizhcharts_voters_table)
+	public function __construct(work $work, check $check, points $points, verify $verify, contact $contact, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_result_table, $breizhcharts_voters_table)
 	{
 		$this->work = $work;
 		$this->check = $check;
@@ -135,7 +131,6 @@ class charts
 		$this->config = $config;
 		$this->ext_manager = $ext_manager;
 		$this->path_helper = $path_helper;
-		//$this->phpbb_container = $phpbb_container;
 		$this->phpbb_dispatcher = $phpbb_dispatcher;
 		$this->root_path = $root_path;
 		$this->php_ext = $php_ext;

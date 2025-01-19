@@ -138,7 +138,6 @@ services:
             - '@config'
             - '@ext.manager'
             - '@path_helper'
-            - '@service_container'
             - '@dispatcher'
             - '%core.root_path%'
             - '%core.php_ext%'
