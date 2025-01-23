@@ -490,6 +490,14 @@ div.video-div {
 	text-align: center;
 }
 
+.video-frame iframe {
+	--calc-width: calc(var(--video-width) * 1px);
+	aspect-ratio: var(--video-width, 16) / var(--video-height, 9);
+	max-width: var(--calc-width, 100%);
+	width: 100%;
+	height: auto;
+}
+
 :not(#defil-ext, #base_ul).topiclist.forums dl {
 	overflow: visible;
 	display: flex;

@@ -16,6 +16,7 @@ use phpbb\controller\helper;
 use phpbb\cache\service as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\config\config;
+use Symfony\Component\DependencyInjection\Container;
 
 class verify
 {
@@ -43,6 +44,9 @@ class verify
 	/** @var \phpbb\config\config */
 	protected $config;
 
+	/** @var \Symfony\Component\DependencyInjection\Container */
+	protected $phpbb_container;
+
 	/**
 	 * The database tables
 	 * @var string
@@ -54,7 +58,7 @@ class verify
 	/**
 	 * Constructor
 	 */
-	public function __construct(work $work, user $user, language $language, template $template, helper $helper, cache $cache, db $db, config $config, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
+	public function __construct(work $work, user $user, language $language, template $template, helper $helper, cache $cache, db $db, config $config, Container $phpbb_container, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
 	{
 		$this->work = $work;
 		$this->user = $user;
@@ -64,6 +68,7 @@ class verify
 		$this->cache = $cache;
 		$this->db = $db;
 		$this->config = $config;
+		$this->phpbb_container = $phpbb_container;
 		$this->breizhcharts_table = $breizhcharts_table;
 		$this->breizhcharts_cats_table = $breizhcharts_cats_table;
 		$this->breizhcharts_voters_table = $breizhcharts_voters_table;
@@ -367,50 +372,72 @@ class verify
 
 	public function get_random_songs($in_chart = false)
 	{
-		if ($in_chart && !$this->config['breizhcharts_random'])
+		if ($in_chart || (!$in_chart && $this->config['breizhcharts_random']))
 		{
-			return;
-		}
-
-		$i = 1;
-		$sql = $this->db->sql_build_query('SELECT', [
-			'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
-			'FROM'		=> [$this->breizhcharts_table => 'c'],
-			'LEFT_JOIN'	=> [
-				[
-					'FROM'	=> [USERS_TABLE => 'u'],
-					'ON'	=> 'u.user_id = c.poster_id',
+			$i = 0;
+			$sql = $this->db->sql_build_query('SELECT', [
+				'SELECT'	=> 'c.*, u.user_id, u.username, u.user_colour',
+				'FROM'		=> [$this->breizhcharts_table => 'c'],
+				'LEFT_JOIN'	=> [
+					[
+						'FROM'	=> [USERS_TABLE => 'u'],
+						'ON'	=> 'u.user_id = c.poster_id',
+					],
 				],
-			],
-			'WHERE'		=> 'c.reported = 0',
-			'ORDER_BY'	=> 'RAND()',
-		]);
-		$result = $this->db->sql_query_limit($sql, 2);
-		while ($row = $this->db->sql_fetchrow($result))
-		{
-			$this->template->assign_block_vars('randoms', [
-				'RAND_NB'			=> $i,
-				'RAND_SONG_ID'		=> $row['song_id'],
-				'RAND_NAME'			=> $row['song_name'],
-				'RAND_ARTIST'		=> $row['artist'],
-				'RAND_ALBUM'		=> $row['album'],
-				'RAND_YEAR'			=> $row['year'],
-				'RAND_CAT'			=> $this->work->get_cat_name($row['cat']),
-				'RAND_THUMBNAIL'	=> $this->work->get_youtube_img($row['video'], true),
-				'RAND_TITLE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
-				'RAND_VIEW'			=> $this->language->lang('BC_SONG_VIEW', (int) $row['song_view']),
-				'RAND_USERNAME'		=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
-				'TOTAL_RATE'		=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
-				'U_RAND_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_video', ['id' => (int) $row['song_id'], 'song_name' => $this->work->display_url($row['song_name'])]) . '#nav',
+				'WHERE'		=> 'c.reported = 0',
+				'ORDER_BY'	=> 'RAND()',
 			]);
-			$i++;
-		}
-		$this->db->sql_freeresult($result);
+			$result = $this->db->sql_query_limit($sql, 2);
+			while ($row = $this->db->sql_fetchrow($result))
+			{
+				$i++;
+				$this->template->assign_block_vars('randoms', [
+					'RAND_NB'			=> $i,
+					'RAND_SONG_ID'		=> $row['song_id'],
+					'RAND_NAME'			=> $row['song_name'],
+					'RAND_ARTIST'		=> $row['artist'],
+					'RAND_ALBUM'		=> $row['album'],
+					'RAND_YEAR'			=> $row['year'],
+					'RAND_CAT'			=> $this->work->get_cat_name($row['cat']),
+					'RAND_THUMBNAIL'	=> $this->work->get_youtube_img($row['video'], true),
+					'RAND_TITLE' 		=> $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']),
+					'RAND_VIEW'			=> $this->language->lang('BC_SONG_VIEW', (int) $row['song_view']),
+					'RAND_USERNAME'		=> $this->work->get_username_song($row['user_id'], $row['username'], $row['user_colour']),
+					'TOTAL_RATE'		=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($row['song_note'], 2)),
+					'U_RAND_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_video', ['id' => (int) $row['song_id'], 'song_name' => $this->work->display_url($row['song_name'])]) . '#nav',
+				]);
+			}
+			$this->db->sql_freeresult($result);
 
-		$this->template->assign_vars([
-			'S_RANDOM_SONG'		=> $i > 1,
-			'RANDOM_INDEX'		=> $this->config['breizhcharts_random_index'],
-		]);
+			if (!$in_chart)
+			{
+				$this->collapse_random();
+			}
+			$this->template->assign_vars([
+				'S_RANDOM_SONG'		=> $i > 1,
+				'RANDOM_INDEX'		=> $this->config['breizhcharts_random_index'],
+			]);
+		}
+	}
+
+	/**
+	 * Add the extension collapsiblecategories in flags list
+	 * @return void
+	 * @access private
+	 */
+	private function collapse_random()
+	{
+		if ($this->phpbb_container->has('phpbb.collapsiblecategories.listener'))
+		{
+			/** @type \phpbb\collapsiblecategories\operator\operator $operator */
+			$operator = $this->phpbb_container->get('phpbb.collapsiblecategories.operator');
+
+			$this->template->assign_vars([
+				'S_COLLAPSE'				=> true,
+				'S_BREIZCHARTS_HIDDEN'		=> $operator->is_collapsed('breizhcharts_index'),
+				'U_BREIZCHARTS_COLLAPSE'	=> $operator->get_collapsible_link('breizhcharts_index'),
+			]);
+		}
 	}
 
 	public function session_mobile()

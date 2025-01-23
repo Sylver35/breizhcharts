@@ -8,6 +8,11 @@
 					</dt>
 					<dd class="lastpost"></dd>
 				</dl>
+				{% if S_COLLAPSE %}
+				{% set S_CC_FORUM_HIDDEN = S_BREIZCHARTS_HIDDEN %}
+				{% set U_CC_COLLAPSE_URL = U_BREIZCHARTS_COLLAPSE %}
+				{% include '@phpbb_collapsiblecategories/collapsible_categories_button.html' %}
+				{% endif %}
 			</li>
 		</ul>
 

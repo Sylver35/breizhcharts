@@ -1,7 +1,7 @@
 /**
  * @author		Sylver35 <webmaster@breizhcode.com>
  * @package		Breizh Charts Extension
- * @copyright	(c) 2021-2024 Sylver35  https://breizhcode.com
+ * @copyright	(c) 2021-2025 country_list Sylver35  https://breizhcode.com
  * @license		http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  */
 
@@ -16,7 +16,48 @@
 	$('a.username-coloured').each(function(){
 		$(this).prop('href', $(this).attr('href')+'#nav');
 	});
+/*
+	breizhcharts.voteMusic = async function(id, rate, sort){
+		var $content = $('#bzh_result-'+id).html(),$ids = $('#list_ids').val();
+		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');
+		if(sort == false){
+			$('#result-div').show().html('<span class="error-div">'+bcConfig.errorVote+'</span>');
+			setTimeout(breizhcharts.clearMessage,4000);
+			return;
+		}
+		try{
+			const response = await $.ajax({
+				url: bcConfig.voteUrl,
+				method: 'POST',
+				dataType: 'json',
+				data: {'id='+id+'&rate='+rate+'&ids='+$ids}
+			});
+			handleSuccess(response);
+		}catch(error){
+			handleError(error);
+		}
+	};
 
+	function handleSuccess(result) {
+		if(result.sort === 1){
+			var aTitle = result.userVote.replace('<span>','').replace('</span>','');
+			$('#rating-'+id).css('width',result.newResult).removeClass('current-not-rating').addClass('current-rating') ;
+			$('#stars-'+id+' a').each(function(){
+				$(this).attr({'onclick': '', 'title': aTitle}).prop('onclick', null);
+			});
+			$('#bzh_result-'+id).html(result.totalRate+'<br>'+result.songRated+'<br><div class="rated"></div>'+result.userVote);
+			$('#result-div').show().html('<span class="succes-div">'+result.message+'</span>');
+		}else{
+			$('#bzh_result-'+id).html($content);
+			$('#result-div').show().html('<span class="error-div">'+result.message+'</span>');
+		}
+		setTimeout(breizhcharts.clearMessage,3500);
+	}
+
+	function handleError(error) {
+		$('#bzh_result-'+id).html($content);
+	}
+*/
 	breizhcharts.voteMusic = function(id, rate, sort){
 		var $content = $('#bzh_result-'+id).html(),$ids = $('#list_ids').val();
 		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');

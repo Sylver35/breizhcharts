@@ -135,8 +135,8 @@ class ajax
 			// Good ! Send the response to the browser now
 			$json_response->send([
 				'sort'		=> 1,
-				'id'		=> $id,
-				'total'		=> $data['total'],
+				'id'		=> (int) $id,
+				'total'		=> (int) $data['total'],
 				'newResult'	=> number_format($data['new_note'] * 10, 2) . '%',
 				'totalRate'	=> $this->language->lang('BC_AJAX_NOTE_TOTAL', number_format($data['new_note'], 2)),
 				'songRated'	=> $this->language->lang('BC_AJAX_NOTE_NB', $data['new_nb']),
@@ -167,19 +167,19 @@ class ajax
 
 		// Create array for the voting
 		$sql_ary = [
-			'vote_user_id'	=> $this->user->data['user_id'],
-			'vote_song_id'	=> $id,
-			'vote_rate'		=> $rate,
+			'vote_user_id'	=> (int) $this->user->data['user_id'],
+			'vote_song_id'	=> (int) $id,
+			'vote_rate'		=> (int) $rate,
 		];
 		$this->db->sql_query('INSERT INTO ' . $this->breizhcharts_voters_table . $this->db->sql_build_array('INSERT', $sql_ary));
 
 		// Update the breizhcharts table
 		$total = (isset($row['total'])) ? (int) $row['total'] : 0;
-		$new_nb = (int) $row['nb_note'] + 1;
+		$new_nb = $row['nb_note'] + 1;
 		$new_note = ($total + $rate) / $new_nb;
 		$data = [
 			'song_note'	=> (float) $new_note,
-			'nb_note'	=> $new_nb,
+			'nb_note'	=> (int) $new_nb,
 		];
 		$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data) . ' WHERE song_id = ' . (int) $id);
 		// Refresh the cache positions

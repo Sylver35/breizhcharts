@@ -274,6 +274,11 @@ class breizhcharts
 		$this->handle('add_video');
 	}
 
+	public function handle_video($id, $song_name)
+	{
+		$this->handle('video', 0, $id, 0, 0, 0, '', $song_name);
+	}
+
 	public function handle_edit($id, $start, $cat)
 	{
 		$this->handle('edit', 0, $id, 0, $start, $cat, '', '');
@@ -283,11 +288,6 @@ class breizhcharts
 	{
 		$result_id = $this->request->variable('result_id', 0);
 		$this->handle('result', 0, 0, $result_id);
-	}
-
-	public function handle_video($id, $song_name)
-	{
-		$this->handle('video', 0, $id, 0, 0, 0, '', $song_name);
 	}
 
 	public function display_popup($id)
@@ -313,7 +313,7 @@ class breizhcharts
 		return $this->helper->render('breizhcharts_video_popup.html', $this->language->lang('BC_CHARTS') . ' - ' . $this->language->lang('BC_FROM_OF', $row['song_name'], $row['artist']));
 	}
 
-	public function add_video($data)
+	private function add_video($data)
 	{
 		if (!$this->auth->acl_gets(['u_breizhcharts_add', 'a_breizhcharts_manage', 'm_breizhcharts_manage']))
 		{
@@ -419,7 +419,7 @@ class breizhcharts
 		trigger_error($return['message']);
 	}
 
-	public function edit_song($data)
+	private function edit_song($data)
 	{
 		if (!$this->auth->acl_get('u_breizhcharts_edit') && !$data['moderate'])
 		{

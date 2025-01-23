@@ -236,9 +236,8 @@ class result
 
 	private function reset_all_notes()
 	{
-		$i = 1;
-		$last_nb = 0;
 		$time = time();
+		$last_nb = $i = 0;
 		$sql_insert = $winner = [];
 
 		$sql = 'SELECT MAX(result_nb) AS old_result
@@ -258,6 +257,7 @@ class result
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			// reset the note and update the position
+			$i++;
 			$sql_ary = [
 				'song_note'	=> 0,
 				'nb_note'	=> 0,
@@ -266,19 +266,13 @@ class result
 			];
 
 			// create insert of 10 bests
-			if (($i < 11) && ($row['nb_note'] > 0))
-			{
-				$sql_insert[] = $this->create_insert($row, $time, $new_result, $i);
-			}
+			$sql_insert[] = (($i < 11) && ($row['nb_note'] > 0)) ? $this->create_insert($row, $time, $new_result, $i) : false;
+
 			// create insert of winner
-			if ($i == 1)
-			{
-				$winner = $this->create_winner($row);
-			}
+			$winner = ((int) $i === 1) ? $this->create_winner($row) : false;
 
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . (int) $row['song_id']);
 			$last_nb = $new_result;
-			$i++;
 		}
 		$this->db->sql_freeresult($result);
 

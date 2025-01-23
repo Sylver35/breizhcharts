@@ -153,13 +153,13 @@ class main_listener implements EventSubscriberInterface
 			$this->template->assign_vars([
 				'S_CHARTS_EXIST'	=> true,
 				'U_BC_CHARTS'		=> $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => 0]),
-				'NEW_SONG'			=> $this->user->data['is_registered'] && ($this->user->data['breizhchart_last'] < $this->config['breizhcharts_last_song']),
+				'NEW_SONG'			=> (bool) ($this->user->data['is_registered'] && ($this->user->data['breizhchart_last'] < $this->config['breizhcharts_last_song'])),
 			]);
 		}
 
 		if ($this->config['breizhcharts_period_activ'] && $this->config['breizhcharts_start_time'])
 		{
-			if (time() - $this->config['breizhcharts_start_time'] > $this->config['breizhcharts_period'])
+			if ((time() - $this->config['breizhcharts_start_time']) > $this->config['breizhcharts_period'])
 			{
 				$this->result->run_vote_charts_period();
 			}

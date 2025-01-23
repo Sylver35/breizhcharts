@@ -199,6 +199,7 @@ services:
             - '@cache'
             - '@dbal.conn'
             - '@config'
+            - '@service_container'
             - '%sylver35.breizhcharts.table.breizhcharts%'
             - '%sylver35.breizhcharts.table.breizhcharts_cats%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
