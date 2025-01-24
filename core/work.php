@@ -220,7 +220,7 @@ class work
 
 	public function display_url($value)
 	{
-		return str_replace([' ', '&nbsp;', '?', "'"], ['_', '_', '', '’'], $value);
+		return str_replace([' ', '&nbsp;', '?', "'", '|', '/', '\\'], ['_', '_', '', '’', '', '', ''], $value);
 	}
 
 	public function get_all_wins($result_id)

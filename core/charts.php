@@ -202,10 +202,10 @@ class charts
 		while ($row = $this->db->sql_fetchrow($result))
 		{
 			$is_user = (int) $row['poster_id'] === (int) $this->user->data['user_id'];
-			$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $data['moderate']);
-			$can_delete = ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
+			$can_edit = (bool) ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $data['moderate']);
+			$can_delete = (bool) ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
+			$can_vote = (bool) ($data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote'));
 			$title_cat = $data['cat'] ? ' - ' . $row['cat_name'] : '';
-			$can_vote = $data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote');
 
 			$this->template->assign_block_vars('charts', [
 				'POSITION'			=> $position[$row['song_id']]['position'],
@@ -230,6 +230,7 @@ class charts
 				'ADDED_TIME'		=> $this->language->lang('BC_ADDED_TIME', $this->user->format_date($row['add_time'])),
 				'TITLE_SONG_VIEW'	=> $this->language->lang('BC_SONG_VIEW_SHORT', (int) $row['song_view']),
 				'S_REPORT'			=> $this->auth->acl_get('u_breizhcharts_report'),
+				'S_CAN_VOTE'		=> $can_vote,
 				'S_REPORTED'		=> $row['reported'],
 				'U_REPORTED'		=> ($row['reported'] && $can_edit) ? $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) : '',
 				'U_TOPIC_VIDEO'		=> $row['topic_id'] ? append_sid("{$this->root_path}viewtopic.{$this->php_ext}", 't=' . $row['topic_id']) : '',
@@ -408,6 +409,7 @@ class charts
 			'U_EDIT_SONG'		=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) : '',
 			'S_REPORT'			=> !$poster && $can_report,
 			'S_VIEW_REPORT'		=> $poster || $data['moderate'],
+			'S_CAN_VOTE'		=> $can_vote,
 			'S_REPORTED'		=> $row['reported'],
 		]);
 

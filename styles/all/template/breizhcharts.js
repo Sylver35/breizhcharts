@@ -63,6 +63,7 @@
 		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');
 		if(sort == false){
 			$('#result-div').show().html('<span class="error-div">'+bcConfig.errorVote+'</span>');
+			setTimeout(breizhcharts.clearVote(id, $content),4000);
 			setTimeout(breizhcharts.clearMessage,4000);
 			return;
 		}
@@ -92,6 +93,10 @@
 			}
 		});
 	};
+
+	breizhcharts.clearVote = function(id, $content){
+		$('#bzh_result-'+id).html($content);
+	}
 
 	breizhcharts.clearMessage = function(){
 		$('#result-div').hide();
