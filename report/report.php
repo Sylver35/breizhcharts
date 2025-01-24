@@ -248,6 +248,11 @@ class report
 		$result = $this->db->sql_query($sql);
 		$row = $this->db->sql_fetchrow($result);
 
+		if (!$row)
+		{
+			throw new http_exception(403, 'BC_REPORT_NO_REPORT');
+		}
+
 		if (((int) $row['user_id'] !== (int) $this->user->data['user_id']) && !$this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']))
 		{
 			throw new http_exception(403, 'NOT_AUTHORISED');

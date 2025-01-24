@@ -254,6 +254,7 @@ $lang = array_merge($lang, [
 	'BC_REPORT_ACTIONS'				=> 'Actions à entreprendre pour résoudre ce rapport',
 	'BC_REPORT_EDIT_CLOSE'			=> 'Refermer le panneau',
 	'BC_REPORT_INFORM'				=> 'Informer l’utilisateur %1$s',
+	'BC_REPORT_NO_REPORT'			=> 'Cette vidéo n’a pas de rapport ouvert',
 	'BC_REPORT_CLOSE'				=> 'Fermer le rapport',
 	'BC_REPORT_CLOSE_END'			=> 'Le rapport demandé est définitivement fermé',
 	'BC_REPORT_CLOSE_CONTACT'		=> 'Fermer le rapport et informer les utilisateurs',
