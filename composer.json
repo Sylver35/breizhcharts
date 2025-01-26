@@ -33,7 +33,7 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
-        "composer/installers": "~2.2.0",
+        "composer/installers": "2.2.0",
     },
     "require-dev": {
         "phing/phing": "~2.4"
