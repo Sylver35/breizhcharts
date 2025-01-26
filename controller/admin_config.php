@@ -13,12 +13,12 @@ use sylver35\breizhcharts\core\points;
 use phpbb\template\template;
 use phpbb\language\language;
 use phpbb\user;
+use phpbb\controller\helper;
 use phpbb\cache\service as cache;
 use phpbb\db\driver\driver_interface as db;
 use phpbb\log\log;
 use phpbb\request\request;
 use phpbb\config\config;
-use phpbb\controller\helper;
 
 class admin_config
 {
@@ -33,6 +33,9 @@ class admin_config
 
 	/** @var \phpbb\user */
 	protected $user;
+
+	/* @var \phpbb\controller\helper */
+	protected $helper;
 
 	/** @var \phpbb\cache\service */
 	protected $cache;	
@@ -49,27 +52,24 @@ class admin_config
 	/** @var \phpbb\config\config */
 	protected $config;
 
-	/* @var \phpbb\controller\helper */
-	protected $helper;
-
 	/** @var string Custom form action */
 	protected $u_action;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(points $points, template $template, language $language, user $user, cache $cache, db $db, log $log, request $request, config $config, helper $helper)
+	public function __construct(points $points, template $template, language $language, user $user, helper $helper, cache $cache, db $db, log $log, request $request, config $config)
 	{
 		$this->points = $points;
 		$this->template = $template;
 		$this->language = $language;
 		$this->user = $user;
+		$this->helper = $helper;
 		$this->cache = $cache;
 		$this->db = $db;
 		$this->log = $log;
 		$this->request = $request;
 		$this->config = $config;
-		$this->helper = $helper;
 	}
 
 	public function acp_breizhcharts_config()
@@ -126,7 +126,7 @@ class admin_config
 			'FORMAT_START_TIME'				=> $this->config['breizhcharts_start_time_bis'],
 			'CHART_PERIOD'					=> $this->period_select($this->config['breizhcharts_period'] / $this->config['breizhcharts_period_val']),
 			'CHART_PERIOD_VAL'				=> $this->config['breizhcharts_period_val'],
-			'CHART_NEXT_RESET'				=>($this->config['breizhcharts_start_time']) ?  $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE')) : 0,
+			'CHART_NEXT_RESET'				=> ($this->config['breizhcharts_start_time']) ?  $this->user->format_date($this->config['breizhcharts_start_time'] + $this->config['breizhcharts_period'], $this->language->lang('BC_DATE')) : 0,
 			'CHART_CHECK_TIME'				=> $this->days_select($this->config['breizhcharts_check_time']),
 			'CHART_CHECK_1'					=> $this->config['breizhcharts_check_1'],
 			'CHART_CHECK_2'					=> $this->config['breizhcharts_check_2'],

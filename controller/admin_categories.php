@@ -33,7 +33,7 @@ class admin_categories
 	protected $user;
 
 	/* @var \phpbb\controller\helper */
-	protected $helper;	
+	protected $helper;
 
 	/** @var \phpbb\db\driver\driver_interface */
 	protected $db;
