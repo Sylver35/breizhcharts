@@ -4,7 +4,7 @@
     "description": "vous pouvez proposer à vos utilisateurs un hit parade de musique, qu’ils peuvent créer eux-mêmes. les utilisateurs  peuvent ajouter de nouvelles chansons, qui participeront ensuite à l'élection. Vous pouvez définir une période d’élection ou non, où les utilisateurs peuvent ensuite voter une fois pour chaque musique. De cette façon, vous recevrez un tableau dynamique..",
     "homepage": "https://breizhcode.com",
     "version": "1.4.0",
-    "time": "2025-01-24",
+    "time": "2025-01-26",
     "keywords": ["phpbb", "extension", "breizh", "music", "song", "charts"],
     "license": "GPL-2.0-only",
     "authors": [
@@ -12,6 +12,11 @@
             "name": "Sylver35",
             "homepage": "https://breizhcode.com",
             "email": "webmaster@breizhcode.com",
+            "role": "Extension Developer"
+        },
+        {
+            "name": "cabot",
+            "homepage": "https://cabotweb.fr/",
             "role": "Extension Developer"
         },
         {
@@ -29,7 +34,6 @@
         "php": ">=7.2",
         "ext-json": "*",
         "composer/installers": "~2.2.0",
-        "phpbb/phpbb": ">=3.3.8"
     },
     "require-dev": {
         "phing/phing": "~2.4"
@@ -42,7 +46,7 @@
     "extra": {
         "display-name": "Breizh charts",
         "soft-require": {
-            "phpbb/phpbb": ">=3.3.8"
+            "phpbb/phpbb": ">=3.3.8,<4.0.0@dev"
         },
         "version-check": {
             "host": "breizhversions.com",
