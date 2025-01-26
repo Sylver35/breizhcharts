@@ -56,24 +56,25 @@
 			<dd><select id="breizhcharts_check_time" name="breizhcharts_check_time">{{ CHART_CHECK_TIME }}</select>&nbsp;&nbsp;{{ lang('BC_CHOICE_DAYS') }}</dd>
 		</dl>
 		<dl>
-			<dt><label for="breizhcharts_start_time">{{ lang('BC_STARTING_TIME') }}{{ lang('COLON') }}</label><br>{{ lang('BC_STARTING_TIME_EXPLAIN') }}</dt>
-			<dd>
-				<input class="post" type="hidden" maxlength="255" size="15" name="breizhcharts_start_time" id="breizhcharts_start_time" value="{{ CHART_START_TIME }}"><br>
-				<input class="post" type="text" maxlength="255" size="18" name="breizhcharts_start_time_bis" id="breizhcharts_start_time_bis" value="{{ FORMAT_START_TIME }}">&nbsp;<input type="reset" id="button_time" value="{{ lang('BC_CALENDAR') }}"><br><br>
-				<strong>{{ CHART_START_TIME_READABLE }}</strong>
-			</dd>
-		</dl>
-		<dl>
 			<dt><label for="breizhcharts_period">{{ lang('BC_PERIOD') }}{{ lang('COLON') }}</label><br>{{ lang('BC_PERIOD_EXPLAIN') }}</dt>
 			<dd>
 				<select id="breizhcharts_period" name="breizhcharts_period">{{ CHART_PERIOD }}</select>&nbsp;&nbsp;
-				<select name="breizhcharts_period_val"><option value="604800"{% if CHART_PERIOD_VAL eq '604800' %} selected=""{% endif %}>{{ lang('BC_CHOICE_WEEKS') }}</option><option value="86400"{% if CHART_PERIOD_VAL eq '86400' %} selected=""{% endif %}>{{ lang('BC_CHOICE_DAYS') }}</option></select>
+				<select id="breizhcharts_period_val" name="breizhcharts_period_val"><option value="604800"{% if CHART_PERIOD_VAL eq '604800' %} selected="selected"{% endif %}>{{ lang('BC_CHOICE_WEEKS') }}</option><option value="86400"{% if CHART_PERIOD_VAL eq '86400' %} selected="selected"{% endif %}>{{ lang('BC_CHOICE_DAYS') }}</option></select>
 				<br><strong>{{ CHART_PERIOD_READABLE }}</strong>
 			</dd>
 		</dl>
 		<dl>
+			<dt><label for="breizhcharts_start_time">{{ lang('BC_STARTING_TIME') }}{{ lang('COLON') }}</label><br>{{ lang('BC_STARTING_TIME_EXPLAIN') }}</dt>
+			<dd>
+				<input class="post" type="hidden" maxlength="255" size="15" name="breizhcharts_start_time" id="breizhcharts_start_time" value="{{ CHART_START_TIME }}"><br>
+				<input class="post" type="text" maxlength="255" size="18" name="breizhcharts_start_time_bis" id="breizhcharts_start_time_bis" onChange="breizhcharts.changeValue(this.value);" value="{{ FORMAT_START_TIME }}">&nbsp;<input type="reset" id="button_time" value="{{ lang('BC_CALENDAR') }}"><br><br>
+				<strong><span id="day_start">{{ CHART_START_TIME_READABLE }}</span></strong>
+			</dd>
+		</dl>
+		
+		<dl>
 			<dt><label for="">{{ lang('BC_NEXT_RESET') }}{{ lang('COLON') }}</label><br>{{ lang('BC_NEXT_RESET_EXPLAIN') }}</dt>
-			<dd><br><br><strong>{{ CHART_NEXT_RESET }}</strong></dd>
+			<dd><br><br><strong><span id="day_finish">{{ CHART_NEXT_RESET }}</span></strong></dd>
 		</dl>
 	</fieldset>
 

@@ -105,3 +105,7 @@ sylver35_breizhcharts_tools:
 sylver35_breizhcharts_ajax_cats:
     path: /breizhcharts/ajax
     defaults: { _controller: sylver35.breizhcharts.admin.categories:ajax_cats  }
+
+sylver35_breizhcharts_change_period:
+    path: /breizhcharts/change_period
+    defaults: { _controller: sylver35.breizhcharts.admin.config:change_period  }

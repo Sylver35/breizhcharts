@@ -8,7 +8,6 @@
 
 namespace sylver35\breizhcharts\controller;
 
-use phpbb\json_response;
 use phpbb\exception\http_exception;
 use sylver35\breizhcharts\core\charts;
 use sylver35\breizhcharts\core\work;

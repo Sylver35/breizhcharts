@@ -35,6 +35,7 @@ services:
             - '@log'
             - '@request'
             - '@config'
+            - '@controller.helper'
 
     sylver35.breizhcharts.admin.categories:
         class: sylver35\breizhcharts\controller\admin_categories

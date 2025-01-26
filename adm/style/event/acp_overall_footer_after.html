@@ -1,15 +1,13 @@
 
-{% if S_BREIZHCHARTS_CONFIG %}
-<script>
-	var calendarLanguage = '{{ USER_LANG }}';
-</script>
+{% if S_BREIZHCHARTS_CONFIG or S_BREIZHCHARTS_EDIT or S_MANAGE_CATS %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/calendar.js' %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/language.js' %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/calendar-setup.js' %}
 {% INCLUDEJS '@sylver35_breizhcharts/calendar/config.js' %}
-{% elseif S_BREIZHCHARTS_EDIT or S_MANAGE_CATS %}
 <script>
+var calendarLanguage = '{{ USER_LANG }}';
 var breizhcharts = {
+	changeUrl: '{{ U_CHANGE_PERIOD }}',
 	checkSong: '{{ U_CHECK_SONG }}',
 	checkUrl: '{{ U_CHECK_VIDEO }}',
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="loader">',
@@ -27,7 +25,25 @@ var breizhcharts = {
 (function($){  // Avoid conflicts with other libraries
 	'use strict';
 
-{% if S_BREIZHCHARTS_EDIT %}
+{% if S_BREIZHCHARTS_CONFIG %}
+	breizhcharts.changeValue = function(value){
+		var $data = 'value='+value+'&period='+$('#breizhcharts_period').val()+'&period_val='+$('#breizhcharts_period_val').val();
+		$.ajax({
+			type: 'POST',
+			dataType: 'json',
+			url: breizhcharts.changeUrl,
+			data: $data,
+			cache: false,
+			success: function(result){
+				$('#breizhcharts_start_time').val(result.breizhcharts_start_time);
+				$('#breizhcharts_start_time_bis').val(result.breizhcharts_start_time_bis);
+				$('#day_start').html(result.day_start);
+				$('#day_finish').html(result.day_finish);
+			}
+		});
+	}
+
+{% elseif S_BREIZHCHARTS_EDIT %}
 	breizhcharts.checkSongArtist = function(){
 		var songName = $('#song_name').val(), artist = $('#artist').val();
 		if(songName === '' || artist === ''){
