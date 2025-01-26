@@ -46,7 +46,7 @@
     "extra": {
         "display-name": "Breizh charts",
         "soft-require": {
-            "phpbb/phpbb": ">=3.3.8,<4.0.0@dev"
+            "phpbb/phpbb": ">=3.3.0@dev,<3.4.0@dev"
         },
         "version-check": {
             "host": "breizhversions.com",
