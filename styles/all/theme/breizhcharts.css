@@ -608,6 +608,21 @@ span.quart {
 	background-position: 0 -10px;
 }
 
+/* Trends
+---------------------------------------------------------------------------- */
+.bzh-trend {
+	--trend-size: 18px;
+	background: var(--trend-image, none) no-repeat 0 0 / contain;
+	display: inline-flex;
+	width: var(--trend-size);
+	height: var(--trend-size);
+}
+
+.trend-new		{ --trend-image: url("./images/trend-new.svg"); }
+.trend-equal	{ --trend-image: url("./images/trend-equal.svg"); }
+.trend-up		{ --trend-image: url("./images/trend-up.svg"); }
+.trend-down		{ --trend-image: url("./images/trend-down.svg"); }
+
 /* Divs for result vote */
 #result-div {
 	top: 100px;

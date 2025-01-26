@@ -179,26 +179,26 @@ class work
 	{
 		if ($last_pos === 0)
 		{
-			$img = 'new.png';
 			$title = 'BC_NEW_PLACED';
+			$class = 'trend-new';
 		}
 		else if ($last_pos === $pos)
 		{
-			$img = 'equal.png';
 			$title = 'BC_POSITION_EQUAL';
+			$class = 'trend-equal';
 		}
 		else if ($pos < $last_pos)
 		{
-			$img = 'up.png';
 			$title = 'BC_POSITION_UP';
+			$class = 'trend-up';
 		}
 		else
 		{
-			$img = 'down.png';
 			$title = 'BC_POSITION_DOWN';
+			$class = 'trend-down';
 		}
 
-		return '<img src="' . $this->ext_path_web . 'images/' . $img . '" alt="' . $img . '" title="' . $this->language->lang($title, $pos) . '">';
+		return '<span class="bzh-trend ' . $class . '" title="' . $this->language->lang($title, $pos) . '"><span class="sr-only">' . $this->language->lang($title, $pos) . '</span></span>';
 	}
 
 	public function stars_vote($song_id, $song_note, $user_vote, $can_vote)
@@ -220,7 +220,7 @@ class work
 
 	public function display_url($value)
 	{
-		return str_replace([' ', '&nbsp;', '?', "'", '|', '/', '\\'], ['_', '_', '', '’', '', '', ''], $value);
+		return str_replace([' ', '&nbsp;', '?', "'", '|', '/', '\\'], ['_', '_', '', '’', '', '-', ''], $value);
 	}
 
 	public function get_all_wins($result_id)
