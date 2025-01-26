@@ -260,7 +260,6 @@ class report
 
 		if (!$row['reported'])
 		{
-			
 			$redirect_url = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? $this->helper->route('sylver35_breizhcharts_list_report') : $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'own', 'cat' => 0]);
 			$return_msg = $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']) ? 'BC_REPORT_BACKLINK' : 'BC_REPORT_BACKLINK_OWN';
 			meta_refresh(3, $redirect_url);
@@ -304,7 +303,7 @@ class report
 			'U_CHECK_VIDEO'		=> $this->helper->route('sylver35_breizhcharts_check_video', ['check' => 1, 'song_id' => $row['song_id']]),
 			'S_POST_ACTION'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=validate',
 			'S_POST_MESSAGE'	=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=send_pm',
-			'S_POST_CLOSE'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=close_report&amp;song=' . $row['song_name'] . '&amp;artist=' . $row['artist'] . '&amp;reason=' . $row['reason_title'] . '&amp;poster_id=' . $row['user_id'] . '&amp;report_id=' . $row['id'],
+			'S_POST_CLOSE'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]) . '?action=close_report&amp;song=' . $row['song_name'] . '&amp;artist=' . $row['artist'] . '&amp;reason=' . $row['reason'] . '&amp;poster_id=' . $row['user_id'] . '&amp;report_id=' . $row['id'],
 		]);
 		$this->db->sql_freeresult($result);
 
