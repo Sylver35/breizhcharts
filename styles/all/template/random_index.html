@@ -15,23 +15,9 @@
 				{% endif %}
 			</li>
 		</ul>
-
 		<ul class="topiclist forums">
-			<li class="row bg1 row-random">
-				{% for random in randoms %}
-				<div class="contener-flex rand-{% if random.RAND_NB is odd %}left{% else %}right{% endif %}">
-					<div class="rand-flex-1">
-						<a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}"><img src="{{ random.RAND_THUMBNAIL }}" alt="{{ random.RAND_TITLE }}" class="thumbnail"></a>
-					</div>
-					<div class="rand-flex-2">
-						<span class="song-title"><a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}">{{ random.RAND_TITLE }}</a></span><br>
-						{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} {{ random.RAND_CAT }}<br>
-						{{ lang('BC_ADDED_BY') }}{{ lang('COLON') }} {{ random.RAND_USERNAME }}<br>
-						<span class="total_rate">{{ random.TOTAL_RATE }}</span><br>
-						{{ random.RAND_VIEW }}
-					</div>
-				</div>
-				{% endfor %}
+			<li class="row bg1">
+				{% include 'random_block.html' %}
 			</li>
 		</ul>
 	</div>

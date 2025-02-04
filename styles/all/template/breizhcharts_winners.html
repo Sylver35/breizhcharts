@@ -21,49 +21,41 @@
 				</dl>
 			</li>
 		</ul>
-
-		<ul class="topiclist forums medium allmax">
-			<li class="row bg3">
-				<dl class="title_tab">
-					<dt class="fantom"></dt>
-					<dd class="width-7">{{ lang('BC_RANK') }}</dd>
-					<dd class="width-50">{{ lang('BC_SONG_TITLE') }}</dd>
-					<dd class="width-10">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd class="width-10">{{ lang('BC_USER') }}</dd>
-					<dd class="width-15">{{ lang('BC_LAST_POS') }}</dd>
+		<ul class="topiclist forums d-table">
+			<li class="bg3 d-tableheading">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablehead">{{ lang('BC_RANK') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_TITLE') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_VIDEO') }}</div>
+					<div class="d-tablehead">{{ lang('BC_USER') }}</div>
+					<div class="d-tablehead">{{ lang('BC_LAST_POS') }}</div>
 					{% if S_UPS %}
-					<dd class="width-7">{{ lang('BC_WON') }}</dd>
+					<div class="d-tablehead">{{ lang('BC_WON') }}</div>
 					{% endif %}
-				</dl>
+				</div>
 			</li>
-			{% if winners|length %}
-			{% for winner in winners %}
-			<li class="row {% if winner.NB is even %}bg2{% else %}bg1{% endif %}">
-				<dl class="content_tab tab_charts">
-					<dt class="fantom"></dt>
-					<dd class="width-7">
-						<div class="video-div">
-							{% if winner.NB > 3 %}
-							<a href="#" title="{{ winner.RANK }}" class="button button-icon-only"><span class="song-title position">{{ winner.RANK }}</span></a>
-							{% else %}
-							{{ winner.RANK }}
-							{% endif %}
-						</div>
-					</dd>
-					<dd class="width-50">
-						<div class="video-div">
-							<span class="song-title"><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a> {{ lang('BC_FROM') }} {{ winner.ARTIST }}</span>
-						</div>
-					</dd>
-					<dd class="width-10">
-						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ winner.VIDEO }}">
-							<img src="{{ winner.THUMBNAIL }}" alt="{{ winner.SONG }}" height="45px">
+			{% for winner in winners if winners %}
+			<li class="row d-tablebody {% if winner.S_ROW_COUNT is even %}bg2{% else %}bg1{% endif %}">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablecell font-larger text-bold">
+						{% if winner.NB > 3 %}
+						<span class="rank-text">{{ winner.RANK }}</span>
+						{% else %}
+						<i class="fa fa-trophy fa-fw fa-bounce rank-icon rank-{{ winner.NB }}"><span class="rank-text">{{ winner.NB }}</span></i>
+						{% endif %}
+					</div>
+					<div class="d-tablecell">
+						<span class="font-bold font-larger"><a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,430); return false;" title="{{ winner.VIDEO }}">{{ winner.SONG }}</a> {{ lang('BC_FROM') }} {{ winner.ARTIST }}</span>
+					</div>
+					<div class="d-tablecell">
+						<a href="{{ winner.U_SHOW_VIDEO }}" onclick="popup(this.href,700,430); return false;" title="{{ winner.VIDEO }}">
+							<img src="{{ winner.THUMBNAIL }}" alt="{{ winner.SONG }}" width="80" height="60" class="bzh-thumbnail">
 						</a>
-					</dd>
-					<dd class="width-10">
+					</div>
+					<div class="d-tablecell">
 						{{ winner.USER }}
-					</dd>
-					<dd class="width-15">
+					</div>
+					<div class="d-tablecell">
 						<div class="song-nforate">
 							<div class="bzh-inline-rating">
 								<ul class="bzh-star-rating">
@@ -86,26 +78,21 @@
 							</div>
 							<div class="bzh-clr"></div>
 						</div>
-					</dd>
+					</div>
 					{% if S_UPS %}
-					<dd class="width-7">
+					<div class="d-tablecell">
 						<div class="winnners">
 							{{ winner.WIN }}
 						</div>
-					</dd>
+					</div>
 					{% endif %}
-				</dl>
+				</div>
+			</li>
+			{% else %}
+			<li class="bg2 d-tablecaption caption-bottom">
+				<div class="no-result">{{ lang('BC_NO_VOTES') }}</div>
 			</li>
 			{% endfor %}
-			{% else %}
-			<li class="row">
-				<dl class="dl-default">
-					<dd class="allmax">
-						{{ lang('BC_NO_VOTES') }}
-					</dd>
-				</dl>
-			</li>
-			{% endif %}
 		</ul>
 	</div>
 </div>
@@ -118,17 +105,13 @@
 			<li class="header">
 				<dl class="row-item">
 					<dt>{{ lang('BC_BONUS_WINNER_HEADER') }}</dt>
-					<dd></dd>
+					<dd>&nbsp;</dd>
 				</dl>
 			</li>
 		</ul>
-		<ul class="topiclist forums medium allmax">
-			<li class="row">
-				<dl class="maxi centered">
-					<dd class="allmax">
-						{{ BONUS_WINNER }}
-					</dd>
-				</dl>
+		<ul class="topiclist forums">
+			<li class="padding-05em text-center font-bold font-larger">
+				{{ BONUS_WINNER }}
 			</li>
 		</ul>
 	</div>

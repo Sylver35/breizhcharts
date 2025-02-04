@@ -27,10 +27,10 @@
 				</dt>
 				<dd>
 					<textarea name="report_text" id="report_text" onblur="breizhcharts.validaTextarea();" rows="10" cols="76" class="inputbox" spellcheck="true"></textarea>
-					<br><span id="result-span" class="undisplay"></span>
+					<br><span id="result-span" class="hidden"></span>
 				</dd>
 			</dl>
-			
+
 			</fieldset>
 		</div>
 	</div>
@@ -46,7 +46,7 @@
 				<input type="hidden" name="poster_name" value="{{ POSTER_NAME }}">
 				<input type="hidden" name="poster_colour" value="{{ POSTER_COLOUR }}">
 				<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}" id="submit1">&nbsp;
-				<input type="submit" name="cancel" class="button2" value="{{ lang('CANCEL') }}" onclick="window.history.go(-1); return false;">
+				<input type="cancel" name="cancel" class="button2" value="{{ lang('CANCEL') }}" onclick="window.history.go(-1); return false;">
 				{{ S_HIDDEN_FIELDS }}
 				{{ S_FORM_TOKEN }}
 			</fieldset>

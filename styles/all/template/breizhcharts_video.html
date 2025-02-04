@@ -10,7 +10,7 @@
 		<span class="title_report">{{ REPORTED_TITLE }}</span>
 		{% if U_REPORTED %}
 		<a href="{{ U_REPORTED }}" title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
-			<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
+			<i class="icon icon-red bzh-rotate fa-exclamation-triangle fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
 		</a>&nbsp;
 		{% endif %}
 		{{ REPORTED_DESC }}
@@ -19,42 +19,46 @@
 {% endif %}
 
 <div class="panel">
-	<div class="inner">
+	<div class="inner d-flex video-page">
 		<div class="rate-video">
-			<dd id="bzh_vote-{{ SONG_ID }}">
+			<div id="bzh_vote-{{ SONG_ID }}">
 				<div class="song-nforate">
 					<div class="bzh-inline-rating">
-						<ul class="bzh-star-rating" id="stars-{{ SONG_ID }}">
+						<ul class="bzh-star-rating {{ !S_CAN_VOTE ? 'no-pointer' }}" id="stars-{{ SONG_ID }}">
 							{{ STARS_VOTE }}
 						</ul>
 					</div>
 					<div id="bzh_result-{{ SONG_ID }}" class="bzh-box">
 						{{ TOTAL_RATE }}<br>
 						{{ SONG_RATED }}<br>
-						<div class="{{ VOTED_IMG }}"></div>{{ USER_VOTE }}
+						<div class="d-inline-flex vote-info {{ VOTED_IMG }}">{{ USER_VOTE }}</div>
 					</div>
-					<div class="bzh-clr"></div>
 				</div>
-			</dd>
+			</div>
 			<ul class="post-buttons">
 				<li>
+					{% if U_DELETE_SONG %}
+					<a href="{{ U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button button-icon-only">
+						<i class="icon icon-red bzh-rotate fa fa-trash fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_DELETE_SONG') }}</span>
+					</a>
+					{% endif %}
 					{% if S_VIEW_REPORT %}
 					<a href="{{ U_REPORTED }}" id="view-report"{% if not S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}" class="button button-icon-only">
-						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
+						<i class="icon icon-red bzh-rotate fa-exclamation-triangle fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_REPORTED') }} - {{ lang('BC_REPORT_GO') }}</span>
 					</a>
 					{% else %}
 					<a href="#" id="view-report"{% if not S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORTED') }}" class="button button-icon-only">
-						<i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BC_REPORTED') }}</span>
+						<i class="icon icon-red bzh-rotate fa-exclamation-triangle fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_REPORTED') }}</span>
 					</a>
 					{% endif %}
 					{% if S_REPORT %}
 					<a href="{{ U_REPORT }}" id="can-report"{% if S_REPORTED %} style="display: none;"{% endif %} title="{{ lang('BC_REPORT') }}" class="button button-icon-only">
-						<i class="bzh-red icon fa-exclamation fa-fw"></i><span class="sr-only">{{ lang('BC_REPORT') }}</span>
+						<i class="icon icon-red bzh-rotate fa-exclamation fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_REPORT') }}</span>
 					</a>
 					{% endif %}
 					{% if U_EDIT_SONG %}
 					<a href="{{ U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only">
-						<i class="bzh-green icon fa fa fa-wrench"></i><span class="sr-only">{{ lang('BC_EDIT_SONG') }}</span>
+						<i class="icon icon-green bzh-rotate fa fa fa-wrench" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_EDIT_SONG') }}</span>
 					</a>
 					{% endif %}
 					<a href="#" title="{{ TITLE_SONG_VIEW }}" class="button button-icon-only" id="a_view"><span class="song-title position" id="span_view">{{ SONG_VIEW }}</span></a>
@@ -66,7 +70,7 @@
 		</div>
 	</div>
 </div>
-<div id="result-div"></div>
+<div id="result-div" class="bzh-modal"></div>
 <input type="hidden" id="reported" name="reported" value="{{ S_REPORTED }}">
 <script>
 var tag = document.createElement('script'), player;

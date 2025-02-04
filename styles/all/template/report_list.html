@@ -1,7 +1,7 @@
 {% INCLUDE 'overall_header.html' %}
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
-	
+
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -10,63 +10,56 @@
 					<dt>
 						<div class="list-inner">{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</div>
 					</dt>
-					<dd class="lastpost">{{ TITLE_PAGE }}</dd>
+					<dd>&nbsp;</dd>
 				</dl>
 			</li>
 		</ul>
-		<ul class="topiclist forums">
-			<li class="row bg3">
-				<dl class="title_tab">
-					<dt class="fantom"></dt>
-					<dd class="width-15">{{ lang('REASON') }}</dd>
-					<dd class="width-15">{{ lang('BC_REPORTED_BY') }}</dd>
-					<dd class="width-40">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}</dd>
-					<dd class="width-15">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd class="width-15">{{ lang('BC_ADDED_BY') }}</dd>
-				</dl>
+		<ul class="topiclist forums d-table">
+			<li class="bg3 d-tableheading">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablehead">{{ lang('REASON') }}</div>
+					<div class="d-tablehead">{{ lang('BC_REPORTED_BY') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_VIDEO') }}</div>
+					<div class="d-tablehead">{{ lang('BC_ADDED_BY') }}</div>
+				</div>
 			</li>
-			{% if charts|length %}
-			{% for chart in charts %}
-			<li class="row {% if chart.POSITION is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
-				<dl class="content_tab">
-					<dt class="fantom"></dt>
-					<dd class="width-15">
-						<span class="song-title">{{ chart.REASON }}</span>
-						<br><br>
-						<a href="{{ chart.U_VIEW_REPORT }}" title="{{ lang('BC_REPORT_GO') }}" class="button button-icon-only song-title report-button"><i class="bzh-red icon fa fa-exclamation-triangle"></i> {{ lang('BC_REPORT_GO') }}</a>
-					</dd>
-					<dd class="width-15">
-						<br>{{ chart.REPORTNAME }}
-						<div class="add-time"><i>{{ chart.REPORT_TIME }}</i></div>
-					</dd>
-					<dd class="width-40">
+			{% for chart in charts if charts %}
+			<li class="row d-tablebody {% if chart.S_ROW_COUNT is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablecell">
+						<div class="font-bold">{{ chart.REASON }}</div>
+						<br>
+						<a href="{{ chart.U_VIEW_REPORT }}" class="button song-title report-button"><i class="icon icon-red bzh-rotate fa fa-exclamation-triangle"></i> <span class="responsive-hide">{{ lang('BC_REPORT_GO') }}</span></a>
+					</div>
+					<div class="d-tablecell">
+						<div>{{ chart.REPORTNAME }}</div>
+						<i>{{ chart.REPORT_TIME }}</i>
+					</div>
+					<div class="d-tablecell">
 						<span class="song-title">{{ chart.TITLE }}</span><br>
 						{{ chart.ARTIST }}
 						<br>
 						{{ chart.ALBUM }}
 						<br>
-						<a href="{{ chart.U_SHOW_POPUP }}" onclick="popup(this.href,700,410);return false;" title="{{ chart.VIDEO }}">{{ lang('BC_SHOW_VIDEO_POPUP') }}</a>
-					</dd>
-					<dd class="width-15">
-						<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" class="thumbnail">
-					</dd>
-					<dd class="width-15">
-						<br>{{ chart.USERNAME }}
-						<div class="add-time"><i>{{ chart.ADDED_TIME }}</i></div>
-					</dd>
-				</dl>
+						<a href="{{ chart.U_SHOW_POPUP }}" onclick="popup(this.href,700,430);return false;" title="{{ chart.VIDEO }}">{{ lang('BC_SHOW_VIDEO_POPUP') }}</a>
+					</div>
+					<div class="d-tablecell">
+						<a href="{{ chart.U_SHOW_VIDEO }}" title="{{ chart.VIDEO }}">
+							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" width="80" height="60" class="bzh-thumbnail">
+						</a>
+					</div>
+					<div class="d-tablecell">
+						<div>{{ chart.USERNAME }}</div>
+						<i>{{ chart.ADDED_TIME }}</i>
+					</div>
+				</div>
+			</li>
+			{% else %}
+			<li class="bg2 d-tablecaption caption-bottom">
+				<div class="no-result">{{ lang('BC_NO_SONGS') }}</div>
 			</li>
 			{% endfor %}
-			{% else %}
-			<li class="row">
-				<dl class="dl-default">
-					<dt class="fantom"></dt>
-					<dd  class="allmax">
-						{{ lang('BC_NO_SONGS') }}
-					</dd>
-				</dl>
-			</li>
-			{% endif %}
 		</ul>
 	</div>
 </div>

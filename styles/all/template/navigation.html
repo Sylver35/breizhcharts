@@ -1,37 +1,66 @@
 <a id="nav"></a>
-		
+
 {% INCLUDE '@sylver35_breizhcharts/random_body.html' %}
 
 <h2 class="charts">{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</h2>
 
-<div id="nav-charts" class="navbar" role="navigation">
+<nav id="nav-charts" class="navbar navbar-charts" role="navigation">
 	<div class="inner">
-		<ul id="nav-songs" class="nav-main" role="menubar">
+		<ul id="nav-songs" class="nav-main linklist" role="menubar">
 			{% if U_ADD_SONG %}
-			<li><a id="nav-add_video" class="navigation_songs" href="{{ U_ADD_SONG }}" title="{{ lang('BC_ADD_SONG') }}"><i class="bzh-nav icon fa fa-download"></i>{{ lang('BC_ADD_SONG') }}</a></li>
+			<li>
+				<a id="nav-add_video" class="navigation_songs" href="{{ U_ADD_SONG }}">
+					<i class="icon icon-green bzh-rotate fa fa-download" aria-hidden="true"></i><span>{{ lang('BC_ADD_SONG') }}</span>
+				</a>
+			</li>
 			{% endif %}
-			<li><a id="nav-list" class="navigation_songs" href="{{ U_LIST_TOP }}" title="{{ lang('BC_BEST_RATED') }}"><i class="bzh-nav icon fa fa-line-chart"></i>{{ lang('BC_BEST_RATED') }}</a></li>
-			<li><a id="nav-list_newest" class="navigation_songs" href="{{ U_LIST_NEWEST }}" title="{{ lang('BC_NEWEST') }}"><i class="bzh-nav icon fa fa-sign-in"></i>{{ lang('BC_NEWEST') }}</a></li>
+			<li>
+				<a id="nav-list" class="navigation_songs" href="{{ U_LIST_TOP }}">
+					<i class="icon icon-green bzh-rotate fa fa-line-chart" aria-hidden="true"></i><span>{{ lang('BC_BEST_RATED') }}</span>
+				</a>
+			</li>
+			<li>
+				<a id="nav-list_newest" class="navigation_songs" href="{{ U_LIST_NEWEST }}">
+					<i class="icon icon-green bzh-rotate fa fa-sign-in" aria-hidden="true"></i><span>{{ lang('BC_NEWEST') }}</span>
+				</a>
+			</li>
 			{% if S_ACTIV_PERIOD %}
-			<li><a id="nav-winners" class="navigation_songs" href="{{ U_LAST_WINNERS }}" title="{{ lang('BC_LAST_WINNERS') }}"><i class="bzh-nav icon fa fa-bar-chart"></i>{{ lang('BC_LAST_WINNERS') }}</a></li>
+			<li>
+				<a id="nav-winners" class="navigation_songs" href="{{ U_LAST_WINNERS }}">
+					<i class="icon icon-green bzh-rotate fa fa-bar-chart" aria-hidden="true"></i><span>{{ lang('BC_LAST_WINNERS') }}</span>
+				</a>
+			</li>
 			{% endif %}
 			{% if U_LIST_OWN %}
-			<li><a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}" title="{{ lang('BC_OWN') }}"><i class="bzh-nav icon fa fa-street-view"></i>{{ lang('BC_OWN') }}</a></li>
+			<li>
+				<a id="nav-own" class="navigation_songs" href="{{ U_LIST_OWN }}">
+					<i class="icon icon-green bzh-rotate fa fa-street-view" aria-hidden="true"></i><span>{{ lang('BC_OWN') }}</span>
+				</a>
+			</li>
+			{% endif %}
+			{% if S_REPORTS_LIST and HAS_REPORT %}
+			<li class="rightside" data-skip-responsive="true">
+				<a id="nav-reports-list" class="navigation_songs" href="{{ U_REPORTS_LIST }}" title="{{ lang('BC_REPORTED_LIST_TITLE') }}">
+					<i class="icon icon-{{ HAS_REPORT ? 'red' : 'green' }} bzh-rotate fa fa-exclamation-triangle" aria-hidden="true"></i><span{{ HAS_REPORT ? ' class="font-bold"' }}>{{ lang('BC_REPORTED_LIST') }} ({{ NB_REPORT }})</span>
+				</a>
+			</li>
 			{% endif %}
 			{% if U_BC_TOOLS %}
-			<li><a id="nav-tools" class="navigation_songs" href="{{ U_BC_TOOLS }}" title="{{ lang('BC_TOOLS_TITLE') }}"><i class="bzh-nav icon fa fa-tachometer"></i>{{ lang('BC_TOOLS') }}</a></li>
-			{% endif %}
-			{% if S_REPORTS_LIST %}
-			<li class="report"><a id="nav-reports-list" class="navigation_songs" href="{{ U_REPORTS_LIST }}" title="{{ lang('BC_REPORTED_LIST_TITLE') }}"><i class="bzh-nav icon fa fa-exclamation-triangle{{ HAS_REPORT }}"></i> {{ lang('BC_REPORTED_LIST') }} ({{ NB_REPORT }})</a></li>
+			<li class="rightside" data-skip-responsive="true">
+				<a id="nav-tools" class="navigation_songs" href="{{ U_BC_TOOLS }}" title="{{ lang('BC_TOOLS_TITLE') }}" data-skip-responsive="true">
+					<i class="icon icon-green bzh-rotate fa fa-tachometer" aria-hidden="true"></i><span>{{ lang('BC_TOOLS') }}</span>
+				</a>
+			</li>
 			{% endif %}
 		</ul>
 		{% if U_USER_NAV %}
-		<hr>
-		<ul id="nav-songs2" class="nav-main nav-second" role="menubar">
+		<ul id="nav-songs2" class="linklist navlinks" role="menubar">
 			<li class="user-nav">
-				<a id="nav-other" class="navigation_songs" href="{{ U_USER_NAV }}" title="{{ USER_NAV_TITLE }}"><i class="bzh-nav icon fa fa-user"></i> {{ USER_NAV_TITLE }}</a>
+				<a id="nav-other" class="navigation_songs" href="{{ U_USER_NAV }}">
+					<i class="icon icon-green bzh-rotate fa fa-user" aria-hidden="true"></i> <span>{{ USER_NAV_TITLE }}</span>
+				</a>
 			</li>
 		</ul>
 		{% endif %}
 	</div>
-</div>
+</nav>

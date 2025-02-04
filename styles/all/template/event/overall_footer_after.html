@@ -10,27 +10,28 @@ var bcConfig = {
 	winUrl: '{{ U_LAST_WINNERS }}',
 	reportAutoUrl: '{{ U_REPORT_AUTO }}',
 	loader: '<img src="{{ U_EXT_PATH }}images/ajax_loader.gif" alt="">',
-	ajaxTrue: '<img src="{{ U_EXT_PATH }}images/ajax_true.png" alt="">',
-	ajaxFalse: '<img src="{{ U_EXT_PATH }}images/ajax_false.png" alt="">',
-	submit: '{{ lang("SUBMIT")|escape("js") }}',
-	errorUrl: '{{ lang("BC_INVALID_URL")|escape("js") }}',
-	errorSelect: '{{ lang("BC_ERROR_SELECT")|escape("js") }}',
-	errorSelectNo: '{{ lang("BC_ERROR_SELECT_NO")|escape("js") }}',
-	videoAjax: '{{ lang("BC_SHOW_VIDEO_AJAX")|escape("js") }}',
-	editOpen: '{{ lang("BC_EDIT_SONG")|escape("js") }}',
-	closeOpen: '{{ lang("BC_REPORT_CLOSE")|escape("js") }}',
-	errorVote: '{{ lang("BC_AJAX_NOTE_NO")|escape("js") }}',
+	ajaxTrue: '<img src="{{ U_EXT_PATH }}styles/all/theme/images/rated.svg" alt="">',
+	ajaxFalse: '<img src="{{ U_EXT_PATH }}styles/all/theme/images/rated_no.svg" alt="">',
+	submit: '{{ lang("SUBMIT")|e("js") }}',
+	errorUrl: '{{ lang("BC_INVALID_URL")|e("js") }}',
+	errorSelect: '{{ lang("BC_ERROR_SELECT")|e("js") }}',
+	errorSelectNo: '{{ lang("BC_ERROR_SELECT_NO")|e("js") }}',
+	videoAjax: '{{ lang("BC_SHOW_VIDEO_AJAX")|e("js") }}',
+	editOpen: '{{ lang("BC_EDIT_SONG")|e("js") }}',
+	closeOpen: '{{ lang("BC_REPORT_CLOSE")|e("js") }}',
+	errorVote: '{{ lang("BC_AJAX_NOTE_NO")|e("js") }}',
 	msgOpen: '{{ INFORM }}',
-	editClose: '{{ lang("BC_REPORT_EDIT_CLOSE")|escape("js") }}',
-	presentError: '{{ lang("BC_PRESENT_ERROR")|escape("js") }}',
-	error: '{{ lang("ERROR")|escape("js") }}',
-	ok: '{{ lang("BC_OK")|escape("js") }}',
+	editClose: '{{ lang("BC_REPORT_EDIT_CLOSE")|e("js") }}',
+	presentError: '{{ lang("BC_PRESENT_ERROR")|e("js") }}',
+	error: '{{ lang("ERROR")|e("js") }}',
+	ok: '{{ lang("BC_OK")|e("js") }}',
+	colon: '{{ lang("COLON")|e("js") }}',
 	nav: '{{ NAV_ID }}',
 	id: {% if CHART_ID %}{{ CHART_ID }}{% else %}0{% endif %},
 };
 {% if S_IN_VIDEO %}
 /* Increment view song after 15 seconds */
-$(document).ready(function() {
+$(function() {
 	setTimeout(function(){breizhcharts.viewSong()}, 15000);
 });
 {% endif %}

@@ -6,32 +6,20 @@
 
 {% INCLUDE '@sylver35_breizhcharts/navigation.html' %}
 
-<div id="contener" class="contener-flex">
-	<div class="item-flex-1">
-		<div class="pagination">
-			<fieldset>
-			{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} <select name="cat" id="cat" class="midle" onchange="window.location=this.options[this.selectedIndex].value">{{ SELECT_CATS }}</select>
-			</fieldset>
-		</div>
+<div id="contener" class="d-flex align-center space-between margin-bottom-1em">
+	<div class="font-larger">
+		<label for="cat-genre">{{ lang('BC_SONG_CAT') ~ lang('COLON') }}</label><select name="cat" id="cat-genre" onchange="window.location=this.options[this.selectedIndex].value">{{ SELECT_CATS }}</select>
 	</div>
-
-	<div class="item-flex-2">
-		{% if S_REPORT %}
-		<a href="#" class="button button-icon-only" title="{{ lang('BC_REPORT') }}"><i class="bzh-red icon fa-exclamation fa-fw"></i><span class="sr-only">{{ lang('BC_REPORT_INFO') }}</span></a> {{ lang('BC_REPORT_INFO') }}
+	<div class="pagination">
+		{{ TOTAL_CHARTS }}
+		{% if pagination|length %}
+			{% INCLUDE 'pagination.html' %}
+		{% else %}
+			&bull; {{ PAGE_NUMBER }}
 		{% endif %}
 	</div>
-
-	<div class="item-flex-3">
-		<div class="pagination">
-			{{ TOTAL_CHARTS }}
-			{% if pagination|length %}
-				{% INCLUDE 'pagination.html' %}
-			{% else %}
-				&bull; {{ PAGE_NUMBER }}
-			{% endif %}
-		</div>
-	</div>
 </div>
+
 <div class="forabg">
 	<div class="inner">
 		<ul class="topiclist">
@@ -40,73 +28,74 @@
 					<dt>
 						<div class="list-inner">{{ lang('BC_CHARTS') }} - {{ TITLE_PAGE }}</div>
 					</dt>
-					<dd class="lastpost">{{ TITLE_PAGE }}</dd>
+					<dd>&nbsp;</dd>
 				</dl>
 			</li>
 		</ul>
-
-		<ul class="topiclist forums">
-			<li class="row bg3">
-				<dl class="title_tab">
-					<dt class="fantom"></dt>
-					<dd class="width-8">{{ lang('BC_CURR_POS') }}</dd>
-					<dd class="width-10">{{ lang('BC_SONG_CAT') }}</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}31{% else %}33{% endif %}">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br>{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}10{% else %}12{% endif %}">{{ lang('BC_SONG_VIDEO') }}</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}13{% else %}15{% endif %}">{{ lang('BC_ADDED_BY') }}</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}18{% else %}20{% endif %}">{{ lang('BC_RATE') }}</dd>
+		<ul class="topiclist forums d-table">
+			<li class="row bg3 d-tableheading">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablehead">{{ lang('BC_CURR_POS') }}</div>
+					<div class="d-tablehead responsive-hide">{{ lang('BC_SONG_CAT') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_TITLE') }} | {{ lang('BC_SONG_ARTIST') }}<br>{{ lang('BC_SONG_ALBUM') }} | {{ lang('BC_SONG_YEAR') }}</div>
+					<div class="d-tablehead">{{ lang('BC_SONG_VIDEO') }}</div>
+					<div class="d-tablehead responsive-hide">{{ lang('BC_ADDED_BY') }}</div>
+					<div class="d-tablehead">{{ lang('BC_RATE') }}</div>
 					{% if S_ACTIV_PERIOD %}
-					<dd class="width-10">{{ lang('BC_LAST_POS') }}</dd>
+					<div class="d-tablehead">{{ lang('BC_LAST_POS') }}</div>
 					{% endif %}
-				</dl>
+				</div>
 			</li>
-			{% if charts|length %}
-			{% for chart in charts %}
-			<li class="row {% if chart.POSITION is even %}bg1{% else %}bg2{% endif %}" id="li-{{ chart.SONG_ID }}">
-				<dl class="content_tab tab_charts">
-					<dt class="fantom"></dt>
-					<dd class="width-8">
-						<a href="#" title="{{ lang('BC_CURR_POS') }}{{ lang('COLON') }} {{ chart.POSITION }}" class="button button-icon-only"><span class="song-title position">{{ chart.POSITION }}</span></a>
-						{% if chart.S_REPORTED and chart.S_REPORT %}
-						<a href="{{ chart.U_REPORTED }}" title="{{ lang('BC_REPORTED') }}" class="button button-icon-only"><i class="bzh-red icon fa-exclamation-triangle fa-fw"></i><span class="sr-only">{{ lang('BUTTON_REPORT') }}</span></a>
-						{% endif %}
+			{% for chart in charts if charts %}
+			<li class="row {{ chart.S_ROW_COUNT is even ? 'bg1' : 'bg2' }} d-tablebody{{ S_REPORTS_LIST and (chart.S_REPORTED and chart.S_REPORT) ? ' reported' }}" id="li-{{ chart.SONG_ID }}">
+				<div class="d-tablerow cell-border">
+					<div class="d-tablecell">
+						<span class="font-larger font-bold" title="{{ lang('BC_CURR_POS') ~ lang('COLON') }} {{ chart.POSITION }}">
+							{% if chart.POSITION <= 3 %}
+							<i class="fa fa-trophy fa-fw rank-icon rank-{{ chart.POSITION }}"><span class="rank-text">{{ chart.POSITION }}</span></i>
+							{% else %}
+							<a href="#" title="{{ lang('BC_CURR_POS') }}{{ lang('COLON') }} {{ chart.POSITION }}" class="button button-icon-only"><span class="song-title position">{{ chart.POSITION }}</span></a>
+							{% endif %}
+						</span>
 						<div class="space"></div>
 						{% if chart.U_DELETE_SONG %}
-						<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button button-icon-only"><i class="bzh-red icon fa fa-trash"></i><span class="sr-only">{{ lang('BC_DELETE_SONG') }}</span></a>
+						<a href="{{ chart.U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button button-icon-only"><i class="icon icon-red bzh-rotate fa fa-trash"></i><span class="sr-only">{{ lang('BC_DELETE_SONG') }}</span></a>
 						{% endif %}
 						{% if chart.U_EDIT_SONG %}
-						<a href="{{ chart.U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only"><i class="bzh-green icon fa fa fa-wrench"></i><span class="sr-only">{{ lang('BC_EDIT_SONG') }}</span></a>
+						<a href="{{ chart.U_EDIT_SONG }}" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only"><i class="icon icon-green bzh-rotate fa fa fa-wrench"></i><span class="sr-only">{{ lang('BC_EDIT_SONG') }}</span></a>
 						{% endif %}
-					</dd>
-					<dd class="width-10">
+					</div>
+					<div class="d-tablecell responsive-hide">
 						<span class="song-title">{{ chart.CAT }}</span>
-					</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}31{% else %}33{% endif %}">
-						<span class="song-title">{{ chart.TITLE }}</span><br>
+					</div>
+					<div class="d-tablecell">
+						<span class="song-title">{{ chart.TITLE }}{% if S_REPORTS_LIST and (chart.S_REPORTED and chart.S_REPORT) %} <a href="{{ chart.U_REPORTED }}" title="{{ lang('BC_REPORTED') }}"><i class="icon icon-red bzh-rotate fa-exclamation fa-fw" aria-hidden="true"></i><span class="sr-only">{{ lang('BC_REPORTED') }}</span></a>{% endif %}</span><br>
 						{{ chart.ARTIST }}
 						<br>
 						{{ chart.ALBUM }}
-						{% if chart.ALBUM and chart.YEAR %} | {% endif %}
+						{{ chart.ALBUM and chart.YEAR ? ' | ' }}
 						{{ chart.YEAR }}
 						{% if chart.U_TOPIC_VIDEO %}
-						<br><a href="{{ chart.U_TOPIC_VIDEO }}" title="{{ lang('BC_SEE_TOPIC') }}">{{ lang('BC_SEE_TOPIC') }}</a>
+						<br><a href="{{ chart.U_TOPIC_VIDEO }}">{{ lang('BC_SEE_TOPIC') }}</a>
 						{% endif %}
 						<br>
-						<a href="{{ chart.U_SHOW_POPUP }}" onclick="popup(this.href,700,410); return false;" title="{{ chart.VIDEO }}">{{ lang('BC_SHOW_VIDEO_POPUP') }}</a>
-					</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}10{% else %}12{% endif %}">
-						<a href="{{ chart.U_SHOW_VIDEO }}" title="{{ chart.VIDEO }}">
-							<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" class="thumbnail">
-						</a>
-					</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}13{% else %}15{% endif %}">
+						<a href="{{ chart.U_SHOW_POPUP }}" onclick="popup(this.href,700,430); return false;" title="{{ chart.VIDEO }}">{{ lang('BC_SHOW_VIDEO_POPUP') }}</a>
+					</div>
+					<div class="d-tablecell">
+						<div>
+							<a href="{{ chart.U_SHOW_VIDEO }}" title="{{ chart.VIDEO }}">
+								<img src="{{ chart.THUMBNAIL }}" alt="{{ chart.TITLE }}" width="80" height="60" class="bzh-thumbnail">
+							</a>
+						</div>
+					</div>
+					<div class="d-tablecell responsive-hide">
 						{{ chart.USERNAME }}
 						<div class="add-time"><i>{{ chart.ADDED_TIME }}</i></div>
 						{{ chart.TITLE_SONG_VIEW }}
-					</dd>
-					<dd class="width-{% if S_ACTIV_PERIOD %}18{% else %}20{% endif %}" id="bzh_vote-{{ chart.SONG_ID }}">
+					</div>
+					<div class="d-tablecell" id="bzh_vote-{{ chart.SONG_ID }}">
 						<div class="song-nforate">
-							<div class="bzh-inline-rating">
+							<div class="bzh-inline-rating responsive-hide">
 								<ul class="bzh-star-rating" id="stars-{{ chart.SONG_ID }}">
 									{{ chart.STARS_VOTE }}
 								</ul>
@@ -114,34 +103,28 @@
 							<div id="bzh_result-{{ chart.SONG_ID }}" class="bzh-box">
 								{{ chart.TOTAL_RATE }}<br>
 								{{ chart.SONG_RATED }}<br>
-								<div class="{{ chart.VOTED_IMG }}"></div>{{ chart.USER_VOTE }}
+								<div class="d-inline-flex vote-info {{ chart.VOTED_IMG }}">{{ chart.USER_VOTE }}</div>
 							</div>
 							<div class="bzh-clr"></div>
 						</div>
-					</dd>
+					</div>
 					{% if S_ACTIV_PERIOD %}
-					<dd class="width-10">
+					<div class="d-tablecell">
 						{{ chart.TENDENCY_IMG }}
 						<div class="bzh-tendency">
 							{{ chart.ACTUAL }}<br>
 							{{ chart.LAST }}<br>
 							{{ chart.BEST }}
 						</div>
-					</dd>
+					</div>
 					{% endif %}
-				</dl>
+				</div>
+			</li>
+			{% else %}
+			<li class="bg2 d-tablecaption caption-bottom">
+				<div class="no-result">{{ lang('BC_NO_SONGS') }}</div>
 			</li>
 			{% endfor %}
-			{% else %}
-			<li class="row">
-				<dl class="dl-default">
-					<dt class="fantom"></dt>
-					<dd  class="allmax">
-						{{ lang('BC_NO_SONGS') }}
-					</dd>
-				</dl>
-			</li>
-			{% endif %}
 		</ul>
 	</div>
 </div>
@@ -179,7 +162,7 @@
 	</div>
 </div>
 
-<div id="result-div"></div>
+<div id="result-div" class="bzh-modal"></div>
 
 <br>
 

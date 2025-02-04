@@ -1,65 +1,59 @@
-
 {% if S_RANDOM_SONG and RANDOM_INDEX eq 1 %}
 {% INCLUDE '@sylver35_breizhcharts/random_index.html' %}
 {% endif %}
 
 {% if S_CHECK_FIRST %}
-<div class="forabg">
+<div class="forabg text-center">
 	<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dt class="fantom"></dt>
-					<dd class="centered">{{ RESULT_PERIOD }}</dd>
+					<dt>{{ RESULT_PERIOD }}</dt>
+					<dd>&nbsp;</dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist topics">
 			<li class="bg1">
 			{% if winners|length %}
-				<div class="winners">
-					<div class="content_win">
-						{% for winner in winners %}
-						<span class="row_winners">
-							{{ winner.RANK }}<br><br>
-							<b>{{ winner.SONG }}</b><br>
-							{{ lang('BC_FROM') }}<br>
-							<b>{{ winner.ARTIST }}</b>
-							<br><br>
-							<a href="{{ winner.VIDEO }}" onclick="popup(this.href,700,410);return false;">
-								<img src="{{ winner.IMG }}" title="{{ lang('BC_CLICK_VIDEO') }}" alt="{{ lang('BC_CLICK_VIDEO') }}" class="thumbnail">
-							</a>
-							<br>
-							<div>
-								<div class="song-nforate">
-									<div class="bzh-inline-rating">
-										<ul class="bzh-star-rating">
-											<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="one-star">1</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="two-star">2</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="three-star">3</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="four-star">4</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="five-star">5</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="six-star">6</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a></li>
-											<li><a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a></li>
-										</ul>
-									</div>
-									<div class="bzh-box">
-										{{ winner.TOTAL_RATE }}<br>
-										{{ winner.SONG_RATED }}<br>
-									</div>
-									<div class="bzh-clr"></div>
+				<div class="d-flex space-around gap-1em padding-05em winners">
+					{% for winner in winners %}
+					<span class="row_winners">
+						{{ winner.RANK }}<br><br>
+						<span class="font-bold">{{ winner.SONG }}</span><br>
+						{{ lang('BC_FROM') }}<br>
+						<span class="font-bold">{{ winner.ARTIST }}</span><br><br>
+						<a href="{{ winner.VIDEO }}" title="{{ lang('BC_CLICK_VIDEO') }}" onclick="popup(this.href,700,430);return false;">
+							<img src="{{ winner.IMG }}" alt="" width="80" height="60" class="bzh-thumbnail">
+						</a><br>
+						<div>
+							<div class="song-nforate">
+								<div class="bzh-inline-rating">
+									<ul class="bzh-star-rating">
+										<li class="current-rating" style="width: {{ winner.RESULT }}%;"></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="one-star">1</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="two-star">2</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="three-star">3</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="four-star">4</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="five-star">5</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="six-star">6</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="seven-stars">7</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="eight-stars">8</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="nine-stars">9</a></li>
+										<li><a title="{{ winner.TITLE_RATE }}" class="ten-stars">10</a></li>
+									</ul>
 								</div>
+								<div class="bzh-box">
+									{{ winner.TOTAL_RATE }}<br>
+									{{ winner.SONG_RATED }}<br>
+								</div>
+								<div class="bzh-clr"></div>
 							</div>
-							{{ winner.USER }}{{ lang('COLON') }} {{ winner.WIN }}
-						</span>
-						{% endfor %}
-					</div>
+						</div>
+						{{ winner.USER }}{{ lang('COLON') }} {{ winner.WIN }}
+					</span>
+					{% endfor %}
 				</div>
-				<br>
 				{% if BONUS_WINNER %}
 				<br>
 				<div class="winners">
@@ -91,38 +85,35 @@
 </div>
 
 {% if newests|length %}
-<div class="forabg">
+<div class="forabg text-center">
 	<div class="inner">
 		<ul class="topiclist">
 			<li class="header">
 				<dl class="row-item">
-					<dt class="fantom"></dt>
-					<dd class="centered">{{ lang('BC_NEWEST_PERIOD') }}</dd>
+					<dt>{{ lang('BC_NEWEST_PERIOD') }}</dt>
+					<dd>&nbsp;</dd>
 				</dl>
 			</li>
 		</ul>
 		<ul class="topiclist topics">
-			<li class="bg1">
-				<div class="winners">
-					<div class="content_win">
-					{% for newest in newests %}
-					{% if newest.LINE %}
-					</div>
-					<br>
-					<div class="content_win">
-					{% endif %}
-						<span class="row_winners quart">
-							<b>{{ newest.SONG }}</b><br>
-							{{ lang('BC_FROM') }}<br>
-							<b>{{ newest.ARTIST }}</b><br><br>
-							<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,410); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
-								<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" class="thumbnail">
-							</a>
-							<br><br>
-							{{ newest.USER }}
-						</span>
-					{% endfor %}
-					</div>
+			<li class="bg1 padding-05em winners">
+				<div class="d-flex space-around">
+				{% for newest in newests %}
+				{% if newest.LINE %}
+				</div><br>
+				<div class="d-flex space-around">
+				{% endif %}
+					<span class="row-4">
+						<span class="font-bold">{{ newest.SONG }}</span><br>
+						{{ lang('BC_FROM') }}<br>
+						<span class="font-bold">{{ newest.ARTIST }}</span><br><br>
+						<a href="{{ newest.VIDEO }}" onclick="popup(this.href,700,430); return false;" title="{{ lang('BC_CLICK_VIDEO') }}">
+							<img src="{{ newest.IMG }}" alt="{{ newest.SONG }}" width="80" height="60" class="bzh-thumbnail">
+						</a>
+						<br><br>
+						{{ newest.USER }}
+					</span>
+				{% endfor %}
 				</div>
 			</li>
 		</ul>

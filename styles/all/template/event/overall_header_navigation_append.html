@@ -1,3 +1,7 @@
 {% if S_CHARTS_EXIST %}
-	<li data-last-responsive="true"><a href="{{ U_BC_CHARTS }}" title="{% if NEW_SONG %}{{ lang('BC_CHARTS_NEW') }}{% else %}{{ lang('BC_CHARTS') }}{% endif %}" role="menuitem" class="tooltip{% if NEW_SONG %} new-song{% endif %}"><i aria-hidden="true" class="icon"></i><i class="bzh-orange icon fas fa-music"></i> <span>{{ lang('BC_CHARTS_SIMPLE') }}</span></a></li>
+	<li data-last-responsive="true">
+		<a href="{{ U_BC_CHARTS }}" title="{% if NEW_SONG %}{{ lang('BC_CHARTS_NEW') }}{% else %}{{ lang('BC_CHARTS') }}{% endif %}" role="menuitem" class="tooltip{{ NEW_SONG ? ' new-song' }}">
+			<i class="icon icon-orange bzh-rotate fa-music fa-fw" aria-hidden="true"></i><span>{{ lang('BC_CHARTS_SIMPLE') }}</span>
+		</a>
+	</li>
 {% endif %}

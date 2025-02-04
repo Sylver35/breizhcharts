@@ -1,0 +1,16 @@
+<div class="d-flex random-container text-center">
+	{% for random in randoms %}
+	<div class="d-flex random-item row-2">
+		<div class="sub-item-1">
+			<a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}"><img src="{{ random.RAND_THUMBNAIL }}" alt="{{ random.RAND_TITLE }}" width="80" height="60" class="bzh-thumbnail"></a>
+		</div>
+		<div class="sub-item-2">
+			<span class="font-bold"><a href="{{ random.U_RAND_VIDEO }}" title="{{ random.RAND_TITLE }}">{{ random.RAND_TITLE }}</a></span><br>
+			{{ lang('BC_SONG_CAT') }}{{ lang('COLON') }} {{ random.RAND_CAT }}<br>
+			{{ lang('BC_ADDED_BY') }}{{ lang('COLON') }} {{ random.RAND_USERNAME }}<br>
+			<span class="total_rate">{{ random.TOTAL_RATE }}</span><br>
+			{{ random.RAND_VIEW }}
+		</div>
+	</div>
+	{% endfor %}
+</div>

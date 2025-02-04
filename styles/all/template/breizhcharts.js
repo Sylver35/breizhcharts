@@ -9,7 +9,7 @@
 (function($){  // Avoid conflicts with other libraries
 	'use strict';
 
-	$('#nav-'+bcConfig.nav).addClass('navigation_actual');
+	$('#nav-'+bcConfig.nav).addClass('navigation_actual').find('i').toggleClass('icon-green icon-red');
 	$('div.pagination a').each(function(){
 		$(this).prop('href', $(this).attr('href')+'#nav');
 	});
@@ -62,7 +62,7 @@
 		var $content = $('#bzh_result-'+id).html(),$ids = $('#list_ids').val();
 		$('#bzh_result-'+id).html('<div style="text-align:center;">'+bcConfig.loader+'</div>');
 		if(sort == false){
-			$('#result-div').show().html('<span class="error-div">'+bcConfig.errorVote+'</span>');
+			$('#result-div').show().css('display', 'flex').html('<span class="error-div">'+bcConfig.errorVote+'</span>');
 			setTimeout(breizhcharts.clearVote(id, $content),4000);
 			setTimeout(breizhcharts.clearMessage,4000);
 			return;
@@ -81,10 +81,10 @@
 						$(this).attr({'onclick': '', 'title': aTitle}).prop('onclick', null);
 					});
 					$('#bzh_result-'+id).html(result.totalRate+'<br>'+result.songRated+'<br><div class="rated"></div>'+result.userVote);
-					$('#result-div').show().html('<span class="succes-div">'+result.message+'</span>');
+					$('#result-div').show().css('display', 'flex').html('<span class="succes-div">'+result.message+'</span>');
 				}else{
 					$('#bzh_result-'+id).html($content);
-					$('#result-div').show().html('<span class="error-div">'+result.message+'</span>');
+					$('#result-div').show().css('display', 'flex').html('<span class="error-div">'+result.message+'</span>');
 				}
 				setTimeout(breizhcharts.clearMessage,3500);
 			},
@@ -116,13 +116,12 @@
 			cache: false,
 			success: function(result){
 				if(result.sort === 1){
-					$('#check-song').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span>');
+					$('#check-song').removeClass('is-invalid').addClass('is-valid').html(result.message);
 					$('#button').attr({'disabled': false, 'title': bcConfig.submit});
 				}else{
-					$('#check-song').html(bcConfig.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
+					$('#check-song').removeClass('is-valid').addClass('is-invalid').html(result.message);
 					$('#button').attr({'disabled': true, 'title': bcConfig.error});
 				}
-				$('#check-song > span > strong').css('color','initial');
 			},
 			error: function(){
 				$('#check').hide();
@@ -136,7 +135,7 @@
 			return;
 		}
 		if(breizhcharts.urlValide($url) == false){
-			$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.errorUrl+'</span>');
+			$('#check-video').addClass('is-invalid').html(bcConfig.errorUrl);
 			return;
 		}
 		$.ajax({
@@ -147,15 +146,14 @@
 			cache: false,
 			success: function(result){
 				if(result.sort === 3){
-					$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+bcConfig.presentError+' : </span>'+result.name+'<br>'+result.time+'<br>'+bcConfig.videoAjax+' <a href="'+result.url+'"><img src="'+result.image+'" style="height:80px;" alt="img"></a>');
+					$('#check-video').removeClass('is-valid').addClass('is-invalid').html(bcConfig.presentError+bcConfig.colon+' <span class="no-color">'+result.name+'<br>'+result.time+'<br>'+bcConfig.videoAjax+'</span><br><a href="'+result.url+'"><img src="'+result.image+'" alt="" width="80" height="60"></a>');
 					$('#button').attr({'disabled': true, 'title': bcConfig.error});
 				}else if(result.sort === 1){
-					$('#check-video').html(bcConfig.ajaxTrue+' <span style="color:green;">'+result.message+'</span> <img src="'+result.content+'" height="60">');
+					$('#check-video').removeClass('is-invalid').addClass('is-valid').html(result.message+'<br><img src="'+result.content+'" width="80" height="60">');
 				}else{
-					$('#check-video').html(bcConfig.ajaxFalse+' <span style="color:red;">'+result.message+'</span>');
+					$('#check-video').addClass('is-invalid').html(result.message);
 					$('#button').attr({'disabled': true, 'title': bcConfig.error});
 				}
-				$('#check-song > span > strong').css('color','initial');
 			}
 		});
 	}
@@ -171,14 +169,14 @@
 			data: 'error='+event.data,
 			cache: false,
 			success: function(result){
-				$('#result-div').show().html('<div style="text-align:center;">Error: '+result.error+'<br>'+result.content+'</div>');
+				$('#result-div').show().css('display', 'flex').html('<div style="text-align:center;">'+bcConfig.error+bcConfig.colon+' '+result.error+'<br>'+result.content+'</div>');
 				$('#can-report').hide();
 				$('#view-report').show();
 				setTimeout(breizhcharts.clearMessage,15000);
 			},
 			error: function(result,statut,erreur){
 				var obj = result.responseText;
-				$('#result-div').show().html(JSON.parse(JSON.stringify(obj)));
+				$('#result-div').show().css('display', 'flex').html(JSON.parse(JSON.stringify(obj)));
 				setTimeout(breizhcharts.clearMessage,15000);
 			}
 		});
@@ -277,7 +275,7 @@
 
 	breizhcharts.urlValide = function(url){
 		var regex = /^(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})/;
-		 if(regex.test(url)){ 
+		 if(regex.test(url)){
 			return true;
 		}
 		return false;

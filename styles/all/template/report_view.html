@@ -38,15 +38,15 @@
 		<div class="content">
 			<fieldset>
 				<dl class="fields2">
-					<span class="actions-report"><a href="#nav" title="{{ lang('BC_EDIT_SONG') }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.reportEdit()" id="a-icon"><i class="bzh-blue icon fa fa-pencil-square-o" id="i-icon"></i> <span id="span-icon">{{ lang('BC_EDIT_SONG') }}</span></a></span>
+					<a href="#nav" title="{{ lang('BC_EDIT_SONG') }}" class="button" onclick="breizhcharts.reportEdit()" id="a-icon"><span id="span-icon">{{ lang('BC_EDIT_SONG') }}</span> <i class="icon icon-blue bzh-rotate fa fa-pencil-square-o" id="i-icon"></i></a>
 					{% if U_DELETE_SONG %}
-					<span class="actions-report"><a href="{{ U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button button-icon-only song-title report-button"><i class="bzh-blue icon fa fa-trash-o"></i> {{ lang('BC_DELETE_SONG') }}</a></span>
+					<a href="{{ U_DELETE_SONG }}" title="{{ lang('BC_DELETE_SONG') }}" class="button"><span>{{ lang('BC_DELETE_SONG') }}</span> <i class="icon icon-blue bzh-rotate fa fa-trash-o"></i></a>
 					{% endif %}
 					{% if not S_IS_POSTER %}
-					<span class="actions-report"><a href="#nav" title="{{ INFORM }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.messageClose()" id="a-message"><i class="bzh-blue icon fa fa-comments" id="i-message"></i> <span id="span-message">{{ INFORM }}</span></a></span>
+					<a href="#nav" title="{{ INFORM }}" class="button" onclick="breizhcharts.messageClose()" id="a-message"><span id="span-message">{{ INFORM }}</span> <i class="icon icon-blue bzh-rotate fa fa-comments" id="i-message"></i></a>
 					{% endif %}
 					{% if not S_REPORT_AUTO %}
-					<span class="actions-report"><a href="#nav" title="{{ REPORT_CONTACT }}" class="button button-icon-only song-title report-button" onclick="breizhcharts.reportClose()" id="a-close"><i class="bzh-blue icon fa fa-bell-slash" id="i-close"></i> <span id="span-close">{{ lang('BC_REPORT_CLOSE') }}</span></a></span>
+					<a href="#nav" title="{{ REPORT_CONTACT }}" class="button" onclick="breizhcharts.reportClose()" id="a-close"><span id="span-close">{{ lang('BC_REPORT_CLOSE') }}</span> <i class="icon icon-blue bzh-rotate fa fa-bell-slash" id="i-close"></i></a>
 					{% endif %}
 				</dl>
 			</fieldset>
@@ -67,7 +67,7 @@
 			<div class="content">
 				<fieldset class="submit-buttons">
 					<input type="submit" name="submit" class="button1" value="{{ lang('SUBMIT') }}">&nbsp;
-					<input name="cancel" class="button2" onclick="history.back()" value="{{ lang('CANCEL') }}">
+					<input type="cancel" name="cancel" class="button1" value="{{ lang('CANCEL') }}" onclick="history.back()">
 				</fieldset>
 			</div>
 		</div>
@@ -126,16 +126,16 @@
 			{% endif %}
 			<fieldset>
 				<dl>
-					<dt class="label"><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
+					<dt><label for="song_name" >[*] {{ lang('BC_SONG_TITLE') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_TITLE_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="song_name" tabindex="1" name="song_name" size="65" class="inputbox autowidth" value="{{ TITLE }}"></dd>
 				</dl>
 				<dl>
-					<dt class="label"><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
+					<dt><label for="artist">[*] {{ lang('BC_SONG_ARTIST') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_ARTIST_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkSongArtist()" required aria-required="true" type="text" id="artist" tabindex="2" name="artist" size="65" class="inputbox autowidth" value="{{ ARTIST }}"></dd>
 					<dd id="check-song"></dd>
 				</dl>
 				<dl>
-					<dt class="label"><label for="cat">[*] {{ lang('BC_SONG_CAT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_CAT_EXPLAIN') }}</dt>
+					<dt><label for="cat">[*] {{ lang('BC_SONG_CAT') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_CAT_EXPLAIN') }}</dt>
 					<dd>
 						<select name="cat" id="cat" required="required" aria-required="true">
 							{{ SELECT_CATS }}
@@ -143,9 +143,9 @@
 					</dd>
 				</dl>
 				<dl>
-					<dt class="label"><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
+					<dt><label for="video">[*] {{ lang('BC_SONG_VIDEO') }}{{ lang('COLON') }}</label><br>{{ lang('BC_SONG_VIDEO_EXPLAIN') }}</dt>
 					<dd><input onblur="breizhcharts.checkVideo()" required aria-required="true" type="text" id="video" tabindex="7" name="video" size="65" class="inputbox autowidth" spellcheck="false" value="{{ CHART_VIDEO }}"></dd>
-					<dd id="check-video"></dd>
+					<dd id="check-video" class="check-video"></dd>
 				</dl>
 			</fieldset>
 		</div>
@@ -163,7 +163,7 @@
 		<div class="inner">
 			<div class="content">
 				<fieldset class="submit-buttons">
-					<span id="result-span" class="undisplay"></span>
+					<span id="result-span" class="hidden"></span>
 					<input type="hidden" id="ex_cat" name="ex_cat" value="{{ CHART_CAT }}">
 					<input type="hidden" id="ex_cat_nb" name="ex_cat_nb" value="{{ CAT_NB }}">
 					<input type="hidden" id="user_id" name="user_id" value="{{ USER_ID }}">
