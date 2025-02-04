@@ -201,7 +201,7 @@ class charts
 		$result = $this->db->sql_query_limit($sql, $number, $data['start']);
 		while ($row = $this->db->sql_fetchrow($result))
 		{
-			$is_user = (int) $row['poster_id'] === (int) $this->user->data['user_id'];
+			$is_user = (bool) ((int) $row['poster_id'] === (int) $this->user->data['user_id']);
 			$can_edit = (bool) ($this->auth->acl_get('u_breizhcharts_edit') && $is_user || $data['moderate']);
 			$can_delete = (bool) ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
 			$can_vote = (bool) ($data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote'));
@@ -381,10 +381,11 @@ class charts
 		$row = $this->db->sql_fetchrow($result);
 		$this->db->sql_freeresult($result);
 
-		$poster = ((int) $row['poster_id'] === (int) $this->user->data['user_id']) && $data['is_user'];
-		$can_edit = ($this->auth->acl_get('u_breizhcharts_edit') && $poster || $data['moderate']);
-		$can_report = ($this->auth->acl_get('u_breizhcharts_report') && $data['is_user'] || $data['moderate']);
-		$can_vote = $data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote');
+		$poster = (bool) (((int) $row['poster_id'] === (int) $this->user->data['user_id']) && $data['is_user']);
+		$can_edit = (bool) ($this->auth->acl_get('u_breizhcharts_edit') && $poster || $data['moderate']);
+		$can_delete = (bool) ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
+		$can_report = (bool) (($this->auth->acl_get('u_breizhcharts_report') && $data['is_user'] || $data['moderate']));
+		$can_vote = (bool) ($data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote'));
 
 		$this->template->assign_vars([
 			'S_IN_VIDEO'		=> true,
@@ -407,8 +408,9 @@ class charts
 			'U_REPORT_AUTO'		=> $this->helper->route('sylver35_breizhcharts_report_video_auto', ['id' => $row['song_id']]),
 			'U_REPORTED'		=> $this->helper->route('sylver35_breizhcharts_reported_video', ['id' => $row['song_id']]),
 			'U_EDIT_SONG'		=> $can_edit ? $this->helper->route('sylver35_breizhcharts_edit_video', ['id' => $row['song_id'], 'start' => $data['start'], 'cat' => $data['cat']]) : '',
+			'U_DELETE_SONG'		=> $can_delete ? $this->helper->route('sylver35_breizhcharts_delete_music', ['id' => $row['song_id']]) : '',
 			'S_REPORT'			=> !$poster && $can_report,
-			'S_VIEW_REPORT'		=> $poster || $data['moderate'],
+			'S_VIEW_REPORT'		=> (bool) ($poster || $data['moderate']),
 			'S_CAN_VOTE'		=> $can_vote,
 			'S_REPORTED'		=> $row['reported'],
 		]);
