@@ -383,7 +383,7 @@ class charts
 
 		$poster = (bool) (((int) $row['poster_id'] === (int) $this->user->data['user_id']) && $data['is_user']);
 		$can_edit = (bool) ($this->auth->acl_get('u_breizhcharts_edit') && $poster || $data['moderate']);
-		$can_delete = (bool) ($this->auth->acl_get('u_breizhcharts_delete') && $is_user || $data['moderate']);
+		$can_delete = (bool) ($this->auth->acl_get('u_breizhcharts_delete') && $data['is_user'] || $data['moderate']);
 		$can_report = (bool) (($this->auth->acl_get('u_breizhcharts_report') && $data['is_user'] || $data['moderate']));
 		$can_vote = (bool) ($data['is_user'] && $this->auth->acl_get('u_breizhcharts_vote'));
 
