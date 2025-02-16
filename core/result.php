@@ -123,7 +123,7 @@ class result
 		}
 
 		$flags = 0;
-		$poll_ary = $uid = $bitfield = '';
+		$uid = $bitfield = '';
 		// The futur new id is the last at this time + 1
 		$video_id = $this->check->get_last_chart() + 1;
 		$cat_name = $this->work->get_cat_name($cat);
@@ -184,7 +184,7 @@ class result
 			'forum_name'		=> '',
 			'enable_indexing'	=> true,
 		];
-		$post = submit_post('post', $song_title, '', POST_NORMAL, $poll_ary, $data);
+		$post = submit_post('post', $song_title, '', POST_NORMAL, '', $data);
 
 		return $post;
 	}
@@ -212,17 +212,17 @@ class result
 				$this->points->points_to_winners();
 			}
 
+			// Reset all notes
+			$this->reset_all_notes();
+
 			// Send PM to the winners
 			if ($this->config['breizhcharts_pm_enable'])
 			{
 				$this->contact->send_pm_to_winners($points_active);
 			}
 
-			// Reset all notes
-			$this->reset_all_notes();
-
 			// Truncate the voters table
-			$this->db->sql_query('TRUNCATE ' . $this->breizhcharts_voters_table);
+			$this->db->sql_query('TRUNCATE TABLE ' . $this->breizhcharts_voters_table);
 			$this->cache->destroy('sql', $this->breizhcharts_voters_table);
 			$this->cache->destroy('_breizhcharts_voters');
 		}
@@ -236,21 +236,21 @@ class result
 
 	private function reset_all_notes()
 	{
+		$i = 0;
 		$time = time();
-		$last_nb = $i = 0;
-		$sql_insert = $winner = [];
+		$sql_ary = $sql_insert = $winner = [];
 
-		$sql = 'SELECT MAX(result_nb) AS old_result
+		$sql = 'SELECT MAX(result_nb) AS old_nb
 			FROM ' . $this->breizhcharts_result_table;
 		$result = $this->db->sql_query($sql);
-		$old_result = (int) $this->db->sql_fetchfield('old_result');
+		$old_nb = (int) $this->db->sql_fetchfield('old_nb');
 		$this->db->sql_freeresult($result);
-		$new_result = $old_result + 1;
+		// Increment old_result or initialize it
+		$last_nb = ($old_nb) ? $old_nb + 1 : 1;
 
 		$sql = $this->db->sql_build_query('SELECT', [
 			'SELECT'	=> '*',
 			'FROM'		=> [$this->breizhcharts_table => ''],
-			'WHERE'		=> 'nb_note > 0',
 			'ORDER_BY'	=> 'song_note DESC, nb_note DESC, last_pos ASC, best_pos ASC',
 		]);
 		$result = $this->db->sql_query($sql);
@@ -265,14 +265,19 @@ class result
 				'best_pos'	=> ($i < (int) $row['best_pos'] || (int) $row['best_pos'] === 0) ? $i : (int) $row['best_pos'],
 			];
 
-			// create insert of 10 bests
-			$sql_insert[] = (($i < 11) && ($row['nb_note'] > 0)) ? $this->create_insert($row, $time, $new_result, $i) : false;
+			// create insert of 10 bests rated
+			if (($i < 11) && ((int) $row['nb_note'] > 0))
+			{
+				$sql_insert[] = $this->create_insert($row, $time, $last_nb, $i);
+			}
 
 			// create insert of winner
-			$winner = ((int) $i === 1) ? $this->create_winner($row) : false;
+			if ($i === 1)
+			{
+				$winner = $this->create_winner($row);
+			}
 
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $sql_ary) . ' WHERE song_id = ' . (int) $row['song_id']);
-			$last_nb = $new_result;
 		}
 		$this->db->sql_freeresult($result);
 
@@ -283,18 +288,19 @@ class result
 		 * @var	array
 		 * @since 1.1.0
 		 */
-		$vars = ['sql_ary', 'sql_insert', 'winner'];
+		$vars = ['last_nb', 'sql_ary', 'sql_insert', 'winner'];
 		extract($this->phpbb_dispatcher->trigger_event('breizhcharts.reset_all_notes', compact($vars)));
 
+		// Add 10 results votes in result table
 		$this->db->sql_multi_insert($this->breizhcharts_result_table, $sql_insert);
 		$this->config->set('breizhcharts_last_nb', $last_nb);
 	}
 
-	private function create_insert($row, $time, $new_result, $i)
+	private function create_insert($row, $time, $last_nb, $i)
 	{
 		return [
 			'result_song_id'		=> $row['song_id'],
-			'result_nb'				=> $new_result,
+			'result_nb'				=> $last_nb,
 			'result_time'			=> $time,
 			'result_pos'			=> $i,
 			'result_song_name'		=> $row['song_name'],

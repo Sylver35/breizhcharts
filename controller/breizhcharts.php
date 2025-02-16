@@ -148,6 +148,7 @@ class breizhcharts
 			throw new http_exception(403, 'BC_NOT_AUTHORISED');
 		}
 
+		// Initialize data
 		$data = [
 			'rules'			=> true,
 			'mode'			=> (string) $mode,
@@ -159,7 +160,7 @@ class breizhcharts
 			'cat'			=> (int) ($cat ? $cat : 0),
 			'mobile'		=> (bool) $this->verify->session_mobile(),
 			'is_user'		=> (bool) ($this->user->data['is_registered'] && !$this->user->data['is_bot']),
-			'start'			=> $start ? $start : (int) $this->request->variable('start', 0),
+			'start'			=> ($start) ? $start : (int) $this->request->variable('start', 0),
 			'moderate'		=> (bool) $this->auth->acl_gets(['a_breizhcharts_manage', 'm_breizhcharts_manage']),
 			'title_mode'	=> $this->language->lang('BC_NEWEST'),
 			'url'			=> 'sylver35_breizhcharts_page_music',
@@ -561,7 +562,10 @@ class breizhcharts
 
 			if ($topic_id)
 			{
-				include_once($this->root_path . 'includes/functions_admin.' . $this->php_ext);
+				if (!function_exists('delete_topics'))
+				{
+					include($this->root_path . 'includes/functions_admin.' . $this->php_ext);
+				}
 				delete_topics('topic_id', [$topic_id], false);
 				// Resync topics_posted table
 				$topic_ids[] = (int) $topic_id;

@@ -83,7 +83,10 @@ class contact
 		{
 			return;
 		}
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		if (!function_exists('submit_pm'))
+		{
+			include($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		}
 
 		// Select a random voter to get a bonus, if UPS is enabled and active
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -148,7 +151,10 @@ class contact
 
 	public function send_pm_to_winners($points_active)
 	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		if (!function_exists('submit_pm'))
+		{
+			include($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		}
 
 		$switch_lang = false;
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -209,7 +215,10 @@ class contact
 
 	public function send_pm_view_report($id)
 	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		if (!function_exists('submit_pm'))
+		{
+			include($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		}
 		$message_user = $this->request->variable('message-box', '', true);
 
 		$sql = $this->db->sql_build_query('SELECT', [
@@ -285,7 +294,10 @@ class contact
 
 	public function send_pms_report($id, $song_name, $artist, $poster_id, $poster_name, $poster_colour, $reason, $auto = 0)
 	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		if (!function_exists('submit_pm'))
+		{
+			include($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		}
 
 		$switch_lang = false;
 		$sql = 'SELECT *
@@ -344,7 +356,10 @@ class contact
 
 	public function send_pm_close($action, $lang, $song, $artist, $reason, $poster_id, $poster_name, $poster_colour, $report_id, $report_name, $report_colour)
 	{
-		include_once($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		if (!function_exists('submit_pm'))
+		{
+			include($this->root_path . 'includes/functions_privmsgs.' . $this->php_ext);
+		}
 
 		// Switch language if needed
 		$switch_lang = $this->language_switch($lang, false);

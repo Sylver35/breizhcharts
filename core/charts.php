@@ -331,7 +331,7 @@ class charts
 	public function get_template_charts($rules)
 	{
 		$title_explain = '';
-		$is_user = $this->user->data['is_registered'] && !$this->user->data['is_bot'];
+		$is_user = (bool) ($this->user->data['is_registered'] && !$this->user->data['is_bot']);
 		$reports = !$is_user ?: $this->work->get_reported_videos();
 		if ($this->config['breizhcharts_period_activ'])
 		{
