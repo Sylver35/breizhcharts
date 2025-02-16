@@ -123,7 +123,7 @@ class result
 		}
 
 		$flags = 0;
-		$uid = $bitfield = '';
+		$poll_ary = $uid = $bitfield = '';
 		// The futur new id is the last at this time + 1
 		$video_id = $this->check->get_last_chart() + 1;
 		$cat_name = $this->work->get_cat_name($cat);
@@ -184,7 +184,7 @@ class result
 			'forum_name'		=> '',
 			'enable_indexing'	=> true,
 		];
-		$post = submit_post('post', $song_title, '', POST_NORMAL, '', $data);
+		$post = submit_post('post', $song_title, '', POST_NORMAL, $poll_ary, $data);
 
 		return $post;
 	}
