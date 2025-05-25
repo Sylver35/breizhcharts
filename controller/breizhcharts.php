@@ -107,11 +107,12 @@ class breizhcharts
 	protected $breizhcharts_table;
 	protected $breizhcharts_cats_table;
 	protected $breizhcharts_voters_table;
+	protected $breizhcharts_result_table;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(charts $charts, work $work, verify $verify, points $points, result $result, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table)
+	public function __construct(charts $charts, work $work, verify $verify, points $points, result $result, template $template, language $language, user $user, auth $auth, helper $helper, db $db, pagination $pagination, log $log, cache $cache, request $request, config $config, ext_manager $ext_manager, path_helper $path_helper, phpbb_dispatcher $phpbb_dispatcher, $root_path, $php_ext, $breizhcharts_table, $breizhcharts_cats_table, $breizhcharts_voters_table, $breizhcharts_result_table)
 	{
 		$this->charts = $charts;
 		$this->work = $work;
@@ -137,6 +138,7 @@ class breizhcharts
 		$this->breizhcharts_table = $breizhcharts_table;
 		$this->breizhcharts_cats_table = $breizhcharts_cats_table;
 		$this->breizhcharts_voters_table = $breizhcharts_voters_table;
+		$this->breizhcharts_result_table = $breizhcharts_result_table;
 		$this->ext_path = $this->ext_manager->get_extension_path('sylver35/breizhcharts', true);
 		$this->ext_path_web = $this->path_helper->update_web_root_path($this->ext_path);
 	}
@@ -499,8 +501,11 @@ class breizhcharts
 			'cat'			=> $this->request->variable('cat', 0),
 			'video'			=> $this->request->variable('video', '', true),
 		];
-		$ex_cat = $this->request->variable('ex_cat', 0);
-		$ex_cat_nb = $this->request->variable('ex_cat_nb', 0);
+		$data_result = [
+			'result_song_name'	=> $data_video['song_name'],
+			'result_artist'		=> $data_video['artist'],
+			'result_video'		=> $data_video['video'],
+		];
 
 		$error = $this->verify->verify_chart_before_send($data_video, $id);
 		if (count($error))
@@ -511,9 +516,11 @@ class breizhcharts
 		{
 			$this->db->sql_query('UPDATE ' . $this->breizhcharts_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data_video) . ' WHERE song_id = ' . (int) $id);
 
+			$this->db->sql_query('UPDATE ' . $this->breizhcharts_result_table . ' SET ' . $this->db->sql_build_array('UPDATE', $data_result) . ' WHERE result_song_id = ' . (int) $id);
+
 			$this->log->add('user', $this->user->data['user_id'], $this->user->ip, 'LOG_USER_EDITED_SONG', time(), ['reportee_id' => $this->user->data['user_id'], $this->language->lang('BC_FROM_OF', $data_video['song_name'], $data_video['artist'])]);
 			$this->cache->destroy('sql', $this->breizhcharts_table);
-			$this->verify->update_song_cat('update', $data_video['cat'], $ex_cat, $ex_cat_nb);
+			$this->verify->update_song_cat('update', $data_video['cat'], $this->request->variable('ex_cat', 0), $this->request->variable('ex_cat_nb', 0));
 
 			$redirect_url = $this->helper->route('sylver35_breizhcharts_page_music', ['mode' => 'list_newest', 'cat' => $cat, 'start' => $start]);
 			meta_refresh(3, $redirect_url);

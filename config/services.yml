@@ -102,6 +102,7 @@ services:
             - '%sylver35.breizhcharts.table.breizhcharts%'
             - '%sylver35.breizhcharts.table.breizhcharts_cats%'
             - '%sylver35.breizhcharts.table.breizhcharts_voters%'
+            - '%sylver35.breizhcharts.table.breizhcharts_result%'
 
     sylver35.breizhcharts.controller.ajax:
         class: sylver35\breizhcharts\controller\ajax
